@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails - Président Golf Club</title>
+    <link rel="stylesheet" href="scripts.css">
+    <link rel="stylesheet" href="em.css">
+    <link rel="stylesheet" href="style - Copie.css">
+    <style>
+        /* Style pour le bouton retour */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #2c5aa0;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #1d3d6e;
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Bouton retour -->
+    <a href="main_index - Copie.php" class="back-button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15,18 9,12 15,6"></polyline>
+        </svg>
+        Retour à l'accueil
+    </a>
+
+    <!-- Section RESTAURANT (masquée par défaut) -->
+    <section id="restau" style="display: none;">
+        <div><img src="images/5.jpg" class="video-container"></div>
+        <div class="restau-layout">
+            <div class="left">
+                <div class="sous_titre"> <h3>Presentation</h3>
+                    <p>Un ensemble cloisonné sur une surface de 160 m2.
+                        Le restaurant avec sa terrasse en hauteur permet d'avoir une vue plus large sur le parcours.
+                        Le client tout en savourant le menu du Golfeur, appréciera les beaux gestes des joueurs de golf autour des trous n° 09 et 18.</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Horaire</h3>
+                    <p>Ouvert 6j/7 (du mardi au dimanche) et les jours fériés de 07 H à 18 H</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Dimension</h3>
+                    <p>90 m²</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Capacité</h3>
+                    <p>150 Couverts</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Utilisation possible</h3>
+                    <p>Réception entre collègues, familles, et tête à tête entre couple.</p>
+                </div>
+            </div>
+            <div class="right grid">
+                <h3>Visiter le Restaurant</h3>
+                <img src="images/3.jpg" alt="Restaurant">
+                <section class="caracteristiques">
+                    <h3>CARACTÉRISTIQUES</h3>
+                    <div class="grid-caract">
+                        <div class="carte"><strong>Capacité :</strong> 26 à 30 m²</div>
+                        <div class="carte"><strong>Menu :</strong> Africain, Européen</div>
+                        <div class="carte"><strong>Buffet :</strong> Oui</div>
+                        <div class="carte"><strong>Menu à la carte :</strong> Oui</div>
+                        <div class="carte"><strong>Salon VIP :</strong> Oui</div>
+                        <div class="carte"><strong>Wifi :</strong> Oui</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section BAR (masquée par défaut) -->
+    <section id="bar" style="display: none;">
+        <div><img src="images/Nos_espaces/fit.jpg" alt="Bar"></div>
+        <div class="restau-layout">
+            <div class="left">
+                <div class="sous_titre"> <h3>Presentation</h3>
+                    <p>Après un parcours de 18 trous, le green 19 vous recevra avec ses jus frais de fruits du terroir, et vous servira à votre demande le bon café de côte d'Ivoire.
+                    Le comptoir du bar green 19, est par excellence le lieu de rencontre et de partage entre golfeurs et amis.</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Horaire</h3>
+                    <p>Ouvert 7j/7 de 07 H à 18 H</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Dimension</h3>
+                    <p>70 m²</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Capacité</h3>
+                    <p>45 places</p>
+                </div>
+            </div>
+            <div class="right grid">
+                <h3>Visiter le bar</h3>
+                <img src="images/Acc_bar.jpg" alt="Bar">
+                <section class="caracteristiques">
+                    <h3>CARACTÉRISTIQUES</h3>
+                    <div class="grid-caract">
+                        <div class="carte"><strong>Capacité :</strong> 26 à 30 m²</div>
+                        <div class="carte"><strong>Menu :</strong> Africain, Européen</div>
+                        <div class="carte"><strong>Tv: </strong> Oui</div>
+                        <div class="carte"><strong>Menu à la carte :</strong> Oui</div>
+                        <div class="carte"><strong>Salon VIP :</strong> Oui</div>
+                        <div class="carte"><strong>Wifi :</strong> Oui</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section SALLE POLYVALENTE (masquée par défaut) -->
+    <section id="salle-poly" style="display: none;">
+        <div><img src="images/Nos_espaces/Sp2.jpg" alt="Salle polyvalente" class="video-container"></div>
+        <div class="restau-layout">
+            <div class="left">
+                <div class="sous_titre"> <h3>Presentation</h3>
+                    <p>PRESENTATION
+                        Un ensemble de trois salles (la polyvalente, la salle de réunion de 30 places, la salle de Billard).
+                        La Salle de fête du PGC, peut être modulable selon les événements : mariages, baptêmes, conférences et réunions.
+                        Salle climatisée, avec des vitres teintées permet de faire des projections, et réunions d'affaires.
+                        Espace aménagé et équipé pour l'organisation de cérémonies(Bal de fin d'année, etc.)
+                    </p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Horaire</h3>
+                    <p>Ouvert 6j/7 (du mardi au dimanche) et les jours fériés de 07 H à 18 H</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Dimension</h3>
+                    <p>200 m²</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Capacité</h3>
+                    <p>150 places</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Utilisation possible</h3>
+                    <ul type="disk">
+                        <li>Cocktail</li>
+                        <li>Menu</li>
+                        <li>Buffet dansant</li>
+                        <li>Conférences</li>
+                        <li>Projection à la demande</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right grid">
+                <h3>Visiter la salle polyvalente</h3>
+                <img src="images/4.jpg" class="w-100" alt="Salle poly">
+                <section class="caracteristiques">
+                    <h3>CARACTÉRISTIQUES</h3>
+                    <div class="grid-caract">
+                        <div class="carte"><strong>Capacité max :</strong>150 Personnes</div>
+                        <div class="carte"><strong>Projecteur :</strong> A la demande</div>
+                        <div class="carte"><strong>Sonorisation :</strong> A la demande</div>
+                        <div class="carte"><strong>Salle modulable:</strong> Oui</div>
+                        <div class="carte"><strong>Climatisation :</strong> Oui</div>
+                        <div class="carte"><strong>Wifi :</strong> Oui</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section SALLE DE RÉUNION (masquée par défaut) -->
+    <section id="salle-reunion" style="display: none;">
+        <div><img src="images/Nos_espaces/Salle_R.jpg" alt="Salle de réunion" class="video-container"></div>
+        <div class="restau-layout">
+            <div class="left">
+                <div class="sous_titre"> <h3>Presentation</h3>
+                    <p>Cette salle de réunion appelée aussi Salle de Bridge est un cadre propice à la concentration, aux réunions entre responsables, et aussi aux réceptions.</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Commodités</h3>
+                    <ul type="disc">
+                        <li>Espace aménagé</li>
+                        <li>Tables et chaises disposées</li>
+                    </ul>
+                </div>
+                <div class="sous_titre">
+                    <h3>Horaire</h3>
+                    <p>Ouvert 09h à 18h du mardi au dimanche et les jours fériés</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Dimension</h3>
+                    <p>50 m²</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Capacité</h3>
+                    <p>30 places</p>
+                </div>
+            </div>
+            <div class="right grid">
+                <h3>Visiter la salle de réunion</h3>
+                <img src="images/sr.jpg" alt="Réunion">
+                <section class="caracteristiques">
+                    <h3>CARACTÉRISTIQUES</h3>
+                    <div class="grid-caract">
+                        <div class="carte"><strong>Capacité max :</strong>30 Pers.</div>
+                        <div class="carte"><strong>Projecteur :</strong> A la demande</div>
+                        <div class="carte"><strong>Sonorisation :</strong> A la demande</div>
+                        <div class="carte"><strong>Salle modulable:</strong> Oui</div>
+                        <div class="carte"><strong>Climatisation :</strong> Oui</div>
+                        <div class="carte"><strong>Wifi :</strong> Oui</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section PISCINE (masquée par défaut) -->
+    <section id="piscine" style="display: none;">
+        <div><img src="images/pisc1.jpg" alt="Piscine" class="video-container"></div>
+        <div class="restau-layout">
+            <div class="left">
+                <div class="sous_titre"> <h3>Presentation</h3>
+                    <p>La Piscine avec sa forme de croissant lunaire, est située sur la terrasse du Club house. Du bassin de la piscine, les baigneurs et les visiteurs ont une vue panoramique sur le parcours.
+                    Des surveillants de baignade qualifiés, sécurisent et encadrent les Baigneurs.</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Horaire</h3>
+                    <p>Du mardi au dimanche et les jours fériés de 09 H à 18 H</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Profondeur de piscine</h3>
+                    <ul type="disc">
+                        <li>Petit bassin : 0,30 m</li>
+                        <li>Grand bassin : 1,00 m / 2,00 m </li>
+                        <li>Forme semi circulaire </li>
+                        <li>(Longueur : 25 m, largeur : 10 m).</li>
+                    </ul>
+                </div>
+                <div class="sous_titre">
+                    <h3>Activités</h3>
+                    <ul type="disc">
+                        <li>Baignade</li>
+                        <li>Détente</li>
+                        <li>Loisirs, etc.</li>
+                    </ul>
+                </div>
+                <div class="sous_titre">
+                    <h3>Capacité</h3>
+                    <p>60 Personnes</p>
+                </div>
+            </div>
+            <div class="right grid">
+                <h3>Visiter la Piscine</h3>
+                <img src="images/pisc2.jpg" alt="piscine">
+                <section class="caracteristiques">
+                    <h3>CARACTÉRISTIQUES</h3>
+                    <div class="grid-caract">
+                        <div class="carte"><strong>Tarif enfant :</strong> 1000 F</div>
+                        <div class="carte"><strong>Tarif adulte :</strong> 1500 F</div>
+                        <div class="carte"><strong>Piscine enfant :</strong> Oui</div>
+                        <div class="carte"><strong>Cours de natation :</strong> Oui</div>
+                        <div class="carte"><strong>Maître nageur:</strong> Oui</div>
+                        <div class="carte"><strong>Wifi :</strong> Oui</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section GOLF (masquée par défaut) -->
+    <section id="golf" style="display: none;">
+        <div><img src="images/nos_espaces/golf.jpg" alt="golf" class="video-container"></div>
+        <div class="restau-layout">
+            <div class="left">
+                <div class="sous_titre"> <h3>Presentation</h3>
+                    <p>Notre parcours est classé parmi les plus beaux d'Afrique, et apprécié de tous les visiteurs de passage à Yamoussoukro.
+                        Toujours bien entretenu, le Président Golf Club séduit les amoureux du Golf.
+                        Une équipe de Professionnels de Golf, toujours disponibles pour donner des cours individuels ou collectifs.</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Horaire</h3>
+                    <p>Ouvert 6j/7 (du mardi au dimanche) et les jours fériés de 07H30 à 18 H</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Activités</h3>
+                    <ul type="disc">
+                        <li>Initiation au Golf (Individuelle et Entreprise)</li>
+                        <li>Coaching (perfectionnement d'amateurs)</li>
+                        <li>Training (Formation de moniteurs)</li>
+                        <li>Tournois et compétitions (professionnels, amateurs)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right grid">
+                <h3>Visiter le Green</h3>
+                <img src="images/1-3.jpg" alt="Green">
+                <section class="caracteristiques">
+                    <h3>CARACTÉRISTIQUES</h3>
+                    <div class="grid-caract">
+                        <div class="carte"><strong>Terrain vallonné :</strong> Oui</div>
+                        <div class="carte"><strong>Végétation abondante :</strong> Oui</div>
+                        <div class="carte"><strong>Fairways de qualité :</strong> Oui</div>
+                        <div class="carte"><strong>Bancs :</strong> Oui</div>
+                        <div class="carte"><strong>Plan d'eau:</strong> Oui</div>
+                        <div class="carte"><strong>Wifi :</strong> Oui</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section FITNESS (masquée par défaut) -->
+    <section id="fitness" style="display: none;">
+        <div><img src="images/fitness.jpg" alt="fitness" class="video-container"></div>
+        <div class="restau-layout">
+            <div class="left">
+                <div class="sous_titre"> <h3>Presentation</h3>
+                    <p>Lieu de fitness, de préparation physique et de remise en forme pour tous.</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Activités</h3>
+                    <ul type="disc">
+                        <li>Musculation</li>
+                        <li>Body Building</li>
+                        <li>Étirement musculation</li>
+                        <li>Remise en forme</li>
+                    </ul>
+                </div>
+                <div class="sous_titre">
+                    <h3>Horaire</h3>
+                    <p>De 08 h à 18 h / mardi au dimanche et jours fériés.</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Capacité</h3>
+                    <p>60 m²</p>
+                </div>
+                <div class="sous_titre">
+                    <h3>Spécifications</h3>
+                    <ul type="disc">
+                        <li>Grand miroir mural</li>
+                        <li>Salle aménagée</li>
+                        <li>Aération centrale</li>
+                        <li>Appareils de Culture physique. (Presse -pied, charge- épaule, banc, etc.)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right grid">
+                <h3>Visiter la Salle</h3>
+                <img src="images/1.jpg" alt="Fitness">
+                <section class="caracteristiques">
+                    <h3>CARACTÉRISTIQUES</h3>
+                    <div class="grid-caract">
+                        <div class="carte"><strong>Tapis de course :</strong> Oui</div>
+                        <div class="carte"><strong>Vélo de biking :</strong> Oui</div>
+                        <div class="carte"><strong>Coaching :</strong> Oui</div>
+                        <div class="carte"><strong>Banc :</strong> Oui</div>
+                        <div class="carte"><strong>Climatisation:</strong> Oui</div>
+                        <div class="carte"><strong>Wifi :</strong> Oui</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <script src="em.js"></script>
+    
+</body>
+</html>

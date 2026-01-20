@@ -1,0 +1,214 @@
+* {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-transform: capitalize;
+}
+
+body {
+    background-color: #f0f0f0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.main-video-container {
+    flex: 1 1 700px;
+    padding: 20px;
+    background-color: #fff;
+}
+
+.main-video {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background-color: #000;
+}
+
+.main-vid-title {
+    font-size: 22px;
+    color: #333;
+    font-weight: 600;
+    padding: 0 10px;
+}
+
+.video-list-container {
+    flex: 1 1 350px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-left: 2px solid #eee;
+}
+
+.video-list-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.video-list-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.video-list-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.video-list-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.list {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.list:last-child {
+    margin-bottom: 0;
+}
+
+.list:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    border-color: #ffcc00;
+}
+
+.list.active {
+    background-color: #ffcc00;
+    border-color: #ffcc00;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+}
+
+.list.active .list-title {
+    color: #fff;
+    font-weight: 600;
+}
+
+.list-video {
+    width: 120px;
+    height: 70px;
+    border-radius: 6px;
+    object-fit: cover;
+    background-color: #000;
+}
+
+.list-title {
+    font-size: 16px;
+    color: #444;
+    flex: 1;
+    transition: color 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .container {
+        margin: 10px;
+    }
+    
+    .video-list-container {
+        border-left: none;
+        border-top: 2px solid #eee;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .main-video-container,
+    .video-list-container {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+    
+    .main-vid-title {
+        font-size: 20px;
+        text-align: center;
+    }
+    
+    .video-list-container {
+        max-height: 400px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-vid-title {
+        font-size: 18px;
+    }
+    
+    .list {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        padding: 15px;
+    }
+    
+    .list-video {
+        width: 100%;
+        height: 150px;
+    }
+    
+    .list-title {
+        font-size: 15px;
+    }
+    
+    .video-list-container {
+        padding: 15px;
+    }
+}
+
+/* Animation pour le changement de vidéo */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.main-video {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Style pour les vidéos en pause/lecture */
+.list-video {
+    pointer-events: none; /* Empêche la lecture au clic sur la miniature */
+}
+
+/* Amélioration pour le focus */
+.list:focus {
+    outline: 2px solid #ffcc00;
+    outline-offset: 2px;
+}

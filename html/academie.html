@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Président Golf Club</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style - Copie.css">
+    
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+     <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Testimonial Slider | Bedimcode</title>
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"/>
+
+  <!-- Iconscout CDN -->
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+
+<style>
+.background-carousel {
+  position:absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.background-carousel .carousel-item {
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+}
+
+.nav-hover {
+  position: relative;
+}
+
+.dropdown-menu-custom {
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+  position: absolute;
+  top: 120%;
+  left: 0;
+  min-width: 200px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+.nav-hover:hover .dropdown-menu-custom {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-menu-custom a {
+  display: block;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.dropdown-menu-custom a:hover {
+  background: #f5f5f5;
+  /*color: #198754;*/
+}
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.hero h1 span {
+  color: #ffc107;
+}
+
+footer i.bi {
+  font-size: 1.8rem;
+  color: white;
+  margin: 0 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+footer i.bi:hover {
+  color: #ffc107;
+  transform: scale(1.2);
+}
+
+.slide1 { background-image: url('images/Slide_ACC/bg1.jpeg'); }
+.slide2 { background-image: url('images/Slide_ACC/bg2.jpeg'); }
+.slide3 { background-image: url('images/Slide_ACC/bg3.jpeg'); }
+
+.contact-container {
+      position: relative; /* nécessaire pour positionner la fenêtre */
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .contact-container a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #0073e6;
+    }
+
+    /* Fenêtre cachée par défaut */
+    .tooltip {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      width: 260px;
+      height: 150px;
+      background-color: #f9f9f9;
+      color: #333;
+      text-align: left;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      position: absolute;
+      z-index: 1;
+      top: 120%; /* en dessous du texte */
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Affichage au survol */
+    .contact-container:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+    .photo{
+        margin-left:50px;
+        padding-bottom: 15px;
+    }
+
+    .event-card {
+        background-image: url('images/acad.jpg');
+        width: auto;
+        height: 250px;
+        border:white solid 3px;
+        color: #f9f9f9;
+        border-radius: 0%;
+    }
+    .event-content{
+        display: flex;
+    }
+    .event-card-ch{
+        background-image: url('images/C5.jpg');
+        height: 250px;
+
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+  <nav class="navbar navbar-expand-lg fixed-top bg-light shadow">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="Emp.php">
+        <img src="images/logo_pgc.jpeg" width="80" height="60"
+             class="rounded-circle border border-2 border-light">
+        Président Golf Club
+        </a>
+
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mx-auto">
+
+          <li class="nav-item nav-hover">
+            <a class="nav-link" href="main_index - Copie.html#espaces">Nos Espaces</a>
+            <ul class="dropdown-menu-custom">
+              <li><a href="main_index - Copie.html#restau">Restaurant Cora</a></li>
+              <li><a href="main_index - Copie.html#bar">Bar Green 19</a></li>
+              <li><a href="main_index - Copie.html#salle-poly">Salle polyvalente</a></li>
+              <li><a href="main_index - Copie.html#salle-reunion">Salle de réunion</a></li>
+              <li><a href="main_index - Copie.html#golf">Golf</a></li>
+              <li><a href="main_index - Copie.html#piscine">Piscine</a></li>
+              <li><a href="main_index - Copie.html#fitness">Fitness center</a></li>
+              <li><a href="main_index - Copie.html">Le traiteur du PGC</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item nav-hover">
+            <a class="nav-link" href="#">Galerie</a>
+            <ul class="dropdown-menu-custom">
+              <li><a href="#">Photos</a></li>
+              <li><a href="#">Vidéos</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item nav-hover">
+            <a class="nav-link" href="main_index - Copie.html#evenement">Événement & Média</a>
+            <ul class="dropdown-menu-custom">
+              <li><a href="#">Tournois</a></li>
+              <li><a href="#">Communiqués</a></li>
+              <li><a href="#">Presse</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item nav-hover">
+          <a class="nav-link" href="Apropos_de_nous.html">À propos de nous</a>
+          <ul class="dropdown-menu-custom">
+            <li><a href="main_index - Copie.html#histoire">Historique</a></li>
+            <li><a href="main_index - Copie.html#mot_dg">Mot du Directeur</a></li>
+            <li><a href="main_index - Copie.html#equipe">Équipe dirigeante</a></li>
+          </ul>
+        </li>
+
+          <li class="nav-item nav-hover">
+            <a class="nav-link" href="main_index - Copie.html">Accueil</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="contact-container"> 
+        <p>Nous Contacter</p>
+        <div class="tooltip"> 
+          <strong>President Golf Club</strong><br> 
+          📍 Adresse : millionnaire, Yamoussoukro<br> 
+          📞 Téléphone : +225 01 23 45 67 / 0712721342<br> 
+          <a href="mailto:emmanuellazidje17@gmail.com">✉️ </a>Email : golfadd@gmail.com 
+        </div> 
+      </div>
+
+    </div>
+  </nav>
+</header>
+<nav class="navbar navbar-expand-lg bg-secondary navbar-light sticky-top">
+  <div class="container">
+    <ul class="navbar-nav mx-auto">
+      <li class="nav-item nav-hover"><a class="nav-link" href="#present">Presentation</a>
+        <ul class="dropdown-menu-custom">
+              <li><a href="#cours">Cours et Coaching</a></li>
+              <li><a href="#coachs">Equipe des Coachs</a></li>
+        </ul>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="#adhesion">Adhesion</a></li>
+      <li class="nav-item"><a class="nav-link" href="#OpenModal">Inscription</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section id="present" class="events">
+    <div class="events-header">
+        <h2>PRESENTATION</h2>
+    </div>
+    <div id="" class="event-card reveal d-flex justify-content-center">
+            <div class="event-content ">
+                <h2 class="text-center py-5 me-3">COURS ET COACHING <br>
+                     <div class="mt-4">
+                    <a href="#inscription" class="btn btn-light rounded-pill px-4 py-2 me-3">
+                        Commencer
+                    </a>
+                </div>
+                </h2>
+               
+            </div>
+    </div>
+
+    <div class="event-card-ch reveal d-flex justify-content-center">
+            <div class="event-content ">
+                <div><h2 class="text-center py-5 me-3 "> EQUIPE DES COACHS </h2> <br>
+                     <p> Notre équipe de coachs certifiés met son expertise et sa passion au service de votre progression. 
+                    Alliant pédagogie personnalisée et technologies d'analyse de pointe, nous accompagnons chaque joueur, 
+                    du débutant au compétiteur, pour libérer son plein potentiel et maximiser le plaisir sur le parcours</p>
+                     </div>
+            </div>
+            
+    </div>
+     <section class="team-section">
+    <div class="container">
+      <h2 class="text-center mb-5">PRESENTATION DE L'EQUIPE</h2>
+      <div class="row">
+        <div class="col-md-4 team-card">
+          <img src="images/coach1.jpg" alt="coach1">
+          <h5>Nom du Coach</h5>
+          <p>Coach Principal</p>
+        </div>
+        <div class="col-md-4 team-card">
+          <img src="images/coach2.jpg" alt="coach2">
+          <h5>Nom du coach</h5>
+          <p>Coach Secondaire</p>
+        </div>
+        <div class="col-md-4 team-card">
+          <img src="images/coach3.jpg" alt="coach3">
+          <h5>Nom du coach</h5>
+          <p>Coach Suppleant</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<section id="adhesion">
+    <!-- section Restaurant-->
+
+   <div><img src="images/visit_golf.jpg"  class="video-container"></img></div>
+ 
+    <div class="restau-layout">
+      <div class="left">
+       <div class="sous_titre"> <h3>Condition d'Adhesion</h3>
+        <p>...</p>
+        </div>
+        <div class="sous_titre">
+          <h3>Avantages</h3>
+          <p>...</p>
+        </div>
+        <div class="mt-4">
+           <button id="openModal" class="btn btn-light bg-success rounded-pill px-4 py-2 me-3">
+                Inscription
+            </button>
+        </div>
+
+    </div>
+      
+    <div class="right grid">
+      <h3>...</h3>
+      <img src="images/logo_pgc.jpeg" alt="adh">
+      <section class="caracteristiques">
+      <h3>Tarifs</h3>
+      <div class="grid-caract">
+        <div class="carte"><strong> Tarif :</strong>...</div>
+        <div class="carte"><strong> Tarif :</strong>...</div>
+        <div class="carte"><strong> Tarif :</strong>...</div>
+        <div class="carte"><strong> Tarif :</strong>...</div>
+        <div class="carte"><strong> Tarif :</strong>...</div>
+        <div class="carte"><strong> Tarif :</strong>...</div>
+      </div>
+    </section>
+
+    </div>
+    </div> 
+</section>
+
+
+<div id="modalInscription" class="modal-overlay">
+    <div class="signup-card">
+        <span class="close-btn">&times;</span>
+
+        <div class="card-header">
+            <div class="avatar"></div>
+        </div>
+
+        <h3>S'INSCRIRE</h3>
+
+        <form>
+            <input type="text" placeholder="Nom" required>
+            <input type="text" placeholder="Prénom" required>
+            <input type="email" placeholder="Email" required>
+            <input type="password" placeholder="Mot de passe" required>
+            <input type="password" placeholder="confirmer le Mot de passe" required>
+            <input type="tel" placeholder="Téléphone">
+            <label for="tarif">Choisissez votre Tarif:</label>
+            <select name="tarif" id="tarif">
+                <option value="Tarif1">Tarif1</option>
+                <option value="Tarif2">Tarif2</option>
+                <option value="Tarif3">Tarif3</option>
+                <option value="Tarif4">Tarif4</option>
+            </select>
+
+            <button type="submit" class="signup-btn">
+                S'inscrire
+            </button>
+        </form>
+    </div>
+</div>
+
+
+<script src="script.js"></script>
+<footer class="bg-dark py-4 text-center">
+    <div class="container">
+        <i class="bi bi-facebook"></i>
+        <i class="bi bi-twitter-x"></i>
+        <i class="bi bi-instagram"></i>
+        <i class="bi bi-youtube"></i>
+        <i class="bi bi-tiktok"></i>
+
+        <p class="text-white mt-3 mb-0">
+            © 2026 Président Golf Club – Tous droits réservés
+        </p>
+    </div>
+</footer>
+<script>
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener("click", function(e) {
+      e.preventDefault();
+      document.querySelector(this.getAttribute("href")).scrollIntoView({
+        behavior: "smooth"
+      });
+    });
+  });
+
+    const openBtn = document.getElementById("openModal");
+    const modal = document.getElementById("modalInscription");
+    const closeBtn = document.querySelector(".close-btn");
+
+    openBtn.onclick = () => modal.style.display = "flex";
+    closeBtn.onclick = () => modal.style.display = "none";
+
+    window.onclick = (e) => {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
+
+</body>
+</html>

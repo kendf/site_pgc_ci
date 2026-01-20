@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Président Golf Club | Excellence à Yamoussoukro</title>
+    
+    <!-- Fonts Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* PALETTE BLEUE - Nouvelles couleurs */
+            --primary-blue: #1a365d;        /* Bleu marine foncé */
+            --secondary-blue: #2c5282;      /* Bleu marine moyen */
+            --accent-blue: #4299e1;         /* Bleu ciel vif */
+            --light-blue: #ebf8ff;          /* Bleu très clair */
+            --light-beige: #f8f9fa;         /* Beige clair neutre */
+            --dark-charcoal: #2d3748;       /* Charbon foncé */
+            --white: #ffffff;
+            --gray-light: #edf2f7;
+            --gold-accent: #d69e2e;         /* Or pour accents */
+            
+            /* Variables de design */
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.15);
+            --border-radius: 16px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark-charcoal);
+            line-height: 1.6;
+            background-color: var(--white);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, .heading {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        
+        /* NAVIGATION MODERNE */
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+        }
+        
+        .navbar.scrolled {
+            padding: 0.8rem 0;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-blue) !important;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .navbar-brand img {
+            border: 3px solid var(--gold-accent);
+            transition: var(--transition);
+        }
+        
+        .navbar-brand:hover img {
+            transform: rotate(5deg);
+        }
+        
+        .nav-link {
+            color: var(--dark-charcoal) !important;
+            font-weight: 500;
+            padding: 0.5rem 1.2rem !important;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--accent-blue);
+            transition: var(--transition);
+        }
+        
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            width: 80%;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-blue) !important;
+        }
+        
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+        
+        /* HERO SECTION - Design bleu marine */
+        .hero {
+            height: 100vh;
+            min-height: 800px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(26, 54, 93, 0.9), rgba(66, 153, 225, 0.7));
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            color: var(--white);
+            max-width: 800px;
+        }
+        
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero h1 span {
+            color: var(--gold-accent);
+            display: block;
+            font-size: 5.5rem;
+            font-weight: 700;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.4rem;
+            opacity: 0.95;
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+        }
+        
+        /* BUTTONS DESIGN */
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: var(--accent-blue);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: #3182ce;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(66, 153, 225, 0.4);
+        }
+        
+        .btn-outline-white {
+            background: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+        }
+        
+        .btn-outline-white:hover {
+            background: var(--white);
+            color: var(--primary-blue);
+            transform: translateY(-3px);
+        }
+        
+        /* SECTIONS */
+        .section {
+            padding: 120px 0;
+            position: relative;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        
+        .section-title h2 {
+            font-size: 3.2rem;
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent-blue);
+            border-radius: 2px;
+        }
+        
+        .section-title .lead {
+            font-size: 1.3rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        /* FEATURES GRID - Design bleu */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .feature-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 40px 30px;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-light);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-blue);
+            transform: scaleY(0);
+            transition: var(--transition);
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleY(1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-blue);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--light-blue), #fff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 2rem;
+            color: var(--primary-blue);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        
+        .feature-card:hover .feature-icon {
+            background: var(--accent-blue);
+            color: var(--white);
+            transform: scale(1.1);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-blue);
+        }
+        
+        .feature-card p {
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        
+        .feature-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        
+        .feature-link:hover {
+            gap: 12px;
+            color: var(--secondary-blue);
+        }
+        
+        /* SPACES GALLERY - Design bleu */
+        .spaces-section {
+            background: var(--light-blue);
+        }
+        
+        .gallery-container {
+            position: relative;
+            margin-top: 60px;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            height: 400px;
+            cursor: pointer;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 40px 30px;
+            background: linear-gradient(transparent, rgba(26, 54, 93, 0.95));
+            color: var(--white);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .gallery-overlay h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .gallery-overlay p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* EVENTS SECTION - Design carte bleue */
+        .events-slider {
+            position: relative;
+            padding: 0 60px;
+        }
+        
+        .event-card-slide {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            height: 100%;
+        }
+        
+        .event-card-slide:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .event-image {
+            height: 250px;
+            overflow: hidden;
+        }
+        
+        .event-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        
+        .event-card-slide:hover .event-image img {
+            transform: scale(1.05);
+        }
+        
+        .event-content {
+            padding: 35px;
+        }
+        
+        .event-date {
+            display: inline-block;
+            background: var(--accent-blue);
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .event-content h3 {
+            color: var(--primary-blue);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+        
+        .event-content p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        /* RESTAURANT SECTION - Design gastronomique bleu */
+        .restaurant-section {
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--white) 100%);
+        }
+        
+        .restaurant-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .restaurant-info {
+            background: var(--white);
+            padding: 50px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            margin-top: 50px;
+        }
+        
+        .info-block {
+            margin-bottom: 40px;
+        }
+        
+        .info-block:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-block h3 {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .info-block p {
+            color: #666;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        
+        /* FOOTER - Design bleu marine */
+        footer {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 80px 0 40px;
+            position: relative;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-blue);
+        }
+        
+        .footer-logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+        
+        .footer-links h4 {
+            color: var(--accent-blue);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-links ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links ul li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-links ul li a:hover {
+            color: var(--accent-blue);
+            transform: translateX(5px);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .social-link {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.1rem;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        
+        .social-link:hover {
+            background: var(--accent-blue);
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        /* SWIPER CUSTOM STYLES */
+        .swiper-button-next,
+        .swiper-button-prev {
+            color: var(--primary-blue);
+            background: var(--white);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+        
+        .swiper-button-next:after,
+        .swiper-button-prev:after {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        
+        .swiper-button-next:hover,
+        .swiper-button-prev:hover {
+            background: var(--accent-blue);
+            color: var(--white);
+            transform: scale(1.1);
+        }
+        
+        .swiper-pagination-bullet {
+            width: 12px;
+            height: 12px;
+            background: #ddd;
+            opacity: 1;
+        }
+        
+        .swiper-pagination-bullet-active {
+            background: var(--accent-blue);
+        }
+        
+        /* ANIMATIONS */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* SCROLL TO TOP */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--accent-blue);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-top:hover {
+            background: var(--secondary-blue);
+            transform: translateY(-5px);
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1200px) {
+            .hero h1 {
+                font-size: 4rem;
+            }
+            
+            .hero h1 span {
+                font-size: 5rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+            
+            .hero h1 span {
+                font-size: 4rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2.8rem;
+            }
+            
+            .section {
+                padding: 100px 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero {
+                min-height: 700px;
+            }
+            
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .hero h1 span {
+                font-size: 3.2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title .lead {
+                font-size: 1.1rem;
+            }
+            
+            .events-slider {
+                padding: 0 20px;
+            }
+            
+            .feature-card {
+                padding: 30px 20px;
+            }
+            
+            .restaurant-info {
+                padding: 30px 20px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero h1 span {
+                font-size: 2.5rem;
+            }
+            
+            .btn {
+                padding: 0.8rem 2rem;
+                font-size: 0.9rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* LOADING ANIMATION */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--gray-light);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* HERO CAROUSEL */
+        .hero-carousel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .carousel-item {
+            height: 100vh;
+            min-height: 800px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .slide1 { background-image: url('https://images.unsplash.com/photo-1592656094267-764a43c10b02?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); }
+        .slide2 { background-image: url('https://images.unsplash.com/photo-1587174486071-d1e4acdfb8c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); }
+        .slide3 { background-image: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); }
+        
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin: 0 30px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .hero:hover .carousel-control-prev,
+        .hero:hover .carousel-control-next {
+            opacity: 1;
+        }
+        
+        .carousel-indicators {
+            bottom: 40px;
+        }
+        
+        .carousel-indicators button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            border: none;
+            margin: 0 6px;
+        }
+        
+        .carousel-indicators button.active {
+            background: var(--accent-blue);
+        }
+    </style>
+</head>
+<body>
+    <!-- LOADING -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- SCROLL TO TOP -->
+    <div class="scroll-top" id="scrollTop">
+        <i class="fas fa-chevron-up"></i>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="images/logo_pgc.jpeg" width="60" height="60" class="rounded-circle">
+                Président Golf Club
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#espaces">Nos Espaces</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#restaurant">Restaurant</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#evenement">Événements</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#golf">Golf</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-primary" href="#reservation">Réserver</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <div class="hero-carousel carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+            <div class="carousel-inner">
+                <div class="carousel-item active slide1"></div>
+                <div class="carousel-item slide2"></div>
+                <div class="carousel-item slide3"></div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+            </div>
+        </div>
+        
+        <div class="hero-overlay"></div>
+        
+        <div class="container">
+            <div class="hero-content fade-in">
+                <h1 class="heading">Président <span>Golf Club</span></h1>
+                <p class="hero-subtitle">L'excellence du golf en Côte d'Ivoire, un parcours d'exception au cœur de Yamoussoukro. Découvrez un cadre unique alliant sport, détente et gastronomie.</p>
+                <div class="hero-buttons mt-4">
+                    <a href="#espaces" class="btn btn-primary me-3">Découvrir nos espaces</a>
+                    <a href="#reservation" class="btn btn-outline-white">Réserver une visite</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="section">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Excellence & Élégance</h2>
+                <p class="lead">Découvrez ce qui fait du Président Golf Club une destination unique en Afrique de l'Ouest</p>
+            </div>
+            
+            <div class="features-grid">
+                <!-- Feature 1 -->
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-golf-ball"></i>
+                    </div>
+                    <h3>Parcours 18 Trous</h3>
+                    <p>Parcours championnat classé parmi les plus beaux d'Afrique. Expérience golfique d'exception dans un cadre naturel préservé.</p>
+                    <a href="#golf" class="feature-link">
+                        Découvrir <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3>Restaurant Le Cora</h3>
+                    <p>Cuisine gastronomique avec terrasse panoramique offrant une vue imprenable sur le parcours. Saveurs locales et internationales.</p>
+                    <a href="#restaurant" class="feature-link">
+                        Voir le menu <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-swimming-pool"></i>
+                    </div>
+                    <h3>Piscine & Wellness</h3>
+                    <p>Piscine en forme de croissant lunaire et centre de remise en forme. Détente absolue dans un cadre tropical luxueux.</p>
+                    <a href="#wellness" class="feature-link">
+                        Découvrir <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <img src="images/academie_log.jpg" alt="Académie" style="width: 40px; height: 40px; border-radius: 50%;">
+                    </div>
+                    <h3>Académie de Golf</h3>
+                    <p>Formation adaptée à tous les niveaux avec des professionnels certifiés. Programme juniors et cours particuliers.</p>
+                    <a href="#academie" class="feature-link">
+                        S'inscrire <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SPACES SECTION -->
+    <section class="section spaces-section" id="espaces">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Nos Espaces</h2>
+                <p class="lead">Des installations premium conçues pour votre confort et votre plaisir</p>
+            </div>
+            
+            <div class="gallery-container">
+                <div class="swiper espacesSwiper">
+                    <div class="swiper-wrapper">
+                        <!-- Space 1 -->
+                        <div class="swiper-slide">
+                            <div class="gallery-item">
+                                <img src="images/Nos_espaces/1.jpg" alt="Restaurant Le Cora">
+                                <div class="gallery-overlay">
+                                    <h3>RESTAURANT LE CORA</h3>
+                                    <p>Le restaurant avec sa terrasse en hauteur permet d'avoir une vue plus large sur le parcours. Savourez le menu du Golfeur tout en admirant les beaux gestes des joueurs.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Space 2 -->
+                        <div class="swiper-slide">
+                            <div class="gallery-item">
+                                <img src="images/Nos_espaces/b1.jpg" alt="Bar Green 19">
+                                <div class="gallery-overlay">
+                                    <h3>BAR GREEN 19</h3>
+                                    <p>Après un parcours de 18 trous, le Green 19 vous accueille avec ses jus frais de fruits du terroir et cocktails signature. Détente et convivialité garanties.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Space 3 -->
+                        <div class="swiper-slide">
+                            <div class="gallery-item">
+                                <img src="images/Nos_espaces/Sp2.jpg" alt="Salle polyvalente">
+                                <div class="gallery-overlay">
+                                    <h3>SALLE POLYVALENTE</h3>
+                                    <p>Cette salle de fête modulable s'adapte à tous vos événements : mariages, baptêmes, conférences et réunions. Capacité jusqu'à 300 personnes.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Space 4 -->
+                        <div class="swiper-slide">
+                            <div class="gallery-item">
+                                <img src="images/Nos_espaces/piscine.jpg" alt="Piscine">
+                                <div class="gallery-overlay">
+                                    <h3>PISCINE</h3>
+                                    <p>La piscine avec sa forme de croissant lunaire est située sur la terrasse du Club house. Cadre idyllique pour la détente et la baignade.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Space 5 -->
+                        <div class="swiper-slide">
+                            <div class="gallery-item">
+                                <img src="images/Nos_espaces/Salle_R.jpg" alt="Salle de réunion">
+                                <div class="gallery-overlay">
+                                    <h3>SALLE DE RÉUNION</h3>
+                                    <p>Cadre propice à la concentration, aux réunions entre responsables et aux réceptions professionnelles. Équipements high-tech disponibles.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Space 6 -->
+                        <div class="swiper-slide">
+                            <div class="gallery-item">
+                                <img src="images/Nos_espaces/golf.jpg" alt="Golf">
+                                <div class="gallery-overlay">
+                                    <h3>GOLF</h3>
+                                    <p>Notre parcours est classé parmi les plus beaux d'Afrique et apprécié de tous les visiteurs de passage à Yamoussoukro. Par 72 sur 6500 mètres.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Space 7 -->
+                        <div class="swiper-slide">
+                            <div class="gallery-item">
+                                <img src="images/Nos_espaces/fit.jpg" alt="Fitness Center">
+                                <div class="gallery-overlay">
+                                    <h3>FITNESS CENTER</h3>
+                                    <p>Lieu de fitness, de préparation physique et de remise en forme pour tous. Équipements modernes et coachs professionnels.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation buttons -->
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RESTAURANT SECTION -->
+    <section class="section restaurant-section" id="restaurant">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Restaurant Le Cora</h2>
+                <p class="lead">Gastronomie d'exception avec vue panoramique sur le parcours</p>
+            </div>
+            
+            <div class="restaurant-content fade-in">
+                <div class="restaurant-info">
+                    <div class="info-block">
+                        <h3><i class="fas fa-info-circle"></i> Présentation</h3>
+                        <p>Un ensemble cloisonné sur une surface de 160 m². Le restaurant avec sa terrasse en hauteur permet d'avoir une vue plus large sur le parcours. Le client tout en savourant le menu du Golfeur, appréciera les beaux gestes des joueurs de golf autour des trous n° 09 et 18.</p>
+                    </div>
+                    
+                    <div class="info-block">
+                        <h3><i class="fas fa-clock"></i> Horaires</h3>
+                        <p>Ouvert 6 jours sur 7 (du mardi au dimanche) et les jours fériés de 07H00 à 18H00. Service continu avec possibilité de réservation pour les groupes et événements spéciaux.</p>
+                    </div>
+                    
+                    <div class="info-block">
+                        <h3><i class="fas fa-utensil-spoon"></i> Spécialités</h3>
+                        <p>Cuisine ivoirienne authentique et internationale. Produits frais locaux, viandes de qualité et poissons du jour. Carte des vins sélectionnée avec soin.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EVENTS SECTION -->
+    <section class="section" id="evenement">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Événements à Venir</h2>
+                <p class="lead">Rejoignez-nous pour des moments inoubliables</p>
+            </div>
+            
+            <div class="events-slider fade-in">
+                <div class="swiper eventsSwiper">
+                    <div class="swiper-wrapper">
+                        <!-- Event 1 -->
+                        <div class="swiper-slide">
+                            <div class="event-card-slide">
+                                <div class="event-image">
+                                    <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3" alt="Happy Yakro Days">
+                                </div>
+                                <div class="event-content">
+                                    <div class="event-date">Weekends</div>
+                                    <h3>Happy Yakro Days</h3>
+                                    <p>Moments en famille et entre amis. Animations, musique live et activités pour tous les âges dans une ambiance chaleureuse et festive.</p>
+                                    <a href="#" class="feature-link">
+                                        En savoir plus <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Event 2 -->
+                        <div class="swiper-slide">
+                            <div class="event-card-slide">
+                                <div class="event-image">
+                                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48" alt="Green Days">
+                                </div>
+                                <div class="event-content">
+                                    <div class="event-date">Vendredis</div>
+                                    <h3>Green Days</h3>
+                                    <p>Soirée détente au bord de la piscine avec cocktail signature, tapas gourmands et ambiance musicale. L'apéro chic du week-end.</p>
+                                    <a href="#" class="feature-link">
+                                        En savoir plus <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Event 3 -->
+                        <div class="swiper-slide">
+                            <div class="event-card-slide">
+                                <div class="event-image">
+                                    <img src="https://images.unsplash.com/photo-1598880940080-ff9a29891b85" alt="Tournoi">
+                                </div>
+                                <div class="event-content">
+                                    <div class="event-date">15 Mars</div>
+                                    <h3>Tournoi du Président</h3>
+                                    <p>Compétition golfique ouverte à tous les niveaux. Trophées, prix et cocktail de clôture. Inscriptions ouvertes.</p>
+                                    <a href="#" class="feature-link">
+                                        S'inscrire <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Event 4 -->
+                        <div class="swiper-slide">
+                            <div class="event-card-slide">
+                                <div class="event-image">
+                                    <img src="https://images.unsplash.com/photo-1572116469696-31de0f17cc34" alt="Dégustation">
+                                </div>
+                                <div class="event-content">
+                                    <div class="event-date">22 Mars</div>
+                                    <h3>Soirée Dégustation</h3>
+                                    <p>Découverte des vins et fromages d'exception guidée par notre sommelier. Limitée à 20 participants.</p>
+                                    <a href="#" class="feature-link">
+                                        Réserver <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation -->
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PARTNERS SECTION -->
+    <section class="section" style="background: var(--light-beige);">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Nos Partenaires</h2>
+                <p class="lead">Des collaborations d'excellence pour une expérience unique</p>
+            </div>
+            
+            <div class="row justify-content-center align-items-center fade-in">
+                <div class="col-md-8 text-center">
+                    <img src="images/partners.png" alt="Partenaires" class="img-fluid" style="max-height: 150px;">
+                    <p class="mt-4" style="color: #666;">Le Président Golf Club bénéficie du soutien de partenaires prestigieux qui partagent notre engagement pour l'excellence et l'innovation dans le domaine du golf et de l'hospitalité.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-5">
+                    <a href="#" class="footer-logo">
+                        <img src="images/logo_pgc.jpeg" width="50" height="50" class="rounded-circle">
+                        Président Golf Club
+                    </a>
+                    <p class="footer-description">
+                        L'excellence du golf en Côte d'Ivoire depuis 1975. Un parcours d'exception, des installations premium et un accueil chaleureux au cœur de Yamoussoukro.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-4 mb-5">
+                    <div class="footer-links">
+                        <h4>Le Club</h4>
+                        <ul>
+                            <li><a href="#home">Accueil</a></li>
+                            <li><a href="#espaces">Nos Espaces</a></li>
+                            <li><a href="#restaurant">Restaurant</a></li>
+                            <li><a href="#evenement">Événements</a></li>
+                            <li><a href="#golf">Le Golf</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-4 mb-5">
+                    <div class="footer-links">
+                        <h4>Informations</h4>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-calendar-alt"></i> Tarifs & Réservations</a></li>
+                            <li><a href="#"><i class="fas fa-map-marker-alt"></i> Plan d'accès</a></li>
+                            <li><a href="#"><i class="fas fa-file-alt"></i> Règlement</a></li>
+                            <li><a href="#"><i class="fas fa-briefcase"></i> Carrières</a></li>
+                            <li><a href="#"><i class="fas fa-newspaper"></i> Presse</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-4 mb-5">
+                    <div class="footer-links">
+                        <h4>Contact</h4>
+                        <ul>
+                            <li><a href="tel:+2252730405060"><i class="fas fa-phone"></i> +225 27 30 40 50 60</a></li>
+                            <li><a href="mailto:contact@presidentgolfclub.ci"><i class="fas fa-envelope"></i> contact@presidentgolfclub.ci</a></li>
+                            <li><a href="#"><i class="fas fa-map-marker-alt"></i> Rue des Golfeurs, Yamoussoukro</a></li>
+                            <li><a href="#"><i class="fas fa-clock"></i> Lun-Dim: 7h-20h</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2024 Président Golf Club. Tous droits réservés. | Conçu avec passion pour l'excellence</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <script>
+        // Page load
+        window.addEventListener('load', function() {
+            document.getElementById('loading').style.display = 'none';
+            
+            // Initialize all animations
+            initAnimations();
+        });
+
+        // Initialize Swipers
+        const espacesSwiper = new Swiper('.espacesSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            breakpoints: {
+                640: {
+                    slidesPerView: 2,
+                },
+                992: {
+                    slidesPerView: 3,
+                }
+            }
+        });
+
+        const eventsSwiper = new Swiper('.eventsSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            breakpoints: {
+                768: {
+                    slidesPerView: 2,
+                },
+                1200: {
+                    slidesPerView: 3,
+                }
+            }
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            const scrollTop = document.getElementById('scrollTop');
+            
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            
+            // Show scroll to top button
+            if (window.scrollY > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+            
+            // Update active nav link
+            updateActiveNavLink();
+        });
+
+        // Scroll to top
+        document.getElementById('scrollTop').addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                
+                if (href === '#') return;
+                
+                e.preventDefault();
+                
+                const targetElement = document.querySelector(href);
+                if (targetElement) {
+                    const navbarHeight = document.querySelector('.navbar').offsetHeight;
+                    const targetPosition = targetElement.offsetTop - navbarHeight - 20;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Update active nav link
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Animation on scroll
+        function initAnimations() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const checkScroll = () => {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (elementTop < windowHeight - 100) {
+                        element.classList.add('visible');
+                    }
+                });
+            };
+            
+            window.addEventListener('scroll', checkScroll);
+            checkScroll(); // Initial check
+        }
+
+        // Update active nav link based on scroll position
+        function updateActiveNavLink() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                const navbarHeight = document.querySelector('.navbar').offsetHeight;
+                
+                if (window.scrollY >= (sectionTop - navbarHeight - 100)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Initialize hero carousel
+        const heroCarousel = new bootstrap.Carousel(document.querySelector('.hero-carousel'), {
+            interval: 5000,
+            wrap: true,
+            pause: false
+        });
+
+        // Add hover effect to hero carousel controls
+        const heroSection = document.querySelector('.hero');
+        const carouselControls = document.querySelectorAll('.carousel-control-prev, .carousel-control-next');
+        
+        heroSection.addEventListener('mouseenter', function() {
+            carouselControls.forEach(control => {
+                control.style.opacity = '1';
+            });
+        });
+        
+        heroSection.addEventListener('mouseleave', function() {
+            carouselControls.forEach(control => {
+                control.style.opacity = '0';
+            });
+        });
+    </script>
+</body>
+</html>

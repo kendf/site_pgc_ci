@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Président Golf Club</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="feuille_css-js/style-Copie.css">
+    
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+     <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Testimonial Slider | Bedimcode</title>
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"/>
+
+  <!-- Iconscout CDN -->
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+
+<style>
+.background-carousel {
+  position:absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.background-carousel .carousel-item {
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+}
+
+.nav-hover {
+  position: relative;
+}
+
+.dropdown-menu-custom {
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+  position: absolute;
+  top: 120%;
+  left: 0;
+  min-width: 200px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+.nav-hover:hover .dropdown-menu-custom {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-menu-custom a {
+  display: block;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.dropdown-menu-custom a:hover {
+  background: #f5f5f5;
+  /*color: #198754;*/
+}
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.hero h1 span {
+  color: #ffc107;
+}
+
+footer i.bi {
+  font-size: 1.8rem;
+  color: white;
+  margin: 0 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+footer i.bi:hover {
+  color: #ffc107;
+  transform: scale(1.2);
+}
+
+.slide1 { background-image: url('images/Slide_ACC/bg1.jpeg'); }
+.slide2 { background-image: url('images/Slide_ACC/bg2.jpeg'); }
+.slide3 { background-image: url('images/Slide_ACC/bg3.jpeg'); }
+
+.contact-container {
+      position: relative; /* nécessaire pour positionner la fenêtre */
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .contact-container a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #0073e6;
+    }
+
+    /* Fenêtre cachée par défaut */
+    .tooltip {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      width: 260px;
+      height: 150px;
+      background-color: #f9f9f9;
+      color: #333;
+      text-align: left;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      position: absolute;
+      z-index: 1;
+      top: 120%; /* en dessous du texte */
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .nav-link{
+      font-family:'Open Sans', sans-serif;
+
+
+    }
+    /* Affichage au survol */
+    .contact-container:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+    .photo{
+        margin-left:50px;
+        padding-bottom: 15px;
+    }
+
+     .visit-golf {
+      background: url('images/adh.jpeg') no-repeat center center;
+      background-size: cover;
+      min-height: 100vh;
+      color: white;
+    }
+   
+</style>
+</head>
+
+<body>
+
+<header>
+  <nav class="navbar navbar-expand-lg fixed-top bg-light shadow">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">
+        <img src="images/logo_pgc.jpeg" width="80" height="60"
+             class="rounded-circle border border-2 border-light">
+        Président Golf Club
+      </a>
+
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mx-auto">
+
+          <li class="nav-item nav-hover">
+            <a class="nav-link" href="main_index - Copie.html#espaces">Nos Espaces</a>
+            <ul class="dropdown-menu-custom">
+              <li><a href="main_index - Copie.php#restau">Restaurant Cora</a></li>
+              <li><a href="main_index - Copie.php#bar">Bar Green 19</a></li>
+              <li><a href="main_index - Copie.php#salle-poly">Salle polyvalente</a></li>
+              <li><a href="main_index - Copie.php#salle-reunion">Salle de réunion</a></li>
+              <li><a href="main_index - Copie.php#golf">Golf</a></li>
+              <li><a href="main_index - Copie.php#piscine">Piscine</a></li>
+              <li><a href="main_index - Copie.php#fitness">Fitness center</a></li>
+              <li><a href="main_index - Copie.php#">Le traiteur du PGC</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item nav-hover">
+            <a class="nav-link" href="#">Galerie</a>
+            <ul class="dropdown-menu-custom">
+              <li><a href="#">Photos</a></li>
+              <li><a href="#">Vidéos</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item nav-hover">
+            <a class="nav-link" href="main_index - Copie.html#evenement">Événement & Média</a>
+            <ul class="dropdown-menu-custom">
+              <li><a href="#">Tournois</a></li>
+              <li><a href="#">Communiqués</a></li>
+              <li><a href="#">Presse</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item nav-hover">
+            <a class="nav-link" href="main_index - Copie.php">Accueil</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="contact-container"> 
+        <p>Nous Contacter</p>
+        <div class="tooltip"> 
+          <strong>President Golf Club</strong><br> 
+          📍 Adresse : millionnaire, Yamoussoukro<br> 
+          📞 Téléphone : +225 01 23 45 67 / 0712721342<br> 
+          <a href="mailto:emmanuellazidje17@gmail.com">✉️ </a>Email : golfadd@gmail.com 
+        </div> 
+      </div>
+
+    </div>
+  </nav>
+</header>
+
+  <div class="visit-golf">
+    <nav class="navbar navbar-expand-lg bg-transparent navbar-dark sticky-top">
+      <div class="container">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link text-warning " href="#histoire">Historique</a></li>
+          <li class="nav-item"><a class="nav-link text-warning " href="#mot_dg">Mot du Directeur Général</a></li>
+          <li class="nav-item"><a class="nav-link text-warning " href="#equipe">Équipe dirigeante</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section id="histoire" class="historique-section">
+      <h2>Historique</h2>
+      <p>Le Président Golf Club, situé à Yamoussoukro, est une institution emblématique qui accueille depuis plusieurs décennies des passionnés de golf, 
+        de gastronomie et de culture. Son histoire reflète l’élégance et l’hospitalité ivoirienne. Le Président Golf Club de Yamoussoukro (PGC), 
+        parcours international de 18 trous, a été crée sur l'initiative de Feu Félix Houphouët Boigny et inauguré le 05 mars 1980. 
+        Avec ses caractéristiques techniques appréciables, eu égard à ses fairways vallonnés, à ses bunkers surdimensionnés, 
+        et un immense obstacle d'eau central. Le Président Golf club a été dessiné par l'Architecte golfeur Gallois DAVE Thomas. 
+        Le club house Surgissant du sol comme un monument naturel, est réparti en deux niveaux : 
+        Le rez-de-jardin où se distribuent les services indispensables aux golfeurs,vestiaires, douches, boutique sportive, sauna, squash, fitness, massage. 
+        Le rez-de-chaussée comprenant accueil, réception, rencontres, secrétariat, détente (bar_restaurant_grill), salle de billard, une salle polyvalente et 
+        un salon de réunion de 30 places. Une jardinière géante sous forme de patio constitue le noyau naturel de décorations. Les terrasses largement dimensionnées, 
+        accompagnées d'une piscine de plein air et d'un allocodrome, participant ainsi au spectacle de l'animation du golf. Le parcours du Président Golf Club a été pendant les grandes rencontres golfiques, 
+        visité par des célébrités du monde poltique, artistique et sportif : Richard NIXON(Ex Président des Etats Unis d'Amérique) Barry White(Artiste Americain) Gary PLAYER(Champ.de Golf. Afrique du sud). 
+        Au Président Golf Club, vous trouverez, Golf, Fitness, piscine, sauna, restaurant/bar,etc.. pour votre bien être dans une oasis de paix à Yamoussoukro. </p>
+    </section>
+  </div>
+</body>
+</html>
+
+  <!-- Mot du Directeur Général -->
+  <section id="mot_dg" class="directeur-section">
+    <h2>Mot du Directeur Général</h2>
+    <blockquote>
+      "Notre mission est de faire du Président Golf Club un lieu de rencontre et de prestige,
+      où chaque visiteur vit une expérience unique alliant détente, sport et culture."
+      <footer class="bg-light border"><h4>Monsieur TOURE CHEICK AHMED </h4></footer>
+    </blockquote>
+  </section>
+
+  <!-- Équipe dirigeante -->
+  <section id="equipe" class="team-section">
+    <div class="container">
+      <h2 class="text-center mb-5">Équipe dirigeante</h2>
+      <div class="row">
+        <div class="col-md-4 team-card">
+          <img src="images/directeur.jpg" alt="Directeur">
+          <h5>TOURE CHEICK AHMED</h5>
+          <p>Directeur Général</p>
+        </div>
+        <div class="col-md-4 team-card">
+          <img src="images/manager.jpg" alt="Manager">
+          <h5>Nom du Manager</h5>
+          <p>Responsable des opérations</p>
+        </div>
+        <div class="col-md-4 team-card">
+          <img src="images/chef.jpg" alt="Chef">
+          <h5>Nom du Chef</h5>
+          <p>Chef cuisinier</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<script src="feuille_css-js/script.js"></script>
+<footer class="bg-dark py-4 text-center">
+    <div class="container">
+        <a href="https://www.facebook.com/share/1DQT3Vvt4y/"><i class="bi bi-facebook"></i></a>
+        <a href="#"><i class="bi bi-twitter-x"></i></a>
+        <a href="https://www.instagram.com/clubpresidentgolf/?utm_source=qr&igsh=bGcwMm45MG1kNWNy"><i class="bi bi-instagram"></i></a>
+        <i class="bi bi-youtube"></i>
+        <a href="https://www.tiktok.com/@president.golf.cl?_r=1&_t=ZM-92w9sVfTOn5"><i class="bi bi-tiktok"></i></a>
+
+        <p class="text-white mt-3 mb-0">
+            © 2026 Président Golf Club – Tous droits réservés
+        </p>
+    </div>
+</footer>
+<script>
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener("click", function(e) {
+      e.preventDefault();
+      document.querySelector(this.getAttribute("href")).scrollIntoView({
+        behavior: "smooth"
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
