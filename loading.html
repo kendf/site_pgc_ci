@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation Golf - Chargement</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        /* Page de chargement */
+        .loading-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0d3b1e 0%, #1a6b3c 100%);
+            background-image: 
+                linear-gradient(135deg, rgba(13, 59, 30, 0.85) 0%, rgba(26, 107, 60, 0.85) 100%),
+                url('https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        /* Conteneur principal */
+        .loader-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Canvas Three.js */
+        #three-canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+        
+        /* Loader rotatif CSS DANS LE PLAN */
+        .css-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            z-index: 2;
+        }
+        
+        /* Anneau dans le plan */
+        .loader-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+        
+        /* Anneau extérieur - DANS LE PLAN */
+        .loader-ring-outer {
+            width: 100%;
+            height: 100%;
+            border-top-color: #4CAF50;
+            border-right-color: rgba(76, 175, 80, 0.3);
+            animation: rotateClockwise 3s infinite;
+        }
+        
+        /* Anneau moyen - DANS LE PLAN */
+        .loader-ring-middle {
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            border-top-color: rgba(255, 255, 255, 0.8);
+            border-right-color: rgba(255, 255, 255, 0.2);
+            animation: rotateCounterClockwise 4s infinite;
+        }
+        
+        /* Anneau intérieur - DANS LE PLAN */
+        .loader-ring-inner {
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: 30%;
+            border-top-color: rgba(129, 199, 132, 0.8);
+            border-right-color: rgba(129, 199, 132, 0.2);
+            animation: rotateClockwise 5s infinite;
+        }
+        
+        @keyframes rotateClockwise {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes rotateCounterClockwise {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+        
+        /* Points tournants DANS LE PLAN */
+        .rotating-points {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .point {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: rotatePoints 6s linear infinite;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+        
+        .point:nth-child(1) { animation-delay: 0s; }
+        .point:nth-child(2) { animation-delay: 0.75s; }
+        .point:nth-child(3) { animation-delay: 1.5s; }
+        .point:nth-child(4) { animation-delay: 2.25s; }
+        .point:nth-child(5) { animation-delay: 3s; }
+        .point:nth-child(6) { animation-delay: 3.75s; }
+        .point:nth-child(7) { animation-delay: 4.5s; }
+        .point:nth-child(8) { animation-delay: 5.25s; }
+        
+        @keyframes rotatePoints {
+            0% { transform: translateX(-50%) rotate(0deg) translateY(300px) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg) translateY(300px) rotate(-360deg); }
+        }
+        
+        /* Texte de chargement */
+        .loading-text {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 1.8rem;
+            text-align: center;
+            z-index: 3;
+            opacity: 0.9;
+        }
+        
+        /* Barre de progression */
+        .progress-container {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            z-index: 3;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .css-loader {
+                width: 400px;
+                height: 400px;
+            }
+            
+            @keyframes rotatePoints {
+                0% { transform: translateX(-50%) rotate(0deg) translateY(200px) rotate(0deg); }
+                100% { transform: translateX(-50%) rotate(360deg) translateY(200px) rotate(-360deg); }
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page de chargement -->
+    <div class="loading-page" id="loadingPage">
+        <div class="loader-container">
+            <!-- Loader CSS rotatif DANS LE PLAN -->
+            <div class="css-loader">
+                <div class="loader-ring loader-ring-outer"></div>
+                <div class="loader-ring loader-ring-middle"></div>
+                <div class="loader-ring loader-ring-inner"></div>
+            </div>
+            
+            <!-- Canvas Three.js -->
+            <canvas id="three-canvas"></canvas>
+            
+            <!-- Texte de chargement -->
+            <div class="loading-text">Chargement...</div>
+            
+            <!-- Barre de progression -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // ====================
+        // INITIALISATION
+        // ====================
+        
+        const loadingPage = document.getElementById('loadingPage');
+        const progressBar = document.getElementById('progressBar');
+        let progress = 0;
+        
+        // ====================
+        // THREE.JS - ANIMATION
+        // ====================
+        const scene = new THREE.Scene();
+        // Caméra
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        
+        // Rendu
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas: document.getElementById('three-canvas'),
+            antialias: true,
+            alpha: true
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0);
+        
+        // Lumières
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 5, 5);
+        scene.add(light);
+        
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+        
+        // Texture
+        const textureLoader = new THREE.TextureLoader();
+        const bumpMapUrl = 'https://media.istockphoto.com/id/1614733639/vector/seamless-golf-ball-pattern.jpg?s=612x612&w=0&k=20&c=cHOak9Z8dbINAP7rDcX9wmLdVdt1yLtjyZHgDagmx1I=';
+        const bumpMap = textureLoader.load(bumpMapUrl);
+        
+        // Balle de golf
+        const geometry = new THREE.SphereGeometry(4, 64, 64);
+        const material = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            roughness: 0.5,
+            metalness: 0,
+            bumpMap: bumpMap,
+            bumpScale: 0.05
+        });
+        
+        const ball = new THREE.Mesh(geometry, material);
+        scene.add(ball);
+        
+        camera.position.z = 15;
+        
+        // Animation
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            ball.rotation.x += 0.01;
+            ball.rotation.y += 0.01;
+            
+            time += 0.05;
+            ball.position.y = Math.sin(time) * 0.05;
+
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // ====================
+        // SIMULATION CHARGEMENT
+        // ====================
+        
+        function simulateLoading() {
+            const interval = setInterval(() => {
+                progress += Math.random() * 7 + 7;
+                if (progress > 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        goToIndexPage();
+                    }, 500);
+                }
+                
+                progressBar.style.width = progress + '%';
+            }, 200);
+        }
+        
+        // ====================
+        // REDIRECTION VERS INDEX.HTML
+        // ====================
+        
+        function goToIndexPage() {
+            loadingPage.style.opacity = '0';
+            loadingPage.style.transition = 'opacity 1s ease';
+            
+            setTimeout(() => {
+                // Redirection vers la page d'accueil
+                window.location.href = 'index.html';
+            }, 1000);
+        }
+        
+        // ====================
+        // DÉMARRAGE
+        // ====================
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            simulateLoading();
+        });
+        
+        // Redimensionnement
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

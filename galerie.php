@@ -463,38 +463,38 @@
     </div>
 
     <script>
-        // BASE DE DONNÉES D'IMAGES
-        // chatgpt vas gerer le texte a mettre
+        // BASE DE DONNEES D'IMAGES
+        // Chemins relatifs pour le serveur
         const galleryData = {
             all: [],
             // category Restaurant
             Restaurant: [
                 {
                     id: 1,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/Nos_espaces/b1.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de : l\'image',
+                    src: "images/Nos_espaces/b1.jpg",
+                    title: 'Restaurant Cora',
+                    desc: 'Vue interieure du restaurant',
                     category: 'Restaurant'
                 },
                 {
                     id: 2,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/sr.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/sr.jpg",
+                    title: 'Salle de reception',
+                    desc: 'Espace elegant pour vos evenements',
                     category: 'Restaurant'
                 },
                 {
                     id: 3,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/5.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/5.jpg",
+                    title: 'Ambiance',
+                    desc: 'Cadre chaleureux et raffine',
                     category: 'Restaurant'
                 },
                 {
                     id: 4,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/sal-pol.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/sal-pol.jpg",
+                    title: 'Salle polyvalente',
+                    desc: 'Espace modulable',
                     category: 'Restaurant'
                 }
             ],
@@ -502,47 +502,47 @@
             Bar: [
                 {
                     id: 5,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/Acc_bar.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/Acc_bar.jpg",
+                    title: 'Bar Green 19',
+                    desc: 'Le bar du club house',
                     category: 'Bar'
                 },
                 {
                     id: 6,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/sal-pol.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/sal-pol.jpg",
+                    title: 'Espace detente',
+                    desc: 'Lieu convivial apres le golf',
                     category: 'Bar'
                 },
                 {
                     id: 7,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/3.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/3.jpg",
+                    title: 'Terrasse',
+                    desc: 'Vue panoramique',
                     category: 'Bar'
                 }
             ],
-            // category sport
+            // category sport (Salle polyvalente)
             sport: [
                 {
                     id: 8,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/fitness.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description',
+                    src: "images/fitness.jpg",
+                    title: 'Salle polyvalente',
+                    desc: 'Espace pour evenements',
                     category: 'sport'
                 },
                 {
                     id: 9,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/2.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/2.jpg",
+                    title: 'Configuration reunion',
+                    desc: 'Amenagement flexible',
                     category: 'sport'
                 },
                 {
                     id: 10,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/1.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/1.jpg",
+                    title: 'Configuration banquet',
+                    desc: 'Pour vos receptions',
                     category: 'sport'
                 }
             ],
@@ -550,16 +550,16 @@
             reunion: [
                 {
                     id: 11,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/sr.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/sr.jpg",
+                    title: 'Salle de reunion',
+                    desc: 'Cadre professionnel',
                     category: 'reunion'
                 },
                 {
                     id: 12,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/Nos_espaces/Salle_R.jpg",
-                    title: 'titre',
-                    desc: 'Green & Fairways',
+                    src: "images/Nos_espaces/Salle_R.jpg",
+                    title: 'Equipements modernes',
+                    desc: 'Technologie de pointe',
                     category: 'reunion'
                 }
             ],
@@ -567,16 +567,16 @@
             Golf: [
                 {
                     id: 13,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/balle.jpeg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
-                    category: 'GOlf'
+                    src: "images/balle.jpeg",
+                    title: 'Balle de golf',
+                    desc: 'Symbole du club',
+                    category: 'Golf'
                 },
                 {
                     id: 14,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/slide-acad/bg1.jpeg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/slide-acad/bg1.jpeg",
+                    title: 'Parcours 18 trous',
+                    desc: 'Un des plus beaux d\'Afrique',
                     category: 'Golf'
                 }
             ],
@@ -584,16 +584,16 @@
             piscine: [
                 {
                     id: 15,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/Nos_espaces/piscine.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/Nos_espaces/piscine.jpg",
+                    title: 'Piscine panoramique',
+                    desc: 'Vue sur le parcours',
                     category: 'piscine'
                 },
                 {
                     id: 16,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/pisc1.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/pisc1.jpg",
+                    title: 'Espace detente',
+                    desc: 'Relaxation au bord de l\'eau',
                     category: 'piscine'
                 }
             ],
@@ -601,36 +601,36 @@
             fitness: [
                 {
                     id: 17,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/fitness.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/fitness.jpg",
+                    title: 'Fitness Center',
+                    desc: 'Equipements modernes',
                     category: 'fitness'
                 },
                 {
                     id: 18,
-                    src: "C:/Users/HP/Desktop/site_pgc.ci/images/2.jpg",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/2.jpg",
+                    title: 'Salle de musculation',
+                    desc: 'Pour votre remise en forme',
                     category: 'fitness'
                 }
-                ],
+            ],
             // category traiteur
             traiteur: [
                 {
                     id: 19,
-                    src: "#",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/Nos_espaces/restau.png",
+                    title: 'Service traiteur',
+                    desc: 'Cuisine raffinee',
                     category: 'traiteur'
                 },
                 {
                     id: 20,
-                    src: "#",
-                    title: 'titre',
-                    desc: 'entrez ici la description de l\'image',
+                    src: "images/Nos_espaces/fresh-cocktails.jpg",
+                    title: 'Cocktails',
+                    desc: 'Pour vos evenements',
                     category: 'traiteur'
                 }
-                ]
+            ]
         };
         
 

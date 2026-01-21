@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(del r.html)",
+      "Bash(ls:*)"
+    ]
+  }
+}
