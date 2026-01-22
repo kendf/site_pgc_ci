@@ -309,7 +309,7 @@ body {
    5. ESPACES SECTION / SWIPER
    ============================================ */
 .espaces-section {
-    padding: 10px;
+    padding: 60px 20px;
     background: aliceblue;
     position: relative;
 }
@@ -394,7 +394,7 @@ body {
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
-    margin-bottom: 15px;
+    
 }
 
 .space-title {
@@ -455,7 +455,7 @@ body {
    6. ÉVÉNEMENTS
    ============================================ */
 .events-section {
-    padding: 80px 20px;
+    padding: 20px;
     background: url('images/pic_event/bg_copie.jpg');
     background-size: cover;
     background-attachment: fixed;
@@ -598,14 +598,14 @@ footer {
 
 .footer-left {
     padding-top: 5px;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 .footer-left h5 {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
     text-transform: uppercase;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     font-size: 0.9rem;
 }
 
@@ -869,9 +869,9 @@ footer i.bi {
 /* Hero Section Detail */
 .detail-hero {
     position: relative;
-    height: 65vh;
+    height: 40vh;
     min-height: 500px;
-    margin-top: 80px;
+    margin-top: 20px;
     overflow: hidden;
     border-radius: 0 0 30px 30px;
 }
@@ -953,7 +953,7 @@ footer i.bi {
     background: white;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
-    padding: 40px;
+    padding: 30px;
     margin-bottom: 30px;
 }
 
@@ -962,7 +962,7 @@ footer i.bi {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 25px;
-    margin-bottom: 40px;
+    margin-bottom: 15px;
 }
 
 .info-card {
@@ -1218,12 +1218,13 @@ footer i.bi {
 .breadcrumb {
     padding: 15px 0;
     background: var(--light-color);
-    margin-top: 80px;
+    margin-top: 30px;
 }
 
 .breadcrumb-content {
     max-width: 1200px;
     margin: 0 auto;
+    height: 10px;
     padding: 0 20px;
     display: flex;
     gap: 10px;
@@ -1322,3 +1323,64 @@ footer i.bi {
         min-height: 350px;
     }
 }
+.booking-section {
+            background-color: white;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .booking-section h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .booking-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 92, 54, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        
+        .btn:hover {
+            background-color: #084229;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(10, 92, 54, 0.2);
+        }
+
+        .btn i {
+            margin-right: 10px;
+        }

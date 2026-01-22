@@ -66,7 +66,6 @@
                         <a class="nav-link" href="#evenement">Événement & Média</a>
                         <ul class="dropdown-menu-custom">
                             <li><a href="#">Tournois</a></li>
-                            <li><a href="#">Communiqués</a></li>
                             <li><a href="https://news.abidjan.net/titrologie" target="_blank">Presse</a></li>
                         </ul>
                     </li>
@@ -315,6 +314,54 @@
 </div>
 
 <!-- ============================================ -->
+<!-- BOOKING MODAL / FORMULAIRE DE RÉSERVATION -->
+<!-- ============================================ -->
+<div class="modal fade" id="bookingModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Réservation en ligne</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form class="booking-form" id="reservationForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" class="form-control" value="2019-01-13">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="players">Nombre de joueur:</label>
+                            <input type="number" name="nombre-joueur">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="time">Heure</label>
+                        <input type="time" id="time" class="form-control" value=":">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="name">Nom complet</label>
+                        <input type="text" id="name" class="form-control" placeholder="Votre nom">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Adresse email</label>
+                        <input type="email" id="email" class="form-control" placeholder="votre@email.com">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-sucess bg-success w-100 mt-3">
+                        <i class="fas fa-search"></i> Trouver un créneau
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
 <!-- FOOTER -->
 <!-- ============================================ -->
 <footer class="text-white footer-cont">
@@ -350,13 +397,12 @@
             <a href="mailto:contact@presidentgolfclub.ci" class="btn btn-primary">
                 <i class="bi bi-envelope"></i> Contact par email
             </a>
-            <a href="#reservation" class="btn btn-primary">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookingModal">
                 <i class="bi bi-calendar-check"></i> Réserver en ligne
-            </a>
+            </button>
         </div>
-        
         <!-- Copyright -->
-        <div class="footer-bottom text-center mt-4 pt-4 border-top border-secondary">
+        <div class="footer-bottom text-center border-top border-black">
             <p class="mb-0">© 2026 Président Golf Club – Tous droits réservés</p>
         </div>
     </div>
