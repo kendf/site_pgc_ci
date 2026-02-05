@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golf | Menu Gastronomique</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="feuille_css-js/tg.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Colonne de gauche : Menu scrollable -->
+        <div class="left-column">
+            <div class="menu-container">
+                <header class="menu-header">
+                    <a href="detail.html?section=restau" class="back-link"><i class="fas fa-arrow-left"></i> Retour</a>
+                    <h1 class="restaurant-name">Cora</h1>
+                    <p class="restaurant-subtitle">Art culinaire</p>
+                    <div class="decorative-line"></div>
+                    <p class="menu-instruction"><i class="fas fa-mouse-pointer"></i> Cliquez sur un menu ou faites défiler</p>
+                </header>
+                
+                <!-- Menus scrollables -->
+                <div class="menus-scroll">
+                    <!-- Menu 1 -->
+                    <div class="menu-card active" data-menu="menu1" data-image="menu1">
+                        <div class="menu-card-header">
+                            <span class="menu-category">Menu</span>
+                            <h2 class="menu-title">Découverte</h2>
+                            <span class="menu-price">85€</span>
+                        </div>
+                        <div class="menu-details">
+                            <div class="menu-item">
+                                <h3><i class="fas fa-seedling"></i> Amuse-bouche</h3>
+                                <p>Velouté de champignons des bois, émulsion à la truffe noire</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-fish"></i> Entrée</h3>
+                                <p>Tartare de langoustines, caviar Osciètre, gel de citron yuzu</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-drumstick-bite"></i> Plat principal</h3>
+                                <p>Pigeon rôti, purée de céleri-rave, jus réduit au porto</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-ice-cream"></i> Dessert</h3>
+                                <p>Soufflé grand marnier, sorbet mandarine sanguine</p>
+                            </div>
+                            <div class="menu-footer">
+                                <span class="wine-pairing"><i class="fas fa-wine-glass-alt"></i> Accords mets-vins optionnels</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Menu 2 -->
+                    <div class="menu-card" data-menu="menu2" data-image="menu2">
+                        <div class="menu-card-header">
+                            <span class="menu-category">Menu</span>
+                            <h2 class="menu-title">Saison</h2>
+                            <span class="menu-price">95€</span>
+                        </div>
+                        <div class="menu-details">
+                            <div class="menu-item">
+                                <h3><i class="fas fa-seedling"></i> Amuse-bouche</h3>
+                                <p>Crème de topinambour, chips de jambon ibérique</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-fish"></i> Entrée</h3>
+                                <p>Saint-Jacques poêlées, chou-fleur fumé, beurre noisette</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-drumstick-bite"></i> Plat principal</h3>
+                                <p>Agneau de pré-salé, légumes oubliés, jus d'herbes</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-ice-cream"></i> Dessert</h3>
+                                <p>Poire Williams rôtie, crémeux chocolat noir, glace au pain d'épices</p>
+                            </div>
+                            <div class="menu-footer">
+                                <span class="wine-pairing"><i class="fas fa-wine-glass-alt"></i> Accords mets-vins inclus</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Menu 3 -->
+                    <div class="menu-card" data-menu="menu3" data-image="menu3">
+                        <div class="menu-card-header">
+                            <span class="menu-category">Menu</span>
+                            <h2 class="menu-title">Signature</h2>
+                            <span class="menu-price">125€</span>
+                        </div>
+                        <div class="menu-details">
+                            <div class="menu-item">
+                                <h3><i class="fas fa-seedling"></i> Amuse-bouche</h3>
+                                <p>Oeuf de caille mollet, crème de parmesan, truffe d'été</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-fish"></i> Entrée</h3>
+                                <p>Homard bleu grillé, mangue, avocat, vinaigrette passion</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-drumstick-bite"></i> Plat principal</h3>
+                                <p>Wagyu A5, pommes soufflées, sauce au vin de Bourgogne</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-ice-cream"></i> Dessert</h3>
+                                <p>Grand dessert du chef - 5 créations sucrées</p>
+                            </div>
+                            <div class="menu-footer">
+                                <span class="wine-pairing"><i class="fas fa-wine-glass-alt"></i> Sélection prestige de vins</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Menu 4 -->
+                    <div class="menu-card" data-menu="menu4" data-image="menu4">
+                        <div class="menu-card-header">
+                            <span class="menu-category">Menu</span>
+                            <h2 class="menu-title">Végétal</h2>
+                            <span class="menu-price">75€</span>
+                        </div>
+                        <div class="menu-details">
+                            <div class="menu-item">
+                                <h3><i class="fas fa-seedling"></i> Amuse-bouche</h3>
+                                <p>Cappuccino de châtaigne, crumble de noix de pécan</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-carrot"></i> Entrée</h3>
+                                <p>Carpaccio de betteraves, fromage de chèvre, pistaches</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-leaf"></i> Plat principal</h3>
+                                <p>Risotto aux cèpes, émulsion de noisettes, copeaux de truffe</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-ice-cream"></i> Dessert</h3>
+                                <p>Sphere de chocolat végétal, sorbet fruits rouges bio</p>
+                            </div>
+                            <div class="menu-footer">
+                                <span class="wine-pairing"><i class="fas fa-wine-glass-alt"></i> Vins bio et naturels</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Menu 5 -->
+                    <div class="menu-card" data-menu="menu5" data-image="menu5">
+                        <div class="menu-card-header">
+                            <span class="menu-category">Menu</span>
+                            <h2 class="menu-title">Prestige</h2>
+                            <span class="menu-price">185€</span>
+                        </div>
+                        <div class="menu-details">
+                            <div class="menu-item">
+                                <h3><i class="fas fa-seedling"></i> Amuse-bouche</h3>
+                                <p>Osetra caviar sur blini, crème fraîche, œuf de caille</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-fish"></i> Entrée</h3>
+                                <p>Homard bleu entier, gelée de corail, vinaigre de Xérès</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-crown"></i> Plat principal</h3>
+                                <p>Bœuf de Kobe, foie gras poêlé, pommes de terre truffées</p>
+                            </div>
+                            <div class="menu-item">
+                                <h3><i class="fas fa-ice-cream"></i> Dessert</h3>
+                                <p>Tablette de chocolat grand cru, or 24 carats, glace vanille de Madagascar</p>
+                            </div>
+                            <div class="menu-footer">
+                                <span class="wine-pairing"><i class="fas fa-wine-glass-alt"></i> Grands crus exclusifs</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Indicateur de scroll -->
+                <div class="scroll-indicator">
+                    <i class="fas fa-chevron-down"></i>
+                    <span>Faites défiler pour découvrir les menus</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Colonne de droite : Image -->
+        <div class="right-column">
+            <div class="image-container">
+                <!-- Image par défaut -->
+                <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                     alt="Menu Découverte" class="menu-image active" id="menu1">
+                
+                <!-- Images des autres menus -->
+                <img src="https://images.unsplash.com/photo-1554679665-f5537f187268?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" 
+                     alt="Menu Saison" class="menu-image" id="menu2">
+                
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                     alt="Menu Signature" class="menu-image" id="menu3">
+                
+                <img src="https://images.unsplash.com/photo-1547592180-85f173990554?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                     alt="Menu Végétal" class="menu-image" id="menu4">
+                
+                <img src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" 
+                     alt="Menu Prestige" class="menu-image" id="menu5">
+                
+                <!-- Overlay avec information -->
+                <div class="image-overlay">
+                    <div class="image-info">
+                        <h2 class="image-title" id="current-menu-title">Menu Découverte</h2>
+                        <p class="image-description" id="current-menu-description">Une sélection raffinée pour une première découverte de notre cuisine créative</p>
+                        <div class="image-details">
+                            <span class="image-price" id="current-menu-price">85€</span>
+                            <span class="image-duration"><i class="far fa-clock"></i> 2h30</span>
+                        </div>
+                    </div>
+                    <div class="image-navigation">
+                        <button class="nav-btn prev-menu-btn" aria-label="Menu précédent">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="menu-counter">
+                            <span id="current-menu">1</span>/<span id="total-menus">5</span>
+                        </div>
+                        <button class="nav-btn next-menu-btn" aria-label="Menu suivant">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Témoignage -->
+            <div class="testimonial">
+                <div class="testimonial-content">
+                    <i class="fas fa-quote-left"></i>
+                    <p>"Une expérience culinaire mémorable. Chaque plat est une œuvre d'art qui éveille tous les sens."</p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Sophie Laurent</span>
+                        <span class="author-title">Critique gastronomique</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script JavaScript -->
+    <script src="feuille_css-js/tyt.js"></script>
+</body>
+</html>

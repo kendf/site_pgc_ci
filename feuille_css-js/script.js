@@ -11,7 +11,7 @@ const espacesData = [
         category: "Restaurant",
         description: "Cuisine raffinee avec vue panoramique sur le parcours de golf",
         image: "images/Nos_espaces/restau.png",
-        link: "detail.html?section=restau"
+        link: "restaurant.html?section=debutpage"
     },
     {
         id: "bar",
@@ -243,4 +243,136 @@ window.addEventListener('resize', () => {
         swiper.destroy();
         initSwiper();
     }
+});
+
+const wrapper = document.getElementById('mediaWrapper');
+const slides = document.querySelectorAll('.media-slide');
+let currentIndex = 0;
+
+function goToSlide(index) {
+  currentIndex = Math.max(0, Math.min(index, slides.length - 1));
+  wrapper.scrollTo({
+    left: wrapper.clientWidth * currentIndex,
+    behavior: 'smooth'
+  });
+}
+
+document.querySelector('.media-next').addEventListener('click', () => {
+  goToSlide(currentIndex + 1);
+});
+
+document.querySelector('.media-prev').addEventListener('click', () => {
+  goToSlide(currentIndex - 1);
+});
+
+/* Auto play vidéo quand visible */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const video = entry.target.querySelector('video');
+    if (!video) return;
+    entry.isIntersecting ? video.play() : video.pause();
+  });
+}, { threshold: 0.6 });
+
+slides.forEach(slide => observer.observe(slide));
+
+/* Swipe mobile */
+let startX = 0;
+wrapper.addEventListener('touchstart', e => {
+  startX = e.touches[0].clientX;
+});
+
+wrapper.addEventListener('touchend', e => {
+  const endX = e.changedTouches[0].clientX;
+  const diff = startX - endX;
+  if (Math.abs(diff) > 50) {
+    diff > 0 ? goToSlide(currentIndex + 1) : goToSlide(currentIndex - 1);
+  }
+});
+
+document.getElementById("reservationFormModal").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const messageBox = document.getElementById("reservationMessage");
+    const submitBtn = form.querySelector("button");
+
+    // UX: état envoi
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Envoi en cours...";
+
+    fetch(form.action, {
+        method: "POST",
+        body: new FormData(form)
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        messageBox.innerHTML = data.message;
+        messageBox.className = data.success
+            ? "alert alert-success mt-3"
+            : "alert alert-danger mt-3";
+
+        if (data.success) {
+            form.reset();
+
+            // ⏱ Fermer le modal après 2 secondes
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(
+                    document.getElementById("reservationModal")
+                );
+                modal.hide();
+                messageBox.innerHTML = "";
+            }, 2000);
+        }
+    })
+    .catch(() => {
+        messageBox.innerHTML = "Erreur de connexion au serveur.";
+        messageBox.className = "alert alert-danger mt-3";
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Envoyer la réservation";
+    });
+});
+
+
+const form = document.getElementById('formReservation');
+
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true; // bloque le bouton
+
+    const formData = new FormData(form);
+
+    fetch('reserver.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success'){
+            // Message vert Bootstrap
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success';
+            alertDiv.textContent = data.message;
+            form.prepend(alertDiv);
+
+            // Vider le formulaire
+            form.reset();
+
+            // Fermer la modal après 2s
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalReservation'));
+                modal.hide();
+                alertDiv.remove();
+            }, 2000);
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => console.error('Erreur:', error))
+    .finally(() => submitBtn.disabled = false);
 });

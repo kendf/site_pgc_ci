@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golf Club Yamoussoukro - Réservation</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --emerald-500: #10b981;
+            --emerald-600: #059669;
+            --teal-600: #0d9488;
+            --orange-500: #f97316;
+            --orange-600: #ea580c;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--emerald-600) 0%, var(--teal-600) 50%, #0891b2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-section {
+            background: linear-gradient(90deg, var(--emerald-600) 0%, var(--teal-600) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            border-radius: 1.5rem 1.5rem 0 0;
+            position: relative;
+        }
+
+        .header-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .progress-section {
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1.5rem 1rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .step-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            min-width: 100px;
+        }
+
+        .step-connector {
+            position: absolute;
+            top: 20px;
+            left: 60%;
+            width: 80%;
+            height: 2px;
+            background: #dee2e6;
+            z-index: 0;
+        }
+
+        .step-connector.active {
+            background: var(--emerald-500);
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+            background: #dee2e6;
+            color: #6c757d;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .step-circle.active {
+            background: var(--emerald-500);
+            color: white;
+            transform: scale(1.25);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .step-circle.completed {
+            background: #22c55e;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .step-label.active {
+            color: var(--emerald-600);
+            font-weight: bold;
+        }
+
+        .step-icon {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .content-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 0 0 1.5rem 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card {
+            border: 3px solid #dee2e6;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            height: 100%;
+        }
+
+        .service-card:hover {
+            border-color: var(--emerald-500);
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card.selected {
+            border-color: var(--emerald-500);
+            background: linear-gradient(135deg, var(--emerald-500) 0%, var(--teal-600) 100%);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .time-slot {
+            border: 2px solid #dee2e6;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .time-slot:hover {
+            border-color: var(--emerald-500);
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .time-slot.selected {
+            border-color: var(--emerald-500);
+            background: #d1fae5;
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-places {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+        }
+
+        .parcours-option {
+            border: 2px solid #dee2e6;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.75rem;
+        }
+
+        .parcours-option:hover {
+            border-color: var(--emerald-500);
+        }
+
+        .parcours-option.selected {
+            border-color: var(--emerald-500);
+            background: #d1fae5;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .table-option {
+            border: 2px solid #dee2e6;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .table-option:hover {
+            border-color: var(--orange-500);
+        }
+
+        .table-option.selected {
+            border-color: var(--orange-500);
+            background: #ffedd5;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(90deg, var(--emerald-500) 0%, var(--teal-600) 100%);
+            border: none;
+            padding: 1rem 2rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .btn-primary-custom:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary-custom {
+            background: #6c757d;
+            border: none;
+            padding: 1rem 2rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary-custom:hover {
+            background: #5a6268;
+        }
+
+        .alert-capacity {
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            border: 2px solid;
+        }
+
+        .summary-row {
+            padding: 1rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .confirmation-icon {
+            width: 100px;
+            height: 100px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+            color: white;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--emerald-500);
+            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.25);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .footer-info {
+            text-align: center;
+            color: white;
+            margin-top: 2rem;
+        }
+
+        .footer-info p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--detail-primary, #1a5fb4);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    width: 200px;
+    font-weight: 500;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(26, 95, 180, 0.3);
+}
+
+    </style>
+</head>
+<body>
+    <div class="container main-container">
+        <!-- Header -->
+        <div class="bg-white rounded-top shadow-lg">
+            <div class="header-section">
+             <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Retour à l'accueil
+            </a>
+                <div class="header-icon">⛳</div>
+                <h1 class="display-4 fw-bold mb-2">President Golf Club Yamoussoukro</h1>
+                <p class="lead">Système de réservation en ligne</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-section">
+                <div class="progress-steps" id="progressSteps">
+                    <!-- Steps will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content-section">
+            <div id="stepContent">
+                <!-- Content will be dynamically loaded here -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-info" id="footerInfo">
+            <p>📧 Une confirmation sera envoyée par email et SMS</p>
+            <p>Pour toute question: 📞 +225 XX XX XX XX XX</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Application State
+        const app = {
+            currentStep: 1,
+            formData: {
+                service_type: '',
+                date: '',
+                heure: '',
+                creneau_id: null,
+                prenom: '',
+                nom: '',
+                email: '',
+                telephone: '',
+                adresse: '',
+                personnes: 1,
+                parcours: '',
+                voiturette: false,
+                table_preference: '',
+                plan_salle: '',
+                details: '',
+                prix_unitaire: 0,
+                prix_total: 0,
+                reservation_id: null
+            },
+            selectedSlot: null
+        };
+
+        // Configuration
+        const steps = [
+            { num: 1, label: 'Service & Date', icon: '📅' },
+            { num: 2, label: 'Créneaux', icon: '🕐' },
+            { num: 3, label: 'Informations', icon: '👤' },
+            { num: 4, label: 'Options', icon: '⚙️' },
+            { num: 5, label: 'Vérification', icon: '✅' },
+            { num: 6, label: 'Confirmation', icon: '🎉' }
+        ];
+
+        const services = [
+            {
+                id: 'golf',
+                nom: 'Parcours de Golf',
+                icon: '⛳',
+                description: 'Profitez de nos parcours exceptionnels',
+                prix_base: 5000
+            },
+            {
+                id: 'restaurant',
+                nom: 'Restaurant',
+                icon: '🍽️',
+                description: 'Savourez notre cuisine raffinée',
+                prix_base: 3000
+            }
+        ];
+
+        const creneaux_golf = [
+            { id: 1, heure: '08:00', disponible: 8, duree: '4h' },
+            { id: 2, heure: '10:00', disponible: 6, duree: '4h' },
+            { id: 3, heure: '14:00', disponible: 10, duree: '4h' },
+            { id: 4, heure: '16:00', disponible: 4, duree: '4h' }
+        ];
+
+        const creneaux_restaurant = [
+            { id: 5, heure: '12:00', disponible: 30, duree: '2h' },
+            { id: 6, heure: '12:30', disponible: 25, duree: '2h' },
+            { id: 7, heure: '19:00', disponible: 35, duree: '2h' },
+            { id: 8, heure: '19:30', disponible: 28, duree: '2h' },
+            { id: 9, heure: '20:00', disponible: 20, duree: '2h' }
+        ];
+
+        const parcours_options = [
+            { value: 'Parcours 9 trous', prix: 2500, desc: 'Idéal pour débuter - 2h environ' },
+            { value: 'Parcours 18 trous', prix: 5000, desc: 'Parcours complet - 4h environ' },
+            { value: 'Terrain d\'entraînement', prix: 1500, desc: 'Practice - 1h-2h' }
+        ];
+
+        const table_options = [
+            { value: 'Terrasse', desc: 'Vue extérieure' },
+            { value: 'Salle principale', desc: 'Ambiance conviviale' },
+            { value: 'Salon privé', desc: 'Intimité garantie' },
+            { value: 'Vue sur le parcours', desc: 'Vue panoramique' }
+        ];
+
+        // Initialize
+        function init() {
+            renderProgressSteps();
+            renderStep();
+        }
+
+        // Render Progress Steps
+        function renderProgressSteps() {
+            const container = document.getElementById('progressSteps');
+            container.innerHTML = steps.map((step, index) => `
+                <div class="step-item">
+                    ${index < steps.length - 1 ? `<div class="step-connector ${app.currentStep > step.num ? 'active' : ''}"></div>` : ''}
+                    <div class="step-circle ${app.currentStep > step.num ? 'completed' : app.currentStep === step.num ? 'active' : ''}">
+                        ${app.currentStep > step.num ? '✓' : step.num}
+                    </div>
+                    <div class="step-label ${app.currentStep === step.num ? 'active' : ''}">
+                        <div class="step-icon">${step.icon}</div>
+                        ${step.label}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render Current Step
+        function renderStep() {
+            const content = document.getElementById('stepContent');
+            
+            switch(app.currentStep) {
+                case 1:
+                    content.innerHTML = renderStep1();
+                    break;
+                case 2:
+                    content.innerHTML = renderStep2();
+                    break;
+                case 3:
+                    content.innerHTML = renderStep3();
+                    break;
+                case 4:
+                    content.innerHTML = renderStep4();
+                    break;
+                case 5:
+                    content.innerHTML = renderStep5();
+                    break;
+                case 6:
+                    content.innerHTML = renderStep6();
+                    document.getElementById('footerInfo').style.display = 'none';
+                    break;
+            }
+            
+            content.classList.add('fade-in');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Step 1: Service & Date Selection
+        function renderStep1() {
+            const today = new Date().toISOString().split('T')[0];
+            return `
+                <h2 class="mb-4 fw-bold">📅 Sélectionnez votre service et date</h2>
+                
+                <div class="mb-4">
+                    <label class="form-label fw-bold fs-5">Type de service</label>
+                    <div class="row g-4">
+                        ${services.map(service => `
+                            <div class="col-md-6">
+                                <div class="service-card ${app.formData.service_type === service.id ? 'selected' : ''}" 
+                                     onclick="selectService('${service.id}')">
+                                    <div class="service-icon">${service.icon}</div>
+                                    <h3 class="h4 fw-bold mb-2">${service.nom}</h3>
+                                    <p class="mb-3">${service.description}</p>
+                                    <p class="fw-bold fs-5 mb-0">À partir de ${service.prix_base.toLocaleString()} FCFA</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold fs-5">
+                        <i class="bi bi-calendar-event text-success"></i> Date souhaitée *
+                    </label>
+                    <input type="date" class="form-control form-control-lg" 
+                           value="${app.formData.date}" 
+                           min="${today}"
+                           onchange="app.formData.date = this.value">
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary-custom" onclick="nextStep()">
+                        Continuer →
+                    </button>
+                </div>
+            `;
+        }
+
+        // Step 2: Time Slot Selection
+        function renderStep2() {
+            const service = services.find(s => s.id === app.formData.service_type);
+            const creneaux = app.formData.service_type === 'golf' ? creneaux_golf : creneaux_restaurant;
+            const dateFormatted = new Date(app.formData.date).toLocaleDateString('fr-FR', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            });
+
+            return `
+                <h2 class="mb-4 fw-bold">🕐 Choisissez votre créneau horaire</h2>
+                
+                <div class="alert alert-success mb-4">
+                    <strong>${service.nom}</strong> - ${dateFormatted}
+                </div>
+
+                <div class="row g-3">
+                    ${creneaux.map(creneau => `
+                        <div class="col-md-4">
+                            <div class="time-slot ${app.selectedSlot?.id === creneau.id ? 'selected' : ''}"
+                                 onclick="selectSlot(${creneau.id})">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <i class="bi bi-clock fs-4 ${app.selectedSlot?.id === creneau.id ? 'text-success' : 'text-secondary'}"></i>
+                                    <span class="badge ${creneau.disponible > 5 ? 'bg-success' : 'bg-warning'} badge-places">
+                                        ${creneau.disponible} places
+                                    </span>
+                                </div>
+                                <h3 class="h3 fw-bold mb-1">${creneau.heure}</h3>
+                                <p class="text-muted mb-0">Durée: ${creneau.duree}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button class="btn btn-secondary-custom" onclick="prevStep()">
+                        ← Retour
+                    </button>
+                    <button class="btn btn-primary-custom" onclick="nextStep()">
+                        Continuer →
+                    </button>
+                </div>
+            `;
+        }
+
+        // Step 3: Client Information
+        function renderStep3() {
+            return `
+                <h2 class="mb-4 fw-bold">👤 Vos informations</h2>
+                
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Prénom *</label>
+                        <input type="text" class="form-control form-control-lg" 
+                               value="${app.formData.prenom}"
+                               onchange="app.formData.prenom = this.value"
+                               placeholder="Votre prénom">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Nom *</label>
+                        <input type="text" class="form-control form-control-lg" 
+                               value="${app.formData.nom}"
+                               onchange="app.formData.nom = this.value"
+                               placeholder="Votre nom">
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-envelope text-success"></i> Email *
+                        </label>
+                        <input type="email" class="form-control form-control-lg" 
+                               value="${app.formData.email}"
+                               onchange="app.formData.email = this.value"
+                               placeholder="exemple@email.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-telephone text-success"></i> Téléphone *
+                        </label>
+                        <input type="tel" class="form-control form-control-lg" 
+                               value="${app.formData.telephone}"
+                               onchange="app.formData.telephone = this.value"
+                               placeholder="+225 XX XX XX XX XX">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-geo-alt text-success"></i> Adresse
+                    </label>
+                    <input type="text" class="form-control form-control-lg" 
+                           value="${app.formData.adresse}"
+                           onchange="app.formData.adresse = this.value"
+                           placeholder="Votre adresse">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-people text-success"></i> Nombre de personnes *
+                    </label>
+                    <input type="number" class="form-control form-control-lg" 
+                           value="${app.formData.personnes}"
+                           min="1" max="20"
+                           onchange="app.formData.personnes = this.value">
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button class="btn btn-secondary-custom" onclick="prevStep()">
+                        ← Retour
+                    </button>
+                    <button class="btn btn-primary-custom" onclick="nextStep()">
+                        Continuer →
+                    </button>
+                </div>
+            `;
+        }
+
+        // Step 4: Service Options
+        function renderStep4() {
+            if (app.formData.service_type === 'golf') {
+                return `
+                    <h2 class="mb-4 fw-bold">⚙️ Options de réservation</h2>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold fs-5 mb-3">Choisissez votre parcours *</label>
+                        ${parcours_options.map(option => `
+                            <div class="parcours-option ${app.formData.parcours === option.value ? 'selected' : ''}"
+                                 onclick="selectParcours('${option.value}', ${option.prix})">
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="radio" name="parcours" ${app.formData.parcours === option.value ? 'checked' : ''}>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold fs-5">${option.value}</div>
+                                        <div class="text-muted">${option.desc}</div>
+                                    </div>
+                                    <div class="fw-bold text-success fs-4">
+                                        ${option.prix.toLocaleString()} FCFA
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                   id="voiturette" ${app.formData.voiturette ? 'checked' : ''}
+                                   onchange="app.formData.voiturette = this.checked">
+                            <label class="form-check-label fw-bold fs-5" for="voiturette">
+                                🚗 Voiturette disponible
+                                <div class="text-muted fw-normal fs-6">Location supplémentaire  +1 000 FCFA</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Informations complémentaires</label>
+                        <textarea class="form-control" rows="4" 
+                                  onchange="app.formData.details = this.value"
+                                  placeholder="Demandes spéciales, allergies, niveau de golf...">${app.formData.details}</textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <button class="btn btn-secondary-custom" onclick="prevStep()">
+                            ← Retour
+                        </button>
+                        <button class="btn btn-primary-custom" onclick="nextStep()">
+                            Continuer →
+                        </button>
+                    </div>
+                `;
+            } else {
+                return `
+                    <h2 class="mb-4 fw-bold">⚙️ Options de réservation</h2>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold fs-5 mb-3">Préférence de table</label>
+                        <div class="row g-3">
+                            ${table_options.map(option => `
+                                <div class="col-md-6">
+                                    <div class="table-option ${app.formData.table_preference === option.value ? 'selected' : ''}"
+                                         onclick="selectTable('${option.value}')">
+                                        <div class="fw-bold fs-5 mb-1">${option.value}</div>
+                                        <div class="text-muted">${option.desc}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Taille du groupe</label>
+                        <select class="form-select form-select-lg" 
+                                onchange="app.formData.plan_salle = this.value">
+                            <option value="">Standard</option>
+                            <option value="petit_groupe" ${app.formData.plan_salle === 'petit_groupe' ? 'selected' : ''}>Petit groupe (2-4 personnes)</option>
+                            <option value="groupe_moyen" ${app.formData.plan_salle === 'groupe_moyen' ? 'selected' : ''}>Groupe moyen (5-8 personnes)</option>
+                            <option value="grand_groupe" ${app.formData.plan_salle === 'grand_groupe' ? 'selected' : ''}>Grand groupe (9+ personnes)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Informations complémentaires</label>
+                        <textarea class="form-control" rows="4" 
+                                  onchange="app.formData.details = this.value"
+                                  placeholder="Demandes spéciales, allergies...">${app.formData.details}</textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <button class="btn btn-secondary-custom" onclick="prevStep()">
+                            ← Retour
+                        </button>
+                        <button class="btn btn-primary-custom" onclick="nextStep()">
+                            Continuer →
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Step 5: Verification
+        function renderStep5() {
+            const check = checkCapacity();
+            const service = services.find(s => s.id === app.formData.service_type);
+            const dateFormatted = new Date(app.formData.date).toLocaleDateString('fr-FR');
+
+            return `
+                <h2 class="mb-4 fw-bold">✅ Vérification et récapitulatif</h2>
+                
+                ${check ? `
+                    <div class="alert alert-capacity ${check.success ? 'alert-success border-success' : 'alert-danger border-danger'} mb-4">
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi ${check.success ? 'bi-check-circle' : 'bi-exclamation-circle'} fs-3"></i>
+                            <div>
+                                <h4 class="fw-bold mb-2">${check.success ? 'Capacité suffisante' : 'Capacité insuffisante'}</h4>
+                                <p class="mb-0">${check.message}</p>
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+
+                <div class="bg-light rounded-3 p-4">
+                    <h3 class="h4 fw-bold mb-4">Récapitulatif de votre réservation</h3>
+                    
+                    <div class="summary-row d-flex justify-content-between">
+                        <span class="text-muted">Service</span>
+                        <span class="fw-bold">${service.nom}</span>
+                    </div>
+                    
+                    <div class="summary-row d-flex justify-content-between">
+                        <span class="text-muted">Date et heure</span>
+                        <span class="fw-bold">${dateFormatted} à ${app.formData.heure}</span>
+                    </div>
+                    
+                    <div class="summary-row d-flex justify-content-between">
+                        <span class="text-muted">Client</span>
+                        <span class="fw-bold">${app.formData.prenom} ${app.formData.nom}</span>
+                    </div>
+                    
+                    <div class="summary-row d-flex justify-content-between">
+                        <span class="text-muted">Nombre de personnes</span>
+                        <span class="fw-bold">${app.formData.personnes}</span>
+                    </div>
+
+                    ${app.formData.service_type === 'golf' && app.formData.parcours ? `
+                        <div class="summary-row d-flex justify-content-between">
+                            <span class="text-muted">Parcours</span>
+                            <span class="fw-bold">${app.formData.parcours}</span>
+                        </div>
+                    ` : ''}
+
+                    ${app.formData.voiturette ? `
+                        <div class="summary-row d-flex justify-content-between">
+                            <span class="text-muted">Voiturette</span>
+                            <span class="fw-bold text-success">Incluse (+1 000 FCFA)</span>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="summary-row d-flex justify-content-between pt-3">
+                        <span class="fw-bold fs-4">Prix total</span>
+                        <span class="fw-bold text-success fs-3">${app.formData.prix_total.toLocaleString()} FCFA</span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button class="btn btn-secondary-custom" onclick="prevStep()">
+                        ← Retour
+                    </button>
+                    <button class="btn btn-primary-custom" onclick="nextStep()">
+                        Confirmer la réservation →
+                    </button>
+                </div>
+            `;
+        }
+
+        // Step 6: Confirmation
+        function renderStep6() {
+            const service = services.find(s => s.id === app.formData.service_type);
+            const dateFormatted = new Date(app.formData.date).toLocaleDateString('fr-FR');
+
+            return `
+                <div class="text-center py-5">
+                    <div class="confirmation-icon">✓</div>
+                    
+                    <h2 class="display-5 fw-bold mb-3">🎉 Réservation confirmée !</h2>
+                    <p class="fs-5 text-muted mb-5">
+                        Votre réservation a été enregistrée avec succès.<br>
+                        Un email de confirmation a été envoyé à <strong>${app.formData.email}</strong>
+                    </p>
+
+                    <div class="bg-gradient p-5 rounded-3 shadow mx-auto" style="max-width: 700px; background: linear-gradient(135deg, #d1fae5 0%, #ccfbf1 100%); border: 2px solid var(--emerald-500);">
+                        <h3 class="h3 fw-bold text-success mb-4">Détails de votre réservation</h3>
+                        
+                        <div class="text-start">
+                            <div class="summary-row d-flex justify-content-between">
+                                <span class="text-muted fw-semibold">ID Réservation</span>
+                                <span class="fw-bold text-success">${app.formData.reservation_id}</span>
+                            </div>
+                            
+                            <div class="summary-row d-flex justify-content-between">
+                                <span class="text-muted fw-semibold">Service</span>
+                                <span class="fw-bold">${service.nom}</span>
+                            </div>
+                            
+                            <div class="summary-row d-flex justify-content-between">
+                                <span class="text-muted fw-semibold">Date et heure</span>
+                                <span class="fw-bold">${dateFormatted} à ${app.formData.heure}</span>
+                            </div>
+                            
+                            <div class="summary-row d-flex justify-content-between">
+                                <span class="text-muted fw-semibold">Client</span>
+                                <span class="fw-bold">${app.formData.prenom} ${app.formData.nom}</span>
+                            </div>
+                            
+                            <div class="summary-row d-flex justify-content-between">
+                                <span class="text-muted fw-semibold">Statut</span>
+                                <span class="fw-bold text-success">✓ Confirmé</span>
+                            </div>
+                            
+                            <div class="summary-row d-flex justify-content-between pt-3">
+                                <span class="fw-bold fs-4">Montant</span>
+                                <span class="fw-bold text-success fs-3">${app.formData.prix_total.toLocaleString()} FCFA</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5">
+                        <button class="btn btn-primary-custom" onclick="window.location.reload()">
+                            Nouvelle réservation
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Helper Functions
+        function selectService(serviceId) {
+            const service = services.find(s => s.id === serviceId);
+            app.formData.service_type = serviceId;
+            app.formData.prix_unitaire = service.prix_base;
+            renderStep();
+        }
+
+        function selectSlot(creneauId) {
+            const creneaux = app.formData.service_type === 'golf' ? creneaux_golf : creneaux_restaurant;
+            const creneau = creneaux.find(c => c.id === creneauId);
+            app.selectedSlot = creneau;
+            app.formData.creneau_id = creneau.id;
+            app.formData.heure = creneau.heure;
+            renderStep();
+        }
+
+        function selectParcours(value, prix) {
+            app.formData.parcours = value;
+            app.formData.prix_unitaire = prix;
+            renderStep();
+        }
+
+        function selectTable(value) {
+            app.formData.table_preference = value;
+            renderStep();
+        }
+
+        function checkCapacity() {
+            if (!app.selectedSlot) return null;
+            
+            const available = app.selectedSlot.disponible;
+            const requested = parseInt(app.formData.personnes);
+            
+            if (requested <= available) {
+                return {
+                    success: true,
+                    message: `Parfait ! Le créneau dispose de ${available} places disponibles pour ${requested} personne(s).`
+                };
+            } else {
+                return {
+                    success: false,
+                    message: `Désolé, ce créneau ne dispose que de ${available} places disponibles. Vous avez demandé ${requested} personne(s).`
+                };
+            }
+        }
+
+        function calculatePrice() {
+            let prix = app.formData.prix_unitaire;
+            
+            if (app.formData.service_type === 'golf' && app.formData.parcours) {
+                const parcours = parcours_options.find(p => p.value === app.formData.parcours);
+                if (parcours) prix = parcours.prix;
+                if (app.formData.voiturette) prix += 1000;
+            }
+            
+            const total = prix * parseInt(app.formData.personnes);
+            app.formData.prix_unitaire = prix;
+            app.formData.prix_total = total;
+        }
+
+        function nextStep() {
+            // Validation
+            if (app.currentStep === 1 && (!app.formData.service_type || !app.formData.date)) {
+                alert('Veuillez sélectionner un service et une date');
+                return;
+            }
+            
+            if (app.currentStep === 2 && !app.selectedSlot) {
+                alert('Veuillez sélectionner un créneau horaire');
+                return;
+            }
+            
+            if (app.currentStep === 3) {
+                if (!app.formData.prenom || !app.formData.nom || !app.formData.email || !app.formData.telephone) {
+                    alert('Veuillez remplir tous les champs obligatoires');
+                    return;
+                }
+            }
+
+            if (app.currentStep === 4) {
+                if (app.formData.service_type === 'golf' && !app.formData.parcours) {
+                    alert('Veuillez sélectionner un parcours');
+                    return;
+                }
+                calculatePrice();
+            }
+
+            if (app.currentStep === 5) {
+                const check = checkCapacity();
+                if (check && !check.success) {
+                    alert(check.message);
+                    return;
+                }
+                // Generate reservation ID
+                const resId = 'RES-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                app.formData.reservation_id = resId;
+            }
+            
+            app.currentStep++;
+            renderProgressSteps();
+            renderStep();
+        }
+
+        function prevStep() {
+            app.currentStep--;
+            renderProgressSteps();
+            renderStep();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

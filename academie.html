@@ -74,7 +74,7 @@
 </header>
   <!-- HERO -->
 
-<section class="hero-slider">
+  <section class="hero-slider">
   <div class="slides">
     <div class="slide active" style="background-image: url('images/slide-acad/bg1.jpeg');">
       <div class="overlay"></div>
@@ -104,26 +104,27 @@
 </section>
   <!-- PROGRAMMES -->
   <section id="programmes" class="programs reveal">
+    <h2 class="text-center text-warning">PROGRAMMES</h2>
     <div class="container">
       <div class="program">
         <img src="initiation.jpg" alt="Initiation">
         <h2>Initiation</h2>
         <p>Découvrez les bases du golf avec nos instructeurs experts.</p>
-        <a href="#" class="btn">En savoir plus</a>
+        <!--a href="#" class="btn">En savoir plus</a-->
       </div>
 
       <div class="program">
         <img src="perfectionnement.jpg" alt="Perfectionnement">
         <h2>Perfectionnement</h2>
         <p>Améliorez votre technique et votre stratégie sur le parcours.</p>
-        <a href="#" class="btn">En savoir plus</a>
+        <!--a href="#" class="btn">En savoir plus</a-->
       </div>
 
       <div class="program">
         <img src="coaching.jpg" alt="Coaching personnalisé">
         <h2>Coaching personnalisé</h2>
         <p>Bénéficiez d'un accompagnement sur mesure pour atteindre vos objectifs.</p>
-        <a href="#" class="btn">En savoir plus</a>
+        <!--a href="#" class="btn">En savoir plus</a-->
       </div>
     </div>
   </section>
@@ -219,7 +220,7 @@
             <div class="avatar rounded-circle" style="background-image: url('images/balle.jpeg');"></div>
         </div>
 
-        <h3>S'INSCRIRE</h3>
+        <h3>Inscription</h3>
 
         <form>
             <input type="text" placeholder="Nom" name="last_name" id="last_name" required>
@@ -244,6 +245,8 @@
         </form>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" 
+integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
   <!-- JS -->
   <script>
@@ -276,9 +279,6 @@
     revealOnScroll();
   </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" 
-integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const slides = document.querySelectorAll(".hero-slider .slide");
@@ -295,7 +295,28 @@ document.addEventListener("DOMContentLoaded", () => {
     slides[index].classList.add("active");
   }, 5000);
 });
-</script>
+ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener("click", function(e) {
+      e.preventDefault();
+      document.querySelector(this.getAttribute("href")).scrollIntoView({
+        behavior: "smooth"
+      });
+    });
+  });
 
+    const openBtn = document.getElementById("openModal");
+    const modal = document.getElementById("modalInscription");
+    const closeBtn = document.querySelector(".close-btn");
+
+    openBtn.onclick = () => modal.style.display = "flex";
+    closeBtn.onclick = () => modal.style.display = "none";
+
+    window.onclick = (e) => {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
+  
 </body>
 </html>
