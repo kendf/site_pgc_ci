@@ -1,0 +1,2198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration - Président Golf Club</title>
+
+  <!-- Bootstrap 5.3.2 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome 6.4.0 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link href="css/style.css" rel="stylesheet">
+
+  <style>
+    /* ============ ADMIN LAYOUT ============ */
+    .gc-admin-wrapper {
+      display: flex;
+      min-height: calc(100vh - 62px);
+    }
+
+    .gc-sidebar {
+      width: 260px;
+      flex-shrink: 0;
+    }
+
+    .gc-main-content {
+      flex: 1;
+      padding: 1.5rem 2rem;
+      overflow-x: hidden;
+    }
+
+    .admin-section {
+      display: none;
+    }
+
+    .admin-section.active {
+      display: block;
+    }
+
+    /* ============ STAT CARD EXTRAS ============ */
+    .gc-stat-card .stat-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* ============ REVENUE BAR CHART ============ */
+    .gc-bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .gc-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .gc-bar-label {
+      width: 100px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #555;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .gc-bar-track {
+      flex: 1;
+      height: 28px;
+      background: #f0f0f0;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .gc-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.8s ease;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #fff;
+      min-width: 0;
+    }
+
+    .gc-bar-fill.bar-golf {
+      background: linear-gradient(135deg, #1a5c2e, #2d8a4e);
+    }
+
+    .gc-bar-fill.bar-restaurant {
+      background: linear-gradient(135deg, #c5a55a, #d4ba7a);
+    }
+
+    .gc-bar-fill.bar-salle {
+      background: linear-gradient(135deg, #3a7bd5, #5b9ae8);
+    }
+
+    .gc-bar-fill.bar-default {
+      background: linear-gradient(135deg, #6c757d, #adb5bd);
+    }
+
+    .gc-bar-value {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #333;
+      width: 80px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ============ CALENDAR VIEW ============ */
+    .gc-calendar {
+      overflow-x: auto;
+    }
+
+    .gc-calendar table {
+      min-width: 700px;
+    }
+
+    .gc-calendar th {
+      background: var(--gc-primary);
+      color: #fff;
+      text-align: center;
+      padding: 0.6rem 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .gc-calendar td {
+      border: 1px solid #e9ecef;
+      padding: 0.3rem;
+      vertical-align: top;
+      min-height: 60px;
+      font-size: 0.75rem;
+    }
+
+    .gc-calendar .slot-item {
+      background: rgba(26, 92, 46, 0.1);
+      border-left: 3px solid var(--gc-primary);
+      padding: 2px 6px;
+      margin-bottom: 2px;
+      border-radius: 0 4px 4px 0;
+      font-size: 0.7rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .gc-calendar .slot-item.slot-full {
+      background: rgba(231, 76, 60, 0.1);
+      border-left-color: #e74c3c;
+    }
+
+    /* ============ SERVICE CARDS ============ */
+    .gc-service-card {
+      background: #fff;
+      border-radius: var(--gc-border-radius);
+      box-shadow: var(--gc-card-shadow);
+      padding: 1.5rem;
+      transition: var(--gc-transition);
+      height: 100%;
+    }
+
+    .gc-service-card:hover {
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .gc-service-card .service-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .gc-service-card .service-name {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--gc-dark);
+    }
+
+    .gc-service-card .service-code {
+      font-size: 0.75rem;
+      color: #999;
+      font-family: monospace;
+    }
+
+    .gc-service-card .service-price {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gc-primary);
+      margin: 0.5rem 0;
+    }
+
+    .gc-service-card .service-description {
+      font-size: 0.85rem;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    /* ============ EXPORT SECTION ============ */
+    .gc-export-card {
+      background: #fff;
+      border-radius: var(--gc-border-radius);
+      box-shadow: var(--gc-card-shadow);
+      padding: 2rem;
+      text-align: center;
+      transition: var(--gc-transition);
+    }
+
+    .gc-export-card:hover {
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .gc-export-card i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .gc-export-card h5 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .gc-export-card p {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 1rem;
+    }
+
+    /* ============ FILTER ROW ============ */
+    .gc-filters {
+      background: #fff;
+      border-radius: var(--gc-border-radius);
+      box-shadow: var(--gc-card-shadow);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ============ PAGINATION ============ */
+    .gc-pagination .page-link {
+      color: var(--gc-primary);
+      border-radius: 6px;
+      margin: 0 2px;
+      border: 1px solid #dee2e6;
+      font-size: 0.85rem;
+    }
+
+    .gc-pagination .page-item.active .page-link {
+      background: var(--gc-primary);
+      border-color: var(--gc-primary);
+      color: #fff;
+    }
+
+    /* ============ ACTION BUTTONS ============ */
+    .btn-action {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      border-radius: 6px;
+      margin: 1px;
+    }
+
+    /* ============ MODAL STYLES ============ */
+    .modal-header {
+      background: linear-gradient(135deg, var(--gc-primary-dark), var(--gc-primary));
+      color: #fff;
+    }
+
+    .modal-header .btn-close {
+      filter: invert(1);
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 992px) {
+      .gc-sidebar {
+        width: 100%;
+        min-height: auto;
+        position: relative;
+        top: 0;
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .gc-admin-wrapper {
+        flex-direction: column;
+      }
+
+      .gc-main-content {
+        padding: 1rem;
+      }
+
+      .gc-sidebar .nav {
+        flex-direction: row;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding: 0.5rem;
+      }
+
+      .gc-sidebar .nav-link {
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      .gc-sidebar .nav-link.active {
+        border-left: none;
+        border-bottom-color: var(--gc-primary);
+      }
+    }
+
+    @media (max-width: 576px) {
+      .gc-stat-card {
+        padding: 1rem;
+      }
+
+      .gc-stat-card .stat-value {
+        font-size: 1.3rem;
+      }
+
+      .gc-stat-card .stat-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav class="navbar navbar-expand-lg gc-navbar sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="../index.html">
+        <i class="fas fa-shield-halved"></i>
+        PGC - Administration
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="adminNavbar">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#" data-section="dashboard">
+              <i class="fas fa-gauge-high me-1"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="reservations">
+              <i class="fas fa-calendar-check me-1"></i> R&eacute;servations
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="utilisateurs">
+              <i class="fas fa-user-shield me-1"></i> Utilisateurs
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="services">
+              <i class="fas fa-concierge-bell me-1"></i> Services
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="creneaux">
+              <i class="fas fa-clock me-1"></i> Cr&eacute;neaux
+            </a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center gap-3">
+          <span class="text-light small" id="adminUserName"></span>
+          <button class="btn btn-outline-light btn-sm" id="btnLogout">
+            <i class="fas fa-sign-out-alt me-1"></i> D&eacute;connexion
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================== MAIN LAYOUT ===================== -->
+  <div class="gc-admin-wrapper">
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="gc-sidebar">
+      <nav class="nav flex-column">
+        <a class="nav-link active" href="#" data-section="dashboard">
+          <i class="fas fa-gauge-high"></i> Dashboard
+        </a>
+        <a class="nav-link" href="#" data-section="reservations">
+          <i class="fas fa-calendar-check"></i> R&eacute;servations
+        </a>
+        <a class="nav-link" href="#" data-section="clients">
+          <i class="fas fa-users"></i> Clients
+        </a>
+        <a class="nav-link" href="#" data-section="utilisateurs">
+          <i class="fas fa-user-shield"></i> Utilisateurs staff
+        </a>
+        <a class="nav-link" href="#" data-section="services">
+          <i class="fas fa-concierge-bell"></i> Services
+        </a>
+        <a class="nav-link" href="#" data-section="creneaux">
+          <i class="fas fa-clock"></i> Cr&eacute;neaux
+        </a>
+        <a class="nav-link" href="#" data-section="statistiques">
+          <i class="fas fa-chart-bar"></i> Statistiques
+        </a>
+        <a class="nav-link" href="#" data-section="export">
+          <i class="fas fa-file-export"></i> Export
+        </a>
+      </nav>
+    </aside>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="gc-main-content">
+
+      <!-- Alert Container -->
+      <div id="alertContainer"></div>
+
+      <!-- ==================== SECTION: DASHBOARD ==================== -->
+      <section id="section-dashboard" class="admin-section active">
+        <div class="gc-page-header">
+          <h1><i class="fas fa-gauge-high me-2"></i>Tableau de bord</h1>
+          <p>Vue d'ensemble de l'activit&eacute; du Golf Club</p>
+        </div>
+
+        <!-- Stat Cards Row -->
+        <div class="row g-3 mb-4" id="dashboardStats">
+          <div class="col-xl col-md-4 col-sm-6">
+            <div class="gc-stat-card">
+              <div class="stat-icon bg-golf"><i class="fas fa-calendar-check"></i></div>
+              <div class="stat-info">
+                <div class="stat-value" id="statTotalReservations">--</div>
+                <div class="stat-label">Total r&eacute;servations</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl col-md-4 col-sm-6">
+            <div class="gc-stat-card">
+              <div class="stat-icon bg-danger"><i class="fas fa-hourglass-half"></i></div>
+              <div class="stat-info">
+                <div class="stat-value" id="statPendingReservations">--</div>
+                <div class="stat-label">R&eacute;servations en attente</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl col-md-4 col-sm-6">
+            <div class="gc-stat-card">
+              <div class="stat-icon bg-revenue"><i class="fas fa-euro-sign"></i></div>
+              <div class="stat-info">
+                <div class="stat-value" id="statTotalRevenue">--</div>
+                <div class="stat-label">Revenus total</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl col-md-4 col-sm-6">
+            <div class="gc-stat-card">
+              <div class="stat-icon bg-users"><i class="fas fa-users"></i></div>
+              <div class="stat-info">
+                <div class="stat-value" id="statTotalClients">--</div>
+                <div class="stat-label">Clients inscrits</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl col-md-4 col-sm-6">
+            <div class="gc-stat-card">
+              <div class="stat-icon bg-salle"><i class="fas fa-chart-pie"></i></div>
+              <div class="stat-info">
+                <div class="stat-value" id="statOccupancy">--</div>
+                <div class="stat-label">Taux d'occupation</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Reservations + Revenue Chart -->
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <div class="gc-card card">
+              <div class="card-header">
+                <i class="fas fa-calendar-check me-2"></i>R&eacute;servations r&eacute;centes
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table gc-table mb-0">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Service</th>
+                        <th>Client</th>
+                        <th>Personnes</th>
+                        <th>Statut</th>
+                      </tr>
+                    </thead>
+                    <tbody id="recentReservationsBody">
+                      <tr>
+                        <td colspan="5" class="text-center py-4">
+                          <div class="spinner-border spinner-border-sm text-primary"></div> Chargement...
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="gc-card card">
+              <div class="card-header">
+                <i class="fas fa-chart-bar me-2"></i>Revenus par service
+              </div>
+              <div class="card-body">
+                <div class="gc-bar-chart" id="revenueByServiceChart">
+                  <div class="text-center py-4">
+                    <div class="spinner-border spinner-border-sm text-primary"></div> Chargement...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SECTION: RESERVATIONS ==================== -->
+      <section id="section-reservations" class="admin-section">
+        <div class="gc-page-header">
+          <h1><i class="fas fa-calendar-check me-2"></i>Gestion des r&eacute;servations</h1>
+          <p>Consulter, confirmer et g&eacute;rer toutes les r&eacute;servations</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="gc-filters gc-form">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+              <label class="form-label">Statut</label>
+              <select class="form-select" id="filterStatus">
+                <option value="">Toutes</option>
+                <option value="en_attente">En attente</option>
+                <option value="confirmee">Confirm&eacute;es</option>
+                <option value="annulee">Annul&eacute;es</option>
+                <option value="terminee">Termin&eacute;es</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Service</label>
+              <select class="form-select" id="filterService">
+                <option value="">Tous les services</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Date d&eacute;but</label>
+              <input type="date" class="form-control" id="filterDateStart">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Date fin</label>
+              <input type="date" class="form-control" id="filterDateEnd">
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-gc-primary w-100" id="btnFilterReservations">
+                <i class="fas fa-search me-1"></i> Filtrer
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reservations Table -->
+        <div class="gc-card card">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table gc-table mb-0">
+                <thead>
+                  <tr>
+                    <th>N&deg;</th>
+                    <th>Date</th>
+                    <th>Service</th>
+                    <th>Client</th>
+                    <th>Personnes</th>
+                    <th>Statut</th>
+                    <th>Prix</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="reservationsTableBody">
+                  <tr>
+                    <td colspan="8" class="text-center py-4">
+                      <div class="spinner-border spinner-border-sm text-primary"></div> Chargement...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav class="mt-3 d-flex justify-content-center">
+          <ul class="pagination gc-pagination" id="reservationsPagination"></ul>
+        </nav>
+      </section>
+
+      <!-- ==================== SECTION: CLIENTS ==================== -->
+      <section id="section-clients" class="admin-section">
+        <div class="gc-page-header">
+          <h1><i class="fas fa-users me-2"></i>Gestion des clients</h1>
+          <p>Consulter et g&eacute;rer les clients inscrits</p>
+        </div>
+
+        <!-- Search -->
+        <div class="gc-filters gc-form mb-3">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-6">
+              <label class="form-label">Rechercher un client</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" class="form-control" id="clientSearchInput" placeholder="Nom, pr&eacute;nom ou email...">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-gc-primary w-100" id="btnSearchClients">
+                <i class="fas fa-search me-1"></i> Rechercher
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clients Table -->
+        <div class="gc-card card">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table gc-table mb-0">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Pr&eacute;nom</th>
+                    <th>Email</th>
+                    <th>T&eacute;l&eacute;phone</th>
+                    <th>R&eacute;servations</th>
+                    <th>Inscrit le</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="clientsTableBody">
+                  <tr>
+                    <td colspan="7" class="text-center py-4">
+                      <div class="spinner-border spinner-border-sm text-primary"></div> Chargement...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SECTION: UTILISATEURS STAFF ==================== -->
+      <section id="section-utilisateurs" class="admin-section">
+        <div class="gc-page-header d-flex justify-content-between align-items-center">
+          <div>
+            <h1><i class="fas fa-user-shield me-2"></i>Utilisateurs staff</h1>
+            <p>G&eacute;rer les comptes du personnel</p>
+          </div>
+          <button class="btn btn-gc-primary" data-bs-toggle="modal" data-bs-target="#modalAddUser">
+            <i class="fas fa-plus me-1"></i> Ajouter un utilisateur
+          </button>
+        </div>
+
+        <!-- Users Table -->
+        <div class="gc-card card">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table gc-table mb-0">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Pr&eacute;nom</th>
+                    <th>Email</th>
+                    <th>R&ocirc;le</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                  <tr>
+                    <td colspan="6" class="text-center py-4">
+                      <div class="spinner-border spinner-border-sm text-primary"></div> Chargement...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SECTION: SERVICES ==================== -->
+      <section id="section-services" class="admin-section">
+        <div class="gc-page-header">
+          <h1><i class="fas fa-concierge-bell me-2"></i>Services</h1>
+          <p>Consulter et g&eacute;rer les services propos&eacute;s</p>
+        </div>
+
+        <div class="row g-4" id="servicesGrid">
+          <div class="col-12 text-center py-4">
+            <div class="spinner-border text-primary"></div>
+            <p class="mt-2 text-muted">Chargement des services...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SECTION: CRENEAUX ==================== -->
+      <section id="section-creneaux" class="admin-section">
+        <div class="gc-page-header d-flex justify-content-between align-items-center">
+          <div>
+            <h1><i class="fas fa-clock me-2"></i>Cr&eacute;neaux horaires</h1>
+            <p>G&eacute;rer les cr&eacute;neaux de r&eacute;servation</p>
+          </div>
+          <button class="btn btn-gc-primary" data-bs-toggle="modal" data-bs-target="#modalGenerateSlots">
+            <i class="fas fa-plus me-1"></i> G&eacute;n&eacute;rer cr&eacute;neaux
+          </button>
+        </div>
+
+        <!-- Calendar View -->
+        <div class="gc-card card">
+          <div class="card-body">
+            <div class="gc-calendar" id="calendarView">
+              <div class="text-center py-4">
+                <div class="spinner-border text-primary"></div>
+                <p class="mt-2 text-muted">Chargement du calendrier...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SECTION: STATISTIQUES ==================== -->
+      <section id="section-statistiques" class="admin-section">
+        <div class="gc-page-header">
+          <h1><i class="fas fa-chart-bar me-2"></i>Statistiques</h1>
+          <p>Analyse d&eacute;taill&eacute;e de l'activit&eacute;</p>
+        </div>
+
+        <!-- Date Range Filter -->
+        <div class="gc-filters gc-form mb-4">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+              <label class="form-label">Date d&eacute;but</label>
+              <input type="date" class="form-control" id="statsDateStart">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Date fin</label>
+              <input type="date" class="form-control" id="statsDateEnd">
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-gc-primary w-100" id="btnFilterStats">
+                <i class="fas fa-filter me-1"></i> Filtrer
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="gc-stat-card">
+              <div class="stat-icon bg-golf"><i class="fas fa-calendar-check"></i></div>
+              <div class="stat-info">
+                <div class="stat-value" id="statsPeriodReservations">--</div>
+                <div class="stat-label">R&eacute;servations par p&eacute;riode</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="gc-stat-card">
+              <div class="stat-icon bg-revenue"><i class="fas fa-euro-sign"></i></div>
+              <div class="stat-info">
+                <div class="stat-value" id="statsPeriodRevenue">--</div>
+                <div class="stat-label">Revenus par p&eacute;riode</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="gc-stat-card">
+              <div class="stat-icon bg-salle"><i class="fas fa-star"></i></div>
+              <div class="stat-info">
+                <div class="stat-value" id="statsMostRequested">--</div>
+                <div class="stat-label">Service le plus demand&eacute;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="gc-card card">
+              <div class="card-header">
+                <i class="fas fa-chart-bar me-2"></i>R&eacute;servations par service
+              </div>
+              <div class="card-body">
+                <div class="gc-bar-chart" id="statsReservationsByService">
+                  <div class="text-center py-4 text-muted">Aucune donn&eacute;e</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="gc-card card">
+              <div class="card-header">
+                <i class="fas fa-chart-bar me-2"></i>Revenus par mois
+              </div>
+              <div class="card-body">
+                <div class="gc-bar-chart" id="statsRevenueByMonth">
+                  <div class="text-center py-4 text-muted">Aucune donn&eacute;e</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SECTION: EXPORT ==================== -->
+      <section id="section-export" class="admin-section">
+        <div class="gc-page-header">
+          <h1><i class="fas fa-file-export me-2"></i>Export de donn&eacute;es</h1>
+          <p>T&eacute;l&eacute;charger les donn&eacute;es au format souhait&eacute;</p>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="gc-export-card">
+              <i class="fas fa-file-excel text-success"></i>
+              <h5>Export r&eacute;servations</h5>
+              <p>T&eacute;l&eacute;charger la liste compl&egrave;te des r&eacute;servations au format Excel</p>
+              <button class="btn btn-gc-primary" id="btnExportReservations">
+                <i class="fas fa-download me-1"></i> T&eacute;l&eacute;charger Excel
+              </button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="gc-export-card">
+              <i class="fas fa-file-pdf text-danger"></i>
+              <h5>Export statistiques</h5>
+              <p>T&eacute;l&eacute;charger le rapport statistique complet au format PDF</p>
+              <button class="btn btn-gc-secondary" id="btnExportStats">
+                <i class="fas fa-download me-1"></i> T&eacute;l&eacute;charger PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===================== MODALS ===================== -->
+
+  <!-- Modal: Refuser une reservation -->
+  <div class="modal fade" id="modalRefuse" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-times-circle me-2"></i>Refuser la r&eacute;servation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body gc-form">
+          <input type="hidden" id="refuseReservationId">
+          <div class="mb-3">
+            <label class="form-label">Motif du refus (note staff)</label>
+            <textarea class="form-control" id="refuseStaffNote" rows="4" placeholder="Indiquez le motif du refus..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-danger" id="btnConfirmRefuse">
+            <i class="fas fa-times me-1"></i> Confirmer le refus
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Ajouter un utilisateur -->
+  <div class="modal fade" id="modalAddUser" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Ajouter un utilisateur</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body gc-form">
+          <form id="formAddUser">
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" id="newUserEmail" required placeholder="email@example.com">
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Nom</label>
+                <input type="text" class="form-control" id="newUserNom" required placeholder="Nom de famille">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Pr&eacute;nom</label>
+                <input type="text" class="form-control" id="newUserPrenom" required placeholder="Pr&eacute;nom">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">R&ocirc;le</label>
+              <select class="form-select" id="newUserRole" required>
+                <option value="">S&eacute;lectionner un r&ocirc;le</option>
+                <option value="admin">Administrateur</option>
+                <option value="restaurant">Restaurant</option>
+                <option value="reception">R&eacute;ception</option>
+                <option value="direction">Direction</option>
+                <option value="staff">Staff</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-gc-primary" id="btnSaveUser">
+            <i class="fas fa-save me-1"></i> Enregistrer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Generer des creneaux -->
+  <div class="modal fade" id="modalGenerateSlots" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-clock me-2"></i>G&eacute;n&eacute;rer des cr&eacute;neaux</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body gc-form">
+          <form id="formGenerateSlots">
+            <div class="row g-3">
+              <div class="col-md-12 mb-3">
+                <label class="form-label">Service</label>
+                <select class="form-select" id="slotServiceId" required>
+                  <option value="">S&eacute;lectionner un service</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Date de d&eacute;but</label>
+                <input type="date" class="form-control" id="slotStartDate" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Date de fin</label>
+                <input type="date" class="form-control" id="slotEndDate" required>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Heure de d&eacute;but</label>
+                <input type="time" class="form-control" id="slotStartTime" required value="08:00">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Heure de fin</label>
+                <input type="time" class="form-control" id="slotEndTime" required value="18:00">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Intervalle (minutes)</label>
+                <input type="number" class="form-control" id="slotInterval" required value="60" min="15" step="15">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Capacit&eacute; par cr&eacute;neau</label>
+                <input type="number" class="form-control" id="slotCapacity" required value="4" min="1">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-gc-primary" id="btnGenerateSlots">
+            <i class="fas fa-cogs me-1"></i> G&eacute;n&eacute;rer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Confirmation suppression client -->
+  <div class="modal fade" id="modalDeleteClient" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Confirmer la suppression</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="deleteClientId">
+          <p>&Ecirc;tes-vous s&ucirc;r de vouloir supprimer ce client ? Cette action est irr&eacute;versible.</p>
+          <p class="fw-bold" id="deleteClientName"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-danger" id="btnConfirmDeleteClient">
+            <i class="fas fa-trash me-1"></i> Supprimer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Profil client -->
+  <div class="modal fade" id="modalClientProfile" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-user me-2"></i>Profil client</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="clientProfileBody">
+          <div class="text-center py-4">
+            <div class="spinner-border text-primary"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- API Module -->
+  <script src="js/api.js"></script>
+
+  <script>
+    'use strict';
+
+    // =====================================================
+    //  GOLF CLUB - ADMIN DASHBOARD
+    //  Vanilla JavaScript ES6+ - Production Ready
+    // =====================================================
+
+    // ============ STATE ============
+    const state = {
+      currentSection: 'dashboard',
+      reservations: {
+        data: [],
+        page: 1,
+        totalPages: 1,
+        filters: {}
+      },
+      clients: [],
+      users: [],
+      services: [],
+      dashboardLoaded: false,
+      statsLoaded: false,
+      servicesLoaded: false,
+      creneauxLoaded: false,
+      clientsLoaded: false,
+      usersLoaded: false
+    };
+
+    // ============ AUTH CHECK ============
+    (function checkAuth() {
+      if (!requireRole(['admin', 'superadmin'])) return;
+    })();
+
+    // ============ DOM READY ============
+    document.addEventListener('DOMContentLoaded', () => {
+      initNavigation();
+      initEventListeners();
+      loadDashboard();
+    });
+
+    // ============ NAVIGATION ============
+    function initNavigation() {
+      // Sidebar links
+      document.querySelectorAll('.gc-sidebar .nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const section = link.dataset.section;
+          navigateTo(section);
+        });
+      });
+
+      // Navbar links
+      document.querySelectorAll('.gc-navbar .nav-link[data-section]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const section = link.dataset.section;
+          navigateTo(section);
+        });
+      });
+    }
+
+    function navigateTo(section) {
+      state.currentSection = section;
+
+      // Update sidebar active
+      document.querySelectorAll('.gc-sidebar .nav-link').forEach(el => {
+        el.classList.toggle('active', el.dataset.section === section);
+      });
+
+      // Update navbar active
+      document.querySelectorAll('.gc-navbar .nav-link[data-section]').forEach(el => {
+        el.classList.toggle('active', el.dataset.section === section);
+      });
+
+      // Show/hide sections
+      document.querySelectorAll('.admin-section').forEach(el => {
+        el.classList.toggle('active', el.id === `section-${section}`);
+      });
+
+      // Load section data
+      switch (section) {
+        case 'dashboard':
+          if (!state.dashboardLoaded) loadDashboard();
+          break;
+        case 'reservations':
+          loadReservations();
+          break;
+        case 'clients':
+          if (!state.clientsLoaded) loadClients();
+          break;
+        case 'utilisateurs':
+          if (!state.usersLoaded) loadUsers();
+          break;
+        case 'services':
+          if (!state.servicesLoaded) loadServices();
+          break;
+        case 'creneaux':
+          if (!state.creneauxLoaded) loadCreneaux();
+          break;
+        case 'statistiques':
+          if (!state.statsLoaded) loadStatistiques();
+          break;
+      }
+    }
+
+    // ============ EVENT LISTENERS ============
+    function initEventListeners() {
+      // Logout
+      document.getElementById('btnLogout').addEventListener('click', () => {
+        removeToken();
+        window.location.href = 'login.html';
+      });
+
+      // Reservation Filters
+      document.getElementById('btnFilterReservations').addEventListener('click', () => {
+        state.reservations.page = 1;
+        loadReservations();
+      });
+
+      // Client Search
+      document.getElementById('btnSearchClients').addEventListener('click', loadClients);
+      document.getElementById('clientSearchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') loadClients();
+      });
+
+      // Refuse reservation
+      document.getElementById('btnConfirmRefuse').addEventListener('click', handleRefuseReservation);
+
+      // Add user
+      document.getElementById('btnSaveUser').addEventListener('click', handleAddUser);
+
+      // Generate slots
+      document.getElementById('btnGenerateSlots').addEventListener('click', handleGenerateSlots);
+
+      // Delete client
+      document.getElementById('btnConfirmDeleteClient').addEventListener('click', handleDeleteClient);
+
+      // Stats filter
+      document.getElementById('btnFilterStats').addEventListener('click', loadStatistiques);
+
+      // Export
+      document.getElementById('btnExportReservations').addEventListener('click', handleExportReservations);
+      document.getElementById('btnExportStats').addEventListener('click', handleExportStats);
+    }
+
+    // ============ DASHBOARD ============
+    async function loadDashboard() {
+      try {
+        const data = await AdminAPI.dashboard();
+        const dashboard = data.data || data;
+
+        // Stat cards
+        document.getElementById('statTotalReservations').textContent =
+          dashboard.total_reservations ?? dashboard.totalReservations ?? 0;
+        document.getElementById('statPendingReservations').textContent =
+          dashboard.reservations_en_attente ?? dashboard.pendingReservations ?? 0;
+        document.getElementById('statTotalRevenue').textContent =
+          formatPrice(dashboard.revenus_total ?? dashboard.totalRevenue ?? 0);
+        document.getElementById('statTotalClients').textContent =
+          dashboard.total_clients ?? dashboard.totalClients ?? 0;
+
+        const occupancy = dashboard.taux_occupation ?? dashboard.occupancyRate ?? 0;
+        document.getElementById('statOccupancy').textContent =
+          (typeof occupancy === 'number' ? occupancy.toFixed(1) : occupancy) + '%';
+
+        // Recent reservations
+        const recentReservations = dashboard.reservations_recentes ?? dashboard.recentReservations ?? [];
+        renderRecentReservations(recentReservations.slice(0, 10));
+
+        // Revenue by service
+        const revenueByService = dashboard.revenus_par_service ?? dashboard.revenueByService ?? [];
+        renderRevenueByServiceChart(revenueByService);
+
+        state.dashboardLoaded = true;
+      } catch (error) {
+        console.error('Erreur chargement dashboard:', error);
+        showAlert(document.getElementById('alertContainer'),
+          'Erreur lors du chargement du tableau de bord: ' + (error.message || 'Erreur inconnue'));
+      }
+    }
+
+    function renderRecentReservations(reservations) {
+      const tbody = document.getElementById('recentReservationsBody');
+
+      if (!reservations.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="gc-empty-state">
+              <i class="fas fa-calendar-times"></i>
+              <p>Aucune r&eacute;servation r&eacute;cente</p>
+            </td>
+          </tr>`;
+        return;
+      }
+
+      tbody.innerHTML = reservations.map(r => {
+        const clientName = r.client
+          ? `${r.client.prenom || ''} ${r.client.nom || ''}`.trim()
+          : (r.client_nom || 'N/A');
+        const serviceName = r.service ? (r.service.nom || r.service.name) : (r.service_nom || 'N/A');
+        const date = r.date_reservation || r.date || r.created_at;
+
+        return `
+          <tr>
+            <td>${date ? formatDate(date) : 'N/A'}</td>
+            <td>${escapeHtml(serviceName)}</td>
+            <td>${escapeHtml(clientName)}</td>
+            <td>${r.nombre_personnes ?? r.nb_personnes ?? '-'}</td>
+            <td>${formatStatus(r.statut || r.status)}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    function renderRevenueByServiceChart(data) {
+      const container = document.getElementById('revenueByServiceChart');
+
+      if (!data || !data.length) {
+        container.innerHTML = '<div class="text-center py-4 text-muted">Aucune donn&eacute;e de revenus</div>';
+        return;
+      }
+
+      const maxValue = Math.max(...data.map(d => parseFloat(d.revenus || d.revenue || d.total || 0)));
+
+      const barClassMap = {
+        golf: 'bar-golf',
+        restaurant: 'bar-restaurant',
+        salle: 'bar-salle',
+        salles: 'bar-salle'
+      };
+
+      container.innerHTML = data.map(d => {
+        const name = d.service || d.nom || d.name || 'Service';
+        const value = parseFloat(d.revenus || d.revenue || d.total || 0);
+        const pct = maxValue > 0 ? (value / maxValue) * 100 : 0;
+        const barClass = barClassMap[name.toLowerCase()] || 'bar-default';
+
+        return `
+          <div class="gc-bar-row">
+            <div class="gc-bar-label">${escapeHtml(name)}</div>
+            <div class="gc-bar-track">
+              <div class="gc-bar-fill ${barClass}" style="width: ${pct}%">${pct > 15 ? formatPrice(value) : ''}</div>
+            </div>
+            <div class="gc-bar-value">${formatPrice(value)}</div>
+          </div>`;
+      }).join('');
+    }
+
+    // ============ RESERVATIONS ============
+    async function loadReservations() {
+      const tbody = document.getElementById('reservationsTableBody');
+      showLoading(tbody.closest('.table-responsive'));
+
+      try {
+        // Load service filter options
+        await loadServiceFilterOptions();
+
+        // Build query params
+        const params = new URLSearchParams();
+        const status = document.getElementById('filterStatus').value;
+        const service = document.getElementById('filterService').value;
+        const dateStart = document.getElementById('filterDateStart').value;
+        const dateEnd = document.getElementById('filterDateEnd').value;
+
+        if (status) params.set('statut', status);
+        if (service) params.set('service_id', service);
+        if (dateStart) params.set('date_debut', dateStart);
+        if (dateEnd) params.set('date_fin', dateEnd);
+        params.set('page', state.reservations.page);
+
+        const queryStr = params.toString();
+        const data = await ReservationsAPI.list(queryStr);
+        const reservations = data.data || data.reservations || data;
+        const pagination = data.pagination || {};
+
+        state.reservations.data = Array.isArray(reservations) ? reservations : [];
+        state.reservations.totalPages = pagination.totalPages || pagination.total_pages || 1;
+
+        renderReservationsTable();
+        renderReservationsPagination();
+      } catch (error) {
+        console.error('Erreur chargement reservations:', error);
+        tbody.closest('.table-responsive').innerHTML = `
+          <table class="table gc-table mb-0">
+            <thead><tr><th>N&deg;</th><th>Date</th><th>Service</th><th>Client</th><th>Personnes</th><th>Statut</th><th>Prix</th><th>Actions</th></tr></thead>
+            <tbody><tr><td colspan="8" class="text-center text-danger py-4">
+              <i class="fas fa-exclamation-triangle me-2"></i>Erreur de chargement
+            </td></tr></tbody>
+          </table>`;
+      }
+    }
+
+    function renderReservationsTable() {
+      const tbody = document.getElementById('reservationsTableBody');
+
+      // Restore table structure if needed
+      const tableResponsive = tbody.closest('.table-responsive') || tbody.parentElement.parentElement;
+      if (!document.getElementById('reservationsTableBody')) {
+        tableResponsive.innerHTML = `
+          <table class="table gc-table mb-0">
+            <thead><tr><th>N&deg;</th><th>Date</th><th>Service</th><th>Client</th><th>Personnes</th><th>Statut</th><th>Prix</th><th>Actions</th></tr></thead>
+            <tbody id="reservationsTableBody"></tbody>
+          </table>`;
+      }
+
+      const target = document.getElementById('reservationsTableBody');
+
+      if (!state.reservations.data.length) {
+        target.innerHTML = `
+          <tr><td colspan="8" class="gc-empty-state">
+            <i class="fas fa-calendar-times"></i>
+            <p>Aucune r&eacute;servation trouv&eacute;e</p>
+          </td></tr>`;
+        return;
+      }
+
+      target.innerHTML = state.reservations.data.map(r => {
+        const clientName = r.client
+          ? `${r.client.prenom || ''} ${r.client.nom || ''}`.trim()
+          : (r.client_nom || 'N/A');
+        const serviceName = r.service ? (r.service.nom || r.service.name) : (r.service_nom || 'N/A');
+        const date = r.date_reservation || r.date || r.created_at;
+        const statut = r.statut || r.status || '';
+        const prix = r.prix_total ?? r.prix ?? r.total ?? 0;
+
+        let actions = '';
+        if (statut === 'en_attente') {
+          actions = `
+            <button class="btn btn-success btn-action" onclick="confirmReservation(${r.id})" title="Confirmer">
+              <i class="fas fa-check"></i>
+            </button>
+            <button class="btn btn-danger btn-action" onclick="openRefuseModal(${r.id})" title="Refuser">
+              <i class="fas fa-times"></i>
+            </button>`;
+        } else if (statut === 'confirmee') {
+          actions = `
+            <button class="btn btn-primary btn-action" onclick="terminerReservation(${r.id})" title="Terminer">
+              <i class="fas fa-flag-checkered"></i>
+            </button>`;
+        }
+
+        return `
+          <tr>
+            <td><strong>#${r.id}</strong></td>
+            <td>${date ? formatDate(date) : 'N/A'}</td>
+            <td>${escapeHtml(serviceName)}</td>
+            <td>${escapeHtml(clientName)}</td>
+            <td>${r.nombre_personnes ?? r.nb_personnes ?? '-'}</td>
+            <td>${formatStatus(statut)}</td>
+            <td>${formatPrice(prix)}</td>
+            <td>${actions || '<span class="text-muted">-</span>'}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    function renderReservationsPagination() {
+      const container = document.getElementById('reservationsPagination');
+      const { page, totalPages } = state.reservations;
+
+      if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+
+      let html = '';
+
+      // Previous
+      html += `
+        <li class="page-item ${page <= 1 ? 'disabled' : ''}">
+          <a class="page-link" href="#" onclick="goToPage(${page - 1})">&laquo;</a>
+        </li>`;
+
+      // Pages
+      const startPage = Math.max(1, page - 2);
+      const endPage = Math.min(totalPages, page + 2);
+
+      if (startPage > 1) {
+        html += `<li class="page-item"><a class="page-link" href="#" onclick="goToPage(1)">1</a></li>`;
+        if (startPage > 2) {
+          html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        html += `
+          <li class="page-item ${i === page ? 'active' : ''}">
+            <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a>
+          </li>`;
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+        html += `<li class="page-item"><a class="page-link" href="#" onclick="goToPage(${totalPages})">${totalPages}</a></li>`;
+      }
+
+      // Next
+      html += `
+        <li class="page-item ${page >= totalPages ? 'disabled' : ''}">
+          <a class="page-link" href="#" onclick="goToPage(${page + 1})">&raquo;</a>
+        </li>`;
+
+      container.innerHTML = html;
+    }
+
+    window.goToPage = function(page) {
+      if (page < 1 || page > state.reservations.totalPages) return;
+      state.reservations.page = page;
+      loadReservations();
+    };
+
+    async function loadServiceFilterOptions() {
+      const select = document.getElementById('filterService');
+      const slotSelect = document.getElementById('slotServiceId');
+
+      if (select.options.length > 1) return; // Already loaded
+
+      try {
+        const data = await ServicesAPI.list();
+        const services = data.data || data.services || data;
+        state.services = Array.isArray(services) ? services : [];
+
+        state.services.forEach(s => {
+          const name = s.nom || s.name || s.code;
+          const option = new Option(name, s.id);
+          select.add(option);
+
+          if (slotSelect) {
+            const slotOption = new Option(name, s.id);
+            slotSelect.add(slotOption);
+          }
+        });
+      } catch (error) {
+        console.error('Erreur chargement services pour filtre:', error);
+      }
+    }
+
+    window.confirmReservation = async function(id) {
+      try {
+        await ReservationsAPI.confirmer(id);
+        showAlert(document.getElementById('alertContainer'),
+          'R&eacute;servation confirm&eacute;e avec succ&egrave;s', 'success');
+        loadReservations();
+        state.dashboardLoaded = false;
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'),
+          'Erreur: ' + (error.message || 'Impossible de confirmer'));
+      }
+    };
+
+    window.openRefuseModal = function(id) {
+      document.getElementById('refuseReservationId').value = id;
+      document.getElementById('refuseStaffNote').value = '';
+      new bootstrap.Modal(document.getElementById('modalRefuse')).show();
+    };
+
+    async function handleRefuseReservation() {
+      const id = document.getElementById('refuseReservationId').value;
+      const note = document.getElementById('refuseStaffNote').value.trim();
+
+      if (!note) {
+        showAlert(document.getElementById('alertContainer'),
+          'Veuillez indiquer un motif de refus');
+        return;
+      }
+
+      const btn = document.getElementById('btnConfirmRefuse');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Traitement...';
+
+      try {
+        await ReservationsAPI.refuser(id, note);
+        bootstrap.Modal.getInstance(document.getElementById('modalRefuse')).hide();
+        showAlert(document.getElementById('alertContainer'),
+          'R&eacute;servation refus&eacute;e', 'warning');
+        loadReservations();
+        state.dashboardLoaded = false;
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'),
+          'Erreur: ' + (error.message || 'Impossible de refuser'));
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-times me-1"></i> Confirmer le refus';
+      }
+    }
+
+    window.terminerReservation = async function(id) {
+      try {
+        await ReservationsAPI.terminer(id);
+        showAlert(document.getElementById('alertContainer'),
+          'R&eacute;servation termin&eacute;e', 'success');
+        loadReservations();
+        state.dashboardLoaded = false;
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'),
+          'Erreur: ' + (error.message || 'Impossible de terminer'));
+      }
+    };
+
+    // ============ CLIENTS ============
+    async function loadClients() {
+      const tbody = document.getElementById('clientsTableBody');
+      showLoading(tbody.closest('.table-responsive'));
+
+      try {
+        const data = await ClientsAPI.list();
+        const clients = data.data || data.clients || data;
+        state.clients = Array.isArray(clients) ? clients : [];
+
+        // Client-side search filter
+        const search = (document.getElementById('clientSearchInput').value || '').toLowerCase().trim();
+        let filtered = state.clients;
+        if (search) {
+          filtered = state.clients.filter(c => {
+            const fullName = `${c.nom || ''} ${c.prenom || ''} ${c.email || ''}`.toLowerCase();
+            return fullName.includes(search);
+          });
+        }
+
+        renderClientsTable(filtered);
+        state.clientsLoaded = true;
+      } catch (error) {
+        console.error('Erreur chargement clients:', error);
+        const container = tbody.closest('.table-responsive');
+        container.innerHTML = `
+          <table class="table gc-table mb-0">
+            <thead><tr><th>Nom</th><th>Pr&eacute;nom</th><th>Email</th><th>T&eacute;l&eacute;phone</th><th>R&eacute;servations</th><th>Inscrit le</th><th>Actions</th></tr></thead>
+            <tbody><tr><td colspan="7" class="text-center text-danger py-4">
+              <i class="fas fa-exclamation-triangle me-2"></i>Erreur de chargement
+            </td></tr></tbody>
+          </table>`;
+      }
+    }
+
+    function renderClientsTable(clients) {
+      // Restore table structure
+      const section = document.getElementById('section-clients');
+      const tableResp = section.querySelector('.table-responsive');
+      tableResp.innerHTML = `
+        <table class="table gc-table mb-0">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Pr&eacute;nom</th>
+              <th>Email</th>
+              <th>T&eacute;l&eacute;phone</th>
+              <th>R&eacute;servations</th>
+              <th>Inscrit le</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="clientsTableBody"></tbody>
+        </table>`;
+
+      const tbody = document.getElementById('clientsTableBody');
+
+      if (!clients.length) {
+        tbody.innerHTML = `
+          <tr><td colspan="7" class="gc-empty-state">
+            <i class="fas fa-users-slash"></i>
+            <p>Aucun client trouv&eacute;</p>
+          </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = clients.map(c => {
+        const reservationCount = c.reservations_count ?? c._count?.reservations ?? c.nb_reservations ?? 0;
+        const inscritLe = c.created_at || c.createdAt;
+
+        return `
+          <tr>
+            <td>${escapeHtml(c.nom || '-')}</td>
+            <td>${escapeHtml(c.prenom || '-')}</td>
+            <td>${escapeHtml(c.email || '-')}</td>
+            <td>${escapeHtml(c.telephone || c.phone || '-')}</td>
+            <td><span class="badge bg-primary">${reservationCount}</span></td>
+            <td>${inscritLe ? formatDate(inscritLe) : '-'}</td>
+            <td>
+              <button class="btn btn-outline-primary btn-action" onclick="viewClientProfile(${c.id})" title="Voir profil">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-outline-danger btn-action" onclick="openDeleteClientModal(${c.id}, '${escapeHtml((c.prenom || '') + ' ' + (c.nom || ''))}')" title="Supprimer">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    window.viewClientProfile = async function(id) {
+      const body = document.getElementById('clientProfileBody');
+      body.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>';
+      new bootstrap.Modal(document.getElementById('modalClientProfile')).show();
+
+      try {
+        const data = await ClientsAPI.get(id);
+        const client = data.data || data.client || data;
+        const reservations = client.reservations || [];
+
+        body.innerHTML = `
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <h5>${escapeHtml((client.prenom || '') + ' ' + (client.nom || ''))}</h5>
+              <p class="mb-1"><i class="fas fa-envelope me-2 text-muted"></i>${escapeHtml(client.email || '-')}</p>
+              <p class="mb-1"><i class="fas fa-phone me-2 text-muted"></i>${escapeHtml(client.telephone || client.phone || '-')}</p>
+              <p class="mb-0"><i class="fas fa-calendar me-2 text-muted"></i>Inscrit le ${client.created_at ? formatDate(client.created_at) : '-'}</p>
+            </div>
+          </div>
+          <h6 class="mb-3">Historique des r&eacute;servations</h6>
+          ${reservations.length ? `
+            <div class="table-responsive">
+              <table class="table gc-table">
+                <thead><tr><th>Date</th><th>Service</th><th>Statut</th><th>Prix</th></tr></thead>
+                <tbody>
+                  ${reservations.map(r => `
+                    <tr>
+                      <td>${r.date_reservation ? formatDate(r.date_reservation) : '-'}</td>
+                      <td>${escapeHtml(r.service?.nom || r.service_nom || '-')}</td>
+                      <td>${formatStatus(r.statut || r.status)}</td>
+                      <td>${formatPrice(r.prix_total ?? r.prix ?? 0)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          ` : '<p class="text-muted">Aucune r&eacute;servation</p>'}`;
+      } catch (error) {
+        body.innerHTML = `<div class="text-center text-danger py-4">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>Erreur de chargement du profil</p>
+        </div>`;
+      }
+    };
+
+    window.openDeleteClientModal = function(id, name) {
+      document.getElementById('deleteClientId').value = id;
+      document.getElementById('deleteClientName').textContent = name;
+      new bootstrap.Modal(document.getElementById('modalDeleteClient')).show();
+    };
+
+    async function handleDeleteClient() {
+      const id = document.getElementById('deleteClientId').value;
+      const btn = document.getElementById('btnConfirmDeleteClient');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Suppression...';
+
+      try {
+        await ClientsAPI.delete(id);
+        bootstrap.Modal.getInstance(document.getElementById('modalDeleteClient')).hide();
+        showAlert(document.getElementById('alertContainer'), 'Client supprim&eacute; avec succ&egrave;s', 'success');
+        state.clientsLoaded = false;
+        loadClients();
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'),
+          'Erreur: ' + (error.message || 'Impossible de supprimer'));
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-trash me-1"></i> Supprimer';
+      }
+    }
+
+    // ============ UTILISATEURS STAFF ============
+    async function loadUsers() {
+      const tbody = document.getElementById('usersTableBody');
+      showLoading(tbody.closest('.table-responsive'));
+
+      try {
+        const data = await AdminAPI.utilisateurs();
+        const users = data.data || data.utilisateurs || data.users || data;
+        state.users = Array.isArray(users) ? users : [];
+
+        renderUsersTable();
+        state.usersLoaded = true;
+      } catch (error) {
+        console.error('Erreur chargement utilisateurs:', error);
+        const container = tbody.closest('.table-responsive');
+        container.innerHTML = `
+          <table class="table gc-table mb-0">
+            <thead><tr><th>Nom</th><th>Pr&eacute;nom</th><th>Email</th><th>R&ocirc;le</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody><tr><td colspan="6" class="text-center text-danger py-4">
+              <i class="fas fa-exclamation-triangle me-2"></i>Erreur de chargement
+            </td></tr></tbody>
+          </table>`;
+      }
+    }
+
+    function renderUsersTable() {
+      const section = document.getElementById('section-utilisateurs');
+      const tableResp = section.querySelector('.table-responsive');
+      tableResp.innerHTML = `
+        <table class="table gc-table mb-0">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Pr&eacute;nom</th>
+              <th>Email</th>
+              <th>R&ocirc;le</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody"></tbody>
+        </table>`;
+
+      const tbody = document.getElementById('usersTableBody');
+
+      if (!state.users.length) {
+        tbody.innerHTML = `
+          <tr><td colspan="6" class="gc-empty-state">
+            <i class="fas fa-user-slash"></i>
+            <p>Aucun utilisateur trouv&eacute;</p>
+          </td></tr>`;
+        return;
+      }
+
+      const roleBadgeMap = {
+        admin: 'bg-danger',
+        reception: 'bg-primary',
+        direction: 'bg-warning text-dark',
+        staff: 'bg-secondary'
+      };
+
+      tbody.innerHTML = state.users.map(u => {
+        const role = u.role || 'staff';
+        const badgeClass = roleBadgeMap[role] || 'bg-secondary';
+        const isActive = u.actif ?? u.active ?? true;
+
+        return `
+          <tr>
+            <td>${escapeHtml(u.nom || '-')}</td>
+            <td>${escapeHtml(u.prenom || '-')}</td>
+            <td>${escapeHtml(u.email || '-')}</td>
+            <td><span class="badge ${badgeClass}">${escapeHtml(role)}</span></td>
+            <td>
+              ${isActive
+                ? '<span class="badge bg-success">Actif</span>'
+                : '<span class="badge bg-secondary">Inactif</span>'}
+            </td>
+            <td>
+              <button class="btn btn-outline-primary btn-action" title="D&eacute;tails">
+                <i class="fas fa-eye"></i>
+              </button>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    async function handleAddUser() {
+      const email = document.getElementById('newUserEmail').value.trim();
+      const nom = document.getElementById('newUserNom').value.trim();
+      const prenom = document.getElementById('newUserPrenom').value.trim();
+      const role = document.getElementById('newUserRole').value;
+
+      if (!email || !nom || !prenom || !role) {
+        showAlert(document.getElementById('alertContainer'),
+          'Veuillez remplir tous les champs');
+        return;
+      }
+
+      const btn = document.getElementById('btnSaveUser');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Enregistrement...';
+
+      try {
+        await AdminAPI.createUser({ email, nom, prenom, role });
+        bootstrap.Modal.getInstance(document.getElementById('modalAddUser')).hide();
+        document.getElementById('formAddUser').reset();
+        showAlert(document.getElementById('alertContainer'),
+          'Utilisateur cr&eacute;&eacute; avec succ&egrave;s', 'success');
+        state.usersLoaded = false;
+        loadUsers();
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'),
+          'Erreur: ' + (error.message || 'Impossible de cr&eacute;er l\'utilisateur'));
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save me-1"></i> Enregistrer';
+      }
+    }
+
+    // ============ SERVICES ============
+    async function loadServices() {
+      const grid = document.getElementById('servicesGrid');
+      grid.innerHTML = `
+        <div class="col-12 text-center py-4">
+          <div class="spinner-border text-primary"></div>
+          <p class="mt-2 text-muted">Chargement des services...</p>
+        </div>`;
+
+      try {
+        const data = await ServicesAPI.list();
+        const services = data.data || data.services || data;
+        state.services = Array.isArray(services) ? services : [];
+
+        renderServicesGrid();
+        state.servicesLoaded = true;
+      } catch (error) {
+        console.error('Erreur chargement services:', error);
+        grid.innerHTML = `
+          <div class="col-12 text-center text-danger py-4">
+            <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+            <p>Erreur lors du chargement des services</p>
+          </div>`;
+      }
+    }
+
+    function renderServicesGrid() {
+      const grid = document.getElementById('servicesGrid');
+
+      if (!state.services.length) {
+        grid.innerHTML = `
+          <div class="col-12 gc-empty-state">
+            <i class="fas fa-concierge-bell"></i>
+            <p>Aucun service configur&eacute;</p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = state.services.map(s => {
+        const name = s.nom || s.name || 'Service';
+        const code = s.code || '';
+        const isActive = s.actif ?? s.active ?? true;
+        const price = s.prix_base ?? s.base_price ?? s.prix ?? 0;
+        const description = s.description || 'Aucune description disponible';
+
+        return `
+          <div class="col-lg-4 col-md-6">
+            <div class="gc-service-card">
+              <div class="service-header">
+                <div>
+                  <div class="service-name">${escapeHtml(name)}</div>
+                  <div class="service-code">${escapeHtml(code)}</div>
+                </div>
+                <span class="badge ${isActive ? 'bg-success' : 'bg-secondary'}">
+                  ${isActive ? 'Actif' : 'Inactif'}
+                </span>
+              </div>
+              <div class="service-price">${formatPrice(price)}</div>
+              <p class="service-description">${escapeHtml(description)}</p>
+              <button class="btn btn-gc-secondary btn-sm mt-2">
+                <i class="fas fa-edit me-1"></i> Modifier
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // ============ CRENEAUX ============
+    async function loadCreneaux() {
+      const container = document.getElementById('calendarView');
+      container.innerHTML = `
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary"></div>
+          <p class="mt-2 text-muted">Chargement du calendrier...</p>
+        </div>`;
+
+      try {
+        // Make sure services are loaded for the generate form
+        await loadServiceFilterOptions();
+
+        const data = await CreneauxAPI.calendar();
+        const calendar = data.data || data.calendar || data;
+
+        renderCalendar(calendar);
+        state.creneauxLoaded = true;
+      } catch (error) {
+        console.error('Erreur chargement creneaux:', error);
+        container.innerHTML = `
+          <div class="text-center text-danger py-4">
+            <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+            <p>Erreur lors du chargement du calendrier</p>
+          </div>`;
+      }
+    }
+
+    function renderCalendar(calendar) {
+      const container = document.getElementById('calendarView');
+      const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+
+      // If calendar is array of slots, group by day of week
+      let slotsByDay = {};
+      days.forEach(d => slotsByDay[d] = []);
+
+      if (Array.isArray(calendar)) {
+        calendar.forEach(slot => {
+          const date = new Date(slot.date || slot.start_time || slot.debut);
+          const dayIndex = (date.getDay() + 6) % 7; // Monday = 0
+          const dayName = days[dayIndex];
+          if (slotsByDay[dayName]) {
+            slotsByDay[dayName].push(slot);
+          }
+        });
+      } else if (calendar && typeof calendar === 'object') {
+        // Already grouped by day
+        Object.entries(calendar).forEach(([key, slots]) => {
+          slotsByDay[key] = Array.isArray(slots) ? slots : [];
+        });
+      }
+
+      const hasSlots = Object.values(slotsByDay).some(s => s.length > 0);
+
+      if (!hasSlots) {
+        container.innerHTML = `
+          <div class="gc-empty-state">
+            <i class="fas fa-calendar-times"></i>
+            <p>Aucun cr&eacute;neau configur&eacute;</p>
+            <p class="small">Cliquez sur "G&eacute;n&eacute;rer cr&eacute;neaux" pour commencer</p>
+          </div>`;
+        return;
+      }
+
+      let html = `
+        <table class="table table-bordered mb-0">
+          <thead>
+            <tr>
+              ${days.map(d => `<th>${d}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>`;
+
+      days.forEach(day => {
+        html += '<td>';
+        const slots = slotsByDay[day] || [];
+        if (slots.length === 0) {
+          html += '<span class="text-muted small">Aucun</span>';
+        } else {
+          slots.slice(0, 8).forEach(slot => {
+            const time = slot.heure_debut || slot.start_time || slot.debut || '';
+            const timeStr = time ? formatTime(time) : '';
+            const capacity = slot.capacite ?? slot.capacity ?? '';
+            const reserved = slot.reserves ?? slot.reserved ?? 0;
+            const isFull = capacity && reserved >= capacity;
+            html += `<div class="slot-item ${isFull ? 'slot-full' : ''}">
+              ${timeStr} ${capacity ? `(${reserved}/${capacity})` : ''}
+            </div>`;
+          });
+          if (slots.length > 8) {
+            html += `<div class="text-muted small">+${slots.length - 8} autres</div>`;
+          }
+        }
+        html += '</td>';
+      });
+
+      html += '</tr></tbody></table>';
+      container.innerHTML = html;
+    }
+
+    async function handleGenerateSlots() {
+      const serviceId = document.getElementById('slotServiceId').value;
+      const startDate = document.getElementById('slotStartDate').value;
+      const endDate = document.getElementById('slotEndDate').value;
+      const startTime = document.getElementById('slotStartTime').value;
+      const endTime = document.getElementById('slotEndTime').value;
+      const interval = document.getElementById('slotInterval').value;
+      const capacity = document.getElementById('slotCapacity').value;
+
+      if (!serviceId || !startDate || !endDate || !startTime || !endTime || !interval || !capacity) {
+        showAlert(document.getElementById('alertContainer'),
+          'Veuillez remplir tous les champs');
+        return;
+      }
+
+      const btn = document.getElementById('btnGenerateSlots');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> G&eacute;n&eacute;ration...';
+
+      try {
+        await CreneauxAPI.generer({
+          service_id: parseInt(serviceId),
+          start_date: startDate,
+          end_date: endDate,
+          start_time: startTime,
+          end_time: endTime,
+          interval: parseInt(interval),
+          capacity: parseInt(capacity)
+        });
+
+        bootstrap.Modal.getInstance(document.getElementById('modalGenerateSlots')).hide();
+        document.getElementById('formGenerateSlots').reset();
+        showAlert(document.getElementById('alertContainer'),
+          'Cr&eacute;neaux g&eacute;n&eacute;r&eacute;s avec succ&egrave;s', 'success');
+        state.creneauxLoaded = false;
+        loadCreneaux();
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'),
+          'Erreur: ' + (error.message || 'Impossible de g&eacute;n&eacute;rer les cr&eacute;neaux'));
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-cogs me-1"></i> G&eacute;n&eacute;rer';
+      }
+    }
+
+    // ============ STATISTIQUES ============
+    async function loadStatistiques() {
+      try {
+        const params = new URLSearchParams();
+        const dateStart = document.getElementById('statsDateStart').value;
+        const dateEnd = document.getElementById('statsDateEnd').value;
+
+        if (dateStart) params.set('date_debut', dateStart);
+        if (dateEnd) params.set('date_fin', dateEnd);
+
+        const queryStr = params.toString();
+
+        // Load both stats in parallel
+        const [resStats, revStats] = await Promise.all([
+          AdminAPI.statsReservations(queryStr),
+          AdminAPI.statsRevenus(queryStr)
+        ]);
+
+        const reservationStats = resStats.data || resStats;
+        const revenueStats = revStats.data || revStats;
+
+        // Period stats
+        document.getElementById('statsPeriodReservations').textContent =
+          reservationStats.total ?? reservationStats.total_reservations ?? 0;
+
+        const totalRevenue = revenueStats.total ?? revenueStats.total_revenus ?? 0;
+        document.getElementById('statsPeriodRevenue').textContent = formatPrice(totalRevenue);
+
+        const mostRequested = reservationStats.service_top ?? reservationStats.most_requested ?? '-';
+        document.getElementById('statsMostRequested').textContent =
+          typeof mostRequested === 'object' ? (mostRequested.nom || mostRequested.name || '-') : mostRequested;
+
+        // Reservations by service chart
+        const byService = reservationStats.par_service ?? reservationStats.byService ?? [];
+        renderStatsBarChart('statsReservationsByService', byService, 'count');
+
+        // Revenue by month chart
+        const byMonth = revenueStats.par_mois ?? revenueStats.byMonth ?? [];
+        renderStatsBarChart('statsRevenueByMonth', byMonth, 'revenue');
+
+        state.statsLoaded = true;
+      } catch (error) {
+        console.error('Erreur chargement statistiques:', error);
+        showAlert(document.getElementById('alertContainer'),
+          'Erreur lors du chargement des statistiques: ' + (error.message || 'Erreur inconnue'));
+      }
+    }
+
+    function renderStatsBarChart(containerId, data, type) {
+      const container = document.getElementById(containerId);
+
+      if (!data || !data.length) {
+        container.innerHTML = '<div class="text-center py-4 text-muted">Aucune donn&eacute;e disponible</div>';
+        return;
+      }
+
+      const getValue = (item) => {
+        if (type === 'revenue') {
+          return parseFloat(item.revenus || item.revenue || item.total || 0);
+        }
+        return parseInt(item.count || item.total || item.nombre || 0);
+      };
+
+      const getLabel = (item) => {
+        return item.service || item.nom || item.name || item.mois || item.month || item.label || '-';
+      };
+
+      const maxValue = Math.max(...data.map(getValue));
+
+      const barClassMap = {
+        golf: 'bar-golf',
+        restaurant: 'bar-restaurant',
+        salle: 'bar-salle',
+        salles: 'bar-salle'
+      };
+
+      container.innerHTML = data.map(item => {
+        const label = getLabel(item);
+        const value = getValue(item);
+        const pct = maxValue > 0 ? (value / maxValue) * 100 : 0;
+        const barClass = barClassMap[label.toLowerCase()] || 'bar-default';
+        const displayValue = type === 'revenue' ? formatPrice(value) : value;
+
+        return `
+          <div class="gc-bar-row">
+            <div class="gc-bar-label">${escapeHtml(String(label))}</div>
+            <div class="gc-bar-track">
+              <div class="gc-bar-fill ${barClass}" style="width: ${pct}%">${pct > 20 ? displayValue : ''}</div>
+            </div>
+            <div class="gc-bar-value">${displayValue}</div>
+          </div>`;
+      }).join('');
+    }
+
+    // ============ EXPORT ============
+    async function handleExportReservations() {
+      const btn = document.getElementById('btnExportReservations');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Export en cours...';
+
+      try {
+        const data = await ReservationsAPI.export();
+
+        if (data.url) {
+          window.open(data.url, '_blank');
+        } else if (data.data) {
+          // Download as blob
+          const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
+          downloadBlob(blob, 'reservations_export.json');
+        }
+
+        showAlert(document.getElementById('alertContainer'),
+          'Export des r&eacute;servations t&eacute;l&eacute;charg&eacute;', 'success');
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'),
+          'Erreur: ' + (error.message || 'Impossible d\'exporter'));
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-download me-1"></i> T&eacute;l&eacute;charger Excel';
+      }
+    }
+
+    async function handleExportStats() {
+      const btn = document.getElementById('btnExportStats');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Export en cours...';
+
+      try {
+        const data = await AdminAPI.exportStats();
+
+        if (data.url) {
+          window.open(data.url, '_blank');
+        } else if (data.data) {
+          const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
+          downloadBlob(blob, 'statistiques_export.json');
+        }
+
+        showAlert(document.getElementById('alertContainer'),
+          'Export des statistiques t&eacute;l&eacute;charg&eacute;', 'success');
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'),
+          'Erreur: ' + (error.message || 'Impossible d\'exporter'));
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-download me-1"></i> T&eacute;l&eacute;charger PDF';
+      }
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // ============ UTILITY ============
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = String(text);
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

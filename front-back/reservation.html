@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Réservation - Président Golf Club</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5.3.2 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome 6.4.0 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Custom Styles -->
+  <link href="css/style.css" rel="stylesheet">
+
+  <style>
+    /* ============ WIZARD STEPPER ============ */
+    .gc-stepper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+      padding: 2rem 0 1.5rem;
+    }
+
+    .gc-stepper-step {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: default;
+      position: relative;
+    }
+
+    .gc-stepper-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #dee2e6;
+      color: #888;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: var(--gc-transition);
+      flex-shrink: 0;
+    }
+
+    .gc-stepper-label {
+      font-weight: 500;
+      color: #aaa;
+      font-size: 0.9rem;
+      transition: var(--gc-transition);
+      white-space: nowrap;
+    }
+
+    .gc-stepper-line {
+      width: 60px;
+      height: 3px;
+      background: #dee2e6;
+      margin: 0 1rem;
+      border-radius: 2px;
+      transition: var(--gc-transition);
+    }
+
+    .gc-stepper-step.active .gc-stepper-circle {
+      background: linear-gradient(135deg, var(--gc-primary), var(--gc-primary-light));
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(26, 92, 46, 0.35);
+    }
+
+    .gc-stepper-step.active .gc-stepper-label {
+      color: var(--gc-primary);
+      font-weight: 600;
+    }
+
+    .gc-stepper-step.completed .gc-stepper-circle {
+      background: var(--gc-primary);
+      color: #fff;
+    }
+
+    .gc-stepper-step.completed .gc-stepper-label {
+      color: var(--gc-primary);
+    }
+
+    .gc-stepper-line.completed {
+      background: var(--gc-primary);
+    }
+
+    /* ============ SERVICE CARDS ============ */
+    .gc-service-card {
+      background: #fff;
+      border-radius: var(--gc-border-radius);
+      box-shadow: var(--gc-card-shadow);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--gc-transition);
+      border: 3px solid transparent;
+      height: 100%;
+    }
+
+    .gc-service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .gc-service-card.selected {
+      border-color: var(--gc-primary);
+      box-shadow: 0 8px 30px rgba(26, 92, 46, 0.2);
+      transform: translateY(-5px);
+    }
+
+    .gc-service-card .service-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.2rem;
+      font-size: 2rem;
+      color: #fff;
+    }
+
+    .gc-service-card .service-icon.icon-golf {
+      background: linear-gradient(135deg, #1a5c2e, #2d8a4e);
+    }
+
+    .gc-service-card .service-icon.icon-restaurant {
+      background: linear-gradient(135deg, #c5a55a, #d4ba7a);
+    }
+
+    .gc-service-card .service-icon.icon-salle {
+      background: linear-gradient(135deg, #3a7bd5, #5b9ae8);
+    }
+
+    .gc-service-card .service-name {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--gc-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .gc-service-card .service-desc {
+      color: #888;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .gc-service-card .service-price {
+      margin-top: 1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--gc-primary);
+    }
+
+    .gc-service-card .check-mark {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--gc-primary);
+      color: #fff;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    .gc-service-card.selected .check-mark {
+      display: flex;
+    }
+
+    /* ============ CALENDAR ============ */
+    .gc-calendar {
+      background: #fff;
+      border-radius: var(--gc-border-radius);
+      box-shadow: var(--gc-card-shadow);
+      overflow: hidden;
+    }
+
+    .gc-calendar-header {
+      background: linear-gradient(135deg, var(--gc-primary-dark), var(--gc-primary));
+      color: #fff;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .gc-calendar-header h5 {
+      margin: 0;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .gc-calendar-header button {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--gc-transition);
+    }
+
+    .gc-calendar-header button:hover {
+      background: rgba(255,255,255,0.35);
+    }
+
+    .gc-calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      padding: 0.75rem;
+    }
+
+    .gc-calendar-day-label {
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: #999;
+      text-transform: uppercase;
+      padding: 0.5rem 0;
+    }
+
+    .gc-calendar-day {
+      text-align: center;
+      padding: 0.55rem 0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--gc-transition);
+      color: #333;
+    }
+
+    .gc-calendar-day:hover:not(.disabled):not(.empty) {
+      background: rgba(26, 92, 46, 0.1);
+    }
+
+    .gc-calendar-day.today {
+      border: 2px solid var(--gc-primary-light);
+    }
+
+    .gc-calendar-day.selected {
+      background: linear-gradient(135deg, var(--gc-primary), var(--gc-primary-light));
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(26, 92, 46, 0.3);
+    }
+
+    .gc-calendar-day.disabled {
+      color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .gc-calendar-day.empty {
+      cursor: default;
+    }
+
+    /* ============ TIME SLOTS ============ */
+    .gc-slot {
+      background: #fff;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: var(--gc-transition);
+      text-align: center;
+    }
+
+    .gc-slot:hover:not(.disabled) {
+      border-color: var(--gc-primary-light);
+      box-shadow: 0 2px 10px rgba(26, 92, 46, 0.12);
+    }
+
+    .gc-slot.selected {
+      border-color: var(--gc-primary);
+      background: rgba(26, 92, 46, 0.05);
+      box-shadow: 0 2px 10px rgba(26, 92, 46, 0.15);
+    }
+
+    .gc-slot.disabled {
+      background: #f8f8f8;
+      color: #bbb;
+      cursor: not-allowed;
+      border-color: #eee;
+    }
+
+    .gc-slot .slot-time {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--gc-dark);
+    }
+
+    .gc-slot.disabled .slot-time {
+      color: #bbb;
+    }
+
+    .gc-slot .slot-capacity {
+      font-size: 0.78rem;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .gc-slot .slot-capacity.low {
+      color: #e67e22;
+      font-weight: 600;
+    }
+
+    .gc-slot .slot-capacity.full {
+      color: #c0392b;
+      font-weight: 600;
+    }
+
+    /* ============ SUMMARY ============ */
+    .gc-summary {
+      background: #fff;
+      border-radius: var(--gc-border-radius);
+      box-shadow: var(--gc-card-shadow);
+      overflow: hidden;
+    }
+
+    .gc-summary-header {
+      background: linear-gradient(135deg, var(--gc-primary-dark), var(--gc-primary));
+      color: #fff;
+      padding: 1rem 1.5rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .gc-summary-body {
+      padding: 1.5rem;
+    }
+
+    .gc-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .gc-summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .gc-summary-row .label {
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    .gc-summary-row .value {
+      font-weight: 600;
+      color: var(--gc-dark);
+    }
+
+    .gc-summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: var(--gc-bg);
+      border-top: 2px solid #e9ecef;
+    }
+
+    .gc-summary-total .label {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .gc-summary-total .value {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: var(--gc-primary);
+    }
+
+    /* ============ WIZARD STEP PANELS ============ */
+    .gc-wizard-step {
+      display: none;
+      animation: fadeInUp 0.4s ease;
+    }
+
+    .gc-wizard-step.active {
+      display: block;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ============ CONFIRMATION MODAL ============ */
+    .gc-confirmation-icon {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gc-primary), var(--gc-primary-light));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 6px 20px rgba(26, 92, 46, 0.3);
+    }
+
+    .gc-confirmation-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .gc-confirmation-detail:last-child {
+      border-bottom: none;
+    }
+
+    .gc-confirmation-detail i {
+      width: 22px;
+      text-align: center;
+      color: var(--gc-primary);
+    }
+
+    .gc-confirmation-detail .detail-label {
+      color: #888;
+      font-size: 0.85rem;
+      min-width: 100px;
+    }
+
+    .gc-confirmation-detail .detail-value {
+      font-weight: 600;
+      color: var(--gc-dark);
+    }
+
+    /* ============ HERO SECTION ============ */
+    .gc-reservation-hero {
+      background: linear-gradient(135deg, var(--gc-primary-dark) 0%, var(--gc-primary) 50%, var(--gc-primary-light) 100%);
+      color: #fff;
+      padding: 2.5rem 0 1.5rem;
+      margin-bottom: 0;
+    }
+
+    .gc-reservation-hero h1 {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .gc-reservation-hero p {
+      color: rgba(255,255,255,0.8);
+      font-size: 1.05rem;
+      margin-bottom: 0;
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 768px) {
+      .gc-stepper {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1.2rem 0 1rem;
+      }
+
+      .gc-stepper-line {
+        width: 3px;
+        height: 20px;
+        margin: 0;
+      }
+
+      .gc-stepper-step {
+        flex-direction: row;
+      }
+
+      .gc-service-card {
+        padding: 1.5rem 1rem;
+      }
+
+      .gc-service-card .service-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+      }
+
+      .gc-reservation-hero h1 {
+        font-size: 1.5rem;
+      }
+
+      .gc-calendar-grid {
+        padding: 0.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAVBAR ============ -->
+  <nav class="navbar navbar-expand-lg gc-navbar sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">
+        <i class="fas fa-golf-ball-tee"></i>
+        Président Golf Club
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <i class="fas fa-bars text-white"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-center gap-1">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">
+              <i class="fas fa-home me-1"></i> Accueil
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="reservation.html">
+              <i class="fas fa-calendar-check me-1"></i> Réservation
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="client.html">
+              <i class="fas fa-user-circle me-1"></i> Mon Espace
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="jeu-golf.html">
+              <i class="fas fa-flag me-1"></i> Jeu de Golf
+            </a>
+          </li>
+          <li class="nav-item ms-lg-2">
+            <a class="btn btn-outline-light btn-sm" href="login.html" id="btnAuth">
+              <i class="fas fa-sign-in-alt me-1"></i> Connexion
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <section class="gc-reservation-hero">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1><i class="fas fa-calendar-plus me-2"></i>Nouvelle Reservation</h1>
+          <p>Reservez votre parcours de golf, une table au restaurant ou une salle de conference en quelques clics.</p>
+        </div>
+        <div class="col-md-4 text-md-end d-none d-md-block">
+          <i class="fas fa-golf-ball-tee" style="font-size: 4rem; opacity: 0.2;"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STEP WIZARD INDICATOR ============ -->
+  <div class="container">
+    <div class="gc-stepper" id="stepper">
+      <div class="gc-stepper-step active" data-step="1">
+        <div class="gc-stepper-circle">1</div>
+        <span class="gc-stepper-label">Service</span>
+      </div>
+      <div class="gc-stepper-line" id="line-1-2"></div>
+      <div class="gc-stepper-step" data-step="2">
+        <div class="gc-stepper-circle">2</div>
+        <span class="gc-stepper-label">Date &amp; Horaire</span>
+      </div>
+      <div class="gc-stepper-line" id="line-2-3"></div>
+      <div class="gc-stepper-step" data-step="3">
+        <div class="gc-stepper-circle">3</div>
+        <span class="gc-stepper-label">Confirmation</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ALERT CONTAINER ============ -->
+  <div class="container">
+    <div id="alertContainer"></div>
+  </div>
+
+  <!-- ============ STEP 1 : CHOOSE SERVICE ============ -->
+  <div class="gc-wizard-step active" id="step1">
+    <div class="container py-4">
+      <div class="text-center mb-4">
+        <h3 class="mb-2">Choisissez votre service</h3>
+        <p class="text-muted">Selectionnez le type de reservation que vous souhaitez effectuer.</p>
+      </div>
+
+      <div id="servicesLoading" class="text-center py-5">
+        <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <p class="mt-3 text-muted">Chargement des services disponibles...</p>
+      </div>
+
+      <div class="row g-4 justify-content-center" id="servicesGrid" style="display: none;">
+        <!-- Filled by JS -->
+      </div>
+
+      <!-- Fallback static cards (shown if API fails) -->
+      <div class="row g-4 justify-content-center" id="servicesFallback" style="display: none;">
+        <div class="col-lg-4 col-md-6">
+          <div class="gc-service-card position-relative" data-service="golf" onclick="selectService('golf', 'Golf', 45)">
+            <div class="check-mark"><i class="fas fa-check"></i></div>
+            <div class="service-icon icon-golf">
+              <i class="fas fa-golf-ball-tee"></i>
+            </div>
+            <div class="service-name">Golf</div>
+            <div class="service-desc">Reservez votre parcours sur notre green 18 trous. Profitez d'un cadre exceptionnel en pleine nature avec une belle vue depuis le lacs.</div>
+            <div class="service-price">A partir de 5000 FCFA</div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="gc-service-card position-relative" data-service="restaurant" onclick="selectService('restaurant', 'Restaurant', 30)">
+            <div class="check-mark"><i class="fas fa-check"></i></div>
+            <div class="service-icon icon-restaurant">
+              <i class="fas fa-utensils"></i>
+            </div>
+            <div class="service-name">Restaurant</div>
+            <div class="service-desc">Reservez une table sur notre surface de 160 m² avec terrasse en hauteur offrant une vue panoramique sur le parcours.</div>
+            <div class="service-price">A partir de 10.000 FCFA</div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="gc-service-card position-relative" data-service="salle" onclick="selectService('salle', 'Salle de Conference', 150)">
+            <div class="check-mark"><i class="fas fa-check"></i></div>
+            <div class="service-icon icon-salle">
+              <i class="fas fa-building"></i>
+            </div>
+            <div class="service-name">Salle de Conference</div>
+            <div class="service-desc">Louez une salle equipee pour vos reunions, seminaires et evenements professionnels.</div>
+            <div class="service-price">A partir de 30.000 FCFA</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-4" id="step1Nav" style="display: none;">
+        <button class="btn btn-gc-primary btn-lg px-5" onclick="goToStep(2)" id="btnStep1Next" disabled>
+          Continuer <i class="fas fa-arrow-right ms-2"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STEP 2 : DATE & TIME ============ -->
+  <div class="gc-wizard-step" id="step2">
+    <div class="container py-4">
+      <div class="text-center mb-4">
+        <h3 class="mb-2">Choisissez la date et l'horaire</h3>
+        <p class="text-muted">Selectionnez un jour puis un creneau horaire disponible.</p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Calendar -->
+        <div class="col-lg-5">
+          <div class="gc-calendar">
+            <div class="gc-calendar-header">
+              <button onclick="changeMonth(-1)" aria-label="Mois precedent">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <h5 id="calendarTitle"></h5>
+              <button onclick="changeMonth(1)" aria-label="Mois suivant">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+            <div class="gc-calendar-grid" id="calendarGrid">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+
+          <div class="mt-3 p-3 bg-white rounded-3 shadow-sm">
+            <small class="text-muted">
+              <i class="fas fa-info-circle me-1 text-primary"></i>
+              Cliquez sur une date pour voir les creneaux disponibles. Les dates grisees ne sont pas disponibles.
+            </small>
+          </div>
+        </div>
+
+        <!-- Time Slots -->
+        <div class="col-lg-7">
+          <div class="gc-card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <span><i class="far fa-clock me-2"></i>Creneaux disponibles</span>
+              <span class="badge bg-light text-dark" id="selectedDateBadge" style="display: none;"></span>
+            </div>
+            <div class="card-body" id="slotsContainer">
+              <div class="gc-empty-state">
+                <i class="far fa-calendar-alt d-block"></i>
+                <p>Selectionnez une date pour voir les creneaux horaires disponibles.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between mt-4">
+        <button class="btn btn-outline-secondary btn-lg px-4" onclick="goToStep(1)">
+          <i class="fas fa-arrow-left me-2"></i> Retour
+        </button>
+        <button class="btn btn-gc-primary btn-lg px-5" onclick="goToStep(3)" id="btnStep2Next" disabled>
+          Continuer <i class="fas fa-arrow-right ms-2"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STEP 3 : DETAILS & CONFIRM ============ -->
+  <div class="gc-wizard-step" id="step3">
+    <div class="container py-4">
+      <div class="text-center mb-4">
+        <h3 class="mb-2">Finalisez votre reservation</h3>
+        <p class="text-muted">Renseignez les derniers details et confirmez votre reservation.</p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Form -->
+        <div class="col-lg-7">
+          <div class="gc-card">
+            <div class="card-header">
+              <i class="fas fa-pen me-2"></i>Details de la reservation
+            </div>
+            <div class="card-body gc-form">
+              <!-- Number of people -->
+              <div class="mb-3">
+                <label for="inputPersonnes" class="form-label">
+                  <i class="fas fa-users me-1"></i> Nombre de personnes
+                </label>
+                <input type="number" class="form-control" id="inputPersonnes" min="1" max="50" value="1"
+                       placeholder="Nombre de participants" onchange="updateSummary()">
+              </div>
+
+              <!-- Golf specific options -->
+              <div id="optionsGolf" style="display: none;">
+                <div class="mb-3">
+                  <label for="selectNiveau" class="form-label">
+                    <i class="fas fa-chart-line me-1"></i> Niveau de jeu
+                  </label>
+                  <select class="form-select" id="selectNiveau">
+                    <option value="debutant">Debutant</option>
+                    <option value="intermediaire" selected>Intermediaire</option>
+                    <option value="avance">Avance</option>
+                    <option value="expert">Expert</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="selectParcours" class="form-label">
+                    <i class="fas fa-flag me-1"></i> Type de parcours
+                  </label>
+                  <select class="form-select" id="selectParcours">
+                    <option value="18_trous">18 trous - Parcours complet</option>
+                    <option value="9_trous">9 trous - Demi-parcours</option>
+                    <option value="practice">Practice</option>
+                  </select>
+                </div>
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="checkCaddie" onchange="updateSummary()">
+                  <label class="form-check-label" for="checkCaddie">
+                    Ajouter un caddie (+5 000 FCFA)
+                  </label>
+                </div>
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="checkVoiturette" onchange="updateSummary()">
+                  <label class="form-check-label" for="checkVoiturette">
+                    Location voiturette (+3 000 FCFA)
+                  </label>
+                </div>
+              </div>
+
+              <!-- Restaurant specific options -->
+              <div id="optionsRestaurant" style="display: none;">
+                <div class="mb-3">
+                  <label for="selectFormule" class="form-label">
+                    <i class="fas fa-utensils me-1"></i> Formule
+                  </label>
+                  <select class="form-select" id="selectFormule" onchange="updateSummary()">
+                    <option value="menu_dejeuner" data-price="10000">Menu déjeuner - 10 000 FCFA</option>
+                    <option value="menu_diner" data-price="15000">Menu dîner - 15 000 FCFA</option>
+                    <option value="menu_gastronomique" data-price="25000">Menu gastronomique - 25 000 FCFA</option>
+                    <option value="brunch" data-price="12000">Brunch du dimanche - 12 000 FCFA</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="selectEmplacement" class="form-label">
+                    <i class="fas fa-map-marker-alt me-1"></i> Emplacement prefere
+                  </label>
+                  <select class="form-select" id="selectEmplacement">
+                    <option value="interieur">Interieur</option>
+                    <option value="terrasse">Terrasse (vue sur le parcours)</option>
+                    <option value="salon_prive">Salon prive</option>
+                  </select>
+                </div>
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="checkAllergies">
+                  <label class="form-check-label" for="checkAllergies">
+                    Allergies alimentaires ou regime special
+                  </label>
+                </div>
+                <div class="mb-3" id="allergiesDetail" style="display: none;">
+                  <textarea class="form-control" id="inputAllergies" rows="2" placeholder="Precisez vos allergies ou restrictions..."></textarea>
+                </div>
+              </div>
+
+              <!-- Salle specific options -->
+              <div id="optionsSalle" style="display: none;">
+                <div class="mb-3">
+                  <label for="selectConfig" class="form-label">
+                    <i class="fas fa-th-large me-1"></i> Configuration de la salle
+                  </label>
+                  <select class="form-select" id="selectConfig">
+                    <option value="theatre">Theatre (presentation)</option>
+                    <option value="classe">Classe (formation)</option>
+                    <option value="u_shape">U (reunion)</option>
+                    <option value="banquet">Banquet (reception)</option>
+                    <option value="cocktail">Cocktail</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="selectEquipement" class="form-label">
+                    <i class="fas fa-tv me-1"></i> Equipement
+                  </label>
+                  <select class="form-select" id="selectEquipement" multiple size="3">
+                    <option value="videoprojecteur" selected>Videoprojecteur</option>
+                    <option value="ecran">Ecran geant</option>
+                    <option value="micro">Microphone et sonorisation</option>
+                    <option value="paperboard">Paperboard</option>
+                    <option value="visioconference">Systeme de visioconference</option>
+                  </select>
+                  <small class="text-muted">Maintenez Ctrl pour selectionner plusieurs elements.</small>
+                </div>
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="checkPause" onchange="updateSummary()">
+                  <label class="form-check-label" for="checkPause">
+                    Pause café et viennoiseries (+2 000 FCFA/pers.)
+                  </label>
+                </div>
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="checkRepas" onchange="updateSummary()">
+                  <label class="form-check-label" for="checkRepas">
+                    Déjeuner d'affaires (+10 000 FCFA/pers.)
+                  </label>
+                </div>
+              </div>
+
+              <!-- Notes -->
+              <div class="mb-3">
+                <label for="inputNotes" class="form-label">
+                  <i class="fas fa-comment me-1"></i> Notes ou demandes speciales
+                </label>
+                <textarea class="form-control" id="inputNotes" rows="3" placeholder="Informations complementaires, demandes particulieres..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="col-lg-5">
+          <div class="gc-summary" id="reservationSummary">
+            <div class="gc-summary-header">
+              <i class="fas fa-receipt me-2"></i>Recapitulatif
+            </div>
+            <div class="gc-summary-body">
+              <div class="gc-summary-row">
+                <span class="label">Service</span>
+                <span class="value" id="sumService">--</span>
+              </div>
+              <div class="gc-summary-row">
+                <span class="label">Date</span>
+                <span class="value" id="sumDate">--</span>
+              </div>
+              <div class="gc-summary-row">
+                <span class="label">Horaire</span>
+                <span class="value" id="sumTime">--</span>
+              </div>
+              <div class="gc-summary-row">
+                <span class="label">Personnes</span>
+                <span class="value" id="sumPersonnes">1</span>
+              </div>
+              <div class="gc-summary-row" id="sumOptionsRow" style="display: none;">
+                <span class="label">Options</span>
+                <span class="value" id="sumOptions">--</span>
+              </div>
+            </div>
+            <div class="gc-summary-total">
+              <span class="label">Total estime</span>
+              <span class="value" id="sumTotal">0,00 &euro;</span>
+            </div>
+          </div>
+
+          <div class="mt-3 p-3 bg-white rounded-3 shadow-sm">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="checkConditions">
+              <label class="form-check-label" for="checkConditions">
+                J'accepte les <a href="#" class="text-decoration-none" style="color: var(--gc-primary);">conditions generales</a> et la
+                <a href="#" class="text-decoration-none" style="color: var(--gc-primary);">politique d'annulation</a>.
+              </label>
+            </div>
+          </div>
+
+          <button class="btn btn-gc-primary btn-lg w-100 mt-3 py-3" id="btnConfirm" onclick="confirmReservation()" disabled>
+            <i class="fas fa-check-circle me-2"></i>Confirmer la reservation
+          </button>
+
+          <div class="text-center mt-2">
+            <small class="text-muted">
+              <i class="fas fa-lock me-1"></i> Paiement securise - Annulation gratuite sous 24h
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <button class="btn btn-outline-secondary btn-lg px-4" onclick="goToStep(2)">
+          <i class="fas fa-arrow-left me-2"></i> Retour
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CONFIRMATION MODAL ============ -->
+  <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0" style="border-radius: var(--gc-border-radius); overflow: hidden;">
+        <div class="modal-body text-center p-5">
+          <div class="gc-confirmation-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <h3 class="mb-2" style="color: var(--gc-dark);">Reservation confirmee !</h3>
+          <p class="text-muted mb-4">Votre reservation a ete enregistree avec succes. Un email de confirmation vous sera envoye.</p>
+
+          <div class="text-start mx-auto" style="max-width: 350px;">
+            <div class="gc-confirmation-detail">
+              <i class="fas fa-hashtag"></i>
+              <span class="detail-label">N&deg; Reservation</span>
+              <span class="detail-value" id="confirmNum">--</span>
+            </div>
+            <div class="gc-confirmation-detail">
+              <i class="fas fa-concierge-bell"></i>
+              <span class="detail-label">Service</span>
+              <span class="detail-value" id="confirmService">--</span>
+            </div>
+            <div class="gc-confirmation-detail">
+              <i class="fas fa-calendar-day"></i>
+              <span class="detail-label">Date</span>
+              <span class="detail-value" id="confirmDate">--</span>
+            </div>
+            <div class="gc-confirmation-detail">
+              <i class="fas fa-clock"></i>
+              <span class="detail-label">Horaire</span>
+              <span class="detail-value" id="confirmTime">--</span>
+            </div>
+            <div class="gc-confirmation-detail">
+              <i class="fas fa-info-circle"></i>
+              <span class="detail-label">Statut</span>
+              <span class="detail-value" id="confirmStatus">--</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 justify-content-center gap-2 pb-4">
+          <a href="client.html" class="btn btn-gc-primary px-4">
+            <i class="fas fa-list me-1"></i> Mes reservations
+          </a>
+          <button type="button" class="btn btn-outline-secondary px-4" onclick="resetWizard()">
+            <i class="fas fa-plus me-1"></i> Nouvelle reservation
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="py-4 mt-5" style="background: var(--gc-dark); color: rgba(255,255,255,0.6);">
+    <div class="container text-center">
+      <p class="mb-1" style="font-size: 0.9rem;">&copy; 2026 Président Golf Club. Tous droits réservés.</p>
+      <p class="mb-0" style="font-size: 0.8rem;">
+        <a href="#" class="text-decoration-none" style="color: var(--gc-secondary);">Mentions legales</a>
+        <span class="mx-2">|</span>
+        <a href="#" class="text-decoration-none" style="color: var(--gc-secondary);">Politique de confidentialite</a>
+        <span class="mx-2">|</span>
+        <a href="#" class="text-decoration-none" style="color: var(--gc-secondary);">Contact</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- API Module -->
+  <script src="js/api.js"></script>
+
+  <script>
+    'use strict';
+
+    // ==================== STATE ====================
+    const state = {
+      currentStep: 1,
+      selectedService: null,
+      selectedServiceName: null,
+      selectedServicePrice: 0,
+      selectedDate: null,
+      selectedSlot: null,
+      calendarYear: new Date().getFullYear(),
+      calendarMonth: new Date().getMonth(),
+      availableSlots: [],
+      services: [],
+    };
+
+    const DAYS_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+    const MONTHS_FR = [
+      'Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'
+    ];
+
+    // ==================== INIT ====================
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+      loadServices();
+      renderCalendar();
+      setupEventListeners();
+    });
+
+    function checkAuth() {
+      const btnAuth = document.getElementById('btnAuth');
+      if (isAuthenticated()) {
+        btnAuth.innerHTML = '<i class="fas fa-sign-out-alt me-1"></i> Deconnexion';
+        btnAuth.href = '#';
+        btnAuth.onclick = (e) => {
+          e.preventDefault();
+          removeToken();
+          window.location.href = 'login.html';
+        };
+      }
+    }
+
+    function setupEventListeners() {
+      document.getElementById('checkAllergies').addEventListener('change', function () {
+        document.getElementById('allergiesDetail').style.display = this.checked ? 'block' : 'none';
+      });
+
+      document.getElementById('checkConditions').addEventListener('change', function () {
+        document.getElementById('btnConfirm').disabled = !this.checked;
+      });
+
+      document.getElementById('inputPersonnes').addEventListener('input', updateSummary);
+    }
+
+    // ==================== SERVICES (Step 1) ====================
+    async function loadServices() {
+      const loading = document.getElementById('servicesLoading');
+      const grid = document.getElementById('servicesGrid');
+      const fallback = document.getElementById('servicesFallback');
+      const nav = document.getElementById('step1Nav');
+
+      try {
+        const response = await ServicesAPI.list();
+        const services = response.data || response.services || response;
+
+        if (Array.isArray(services) && services.length > 0) {
+          state.services = services;
+          renderServiceCards(services);
+          loading.style.display = 'none';
+          grid.style.display = '';
+          grid.classList.add('d-flex', 'flex-wrap');
+          nav.style.display = '';
+        } else {
+          throw new Error('Aucun service disponible');
+        }
+      } catch (error) {
+        console.warn('Chargement des services depuis l\'API echoue, utilisation du fallback:', error);
+        loading.style.display = 'none';
+        fallback.style.display = '';
+        nav.style.display = '';
+      }
+    }
+
+    function renderServiceCards(services) {
+      const grid = document.getElementById('servicesGrid');
+      const iconMap = {
+        golf: { icon: 'fas fa-golf-ball-tee', class: 'icon-golf' },
+        restaurant: { icon: 'fas fa-utensils', class: 'icon-restaurant' },
+        salle: { icon: 'fas fa-building', class: 'icon-salle' },
+      };
+
+      grid.innerHTML = services.map(service => {
+        const code = (service.code || service.type || '').toLowerCase();
+        const iconInfo = iconMap[code] || { icon: 'fas fa-concierge-bell', class: 'icon-golf' };
+        const name = service.nom || service.name || code;
+        const desc = service.description || '';
+        const price = service.prix_base || service.price || 0;
+
+        return `
+          <div class="col-lg-4 col-md-6">
+            <div class="gc-service-card position-relative" data-service="${code}" onclick="selectService('${code}', '${name.replace(/'/g, "\\'")}', ${price})">
+              <div class="check-mark"><i class="fas fa-check"></i></div>
+              <div class="service-icon ${iconInfo.class}">
+                <i class="${iconInfo.icon}"></i>
+              </div>
+              <div class="service-name">${name}</div>
+              <div class="service-desc">${desc}</div>
+              ${price > 0 ? `<div class="service-price">A partir de ${formatPrice(price)}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectService(code, name, price) {
+      state.selectedService = code;
+      state.selectedServiceName = name;
+      state.selectedServicePrice = price || 0;
+
+      // Visual feedback
+      document.querySelectorAll('.gc-service-card').forEach(card => {
+        card.classList.toggle('selected', card.dataset.service === code);
+      });
+
+      document.getElementById('btnStep1Next').disabled = false;
+
+      // Reset downstream selections
+      state.selectedDate = null;
+      state.selectedSlot = null;
+      document.getElementById('btnStep2Next').disabled = true;
+    }
+
+    // ==================== CALENDAR (Step 2) ====================
+    function renderCalendar() {
+      const grid = document.getElementById('calendarGrid');
+      const title = document.getElementById('calendarTitle');
+
+      title.textContent = `${MONTHS_FR[state.calendarMonth]} ${state.calendarYear}`;
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const firstDay = new Date(state.calendarYear, state.calendarMonth, 1);
+      const lastDay = new Date(state.calendarYear, state.calendarMonth + 1, 0);
+
+      // Day of week for first day (Mon=0, Sun=6)
+      let startDow = firstDay.getDay() - 1;
+      if (startDow < 0) startDow = 6;
+
+      let html = '';
+
+      // Day labels
+      DAYS_FR.forEach(d => {
+        html += `<div class="gc-calendar-day-label">${d}</div>`;
+      });
+
+      // Empty cells before first day
+      for (let i = 0; i < startDow; i++) {
+        html += '<div class="gc-calendar-day empty"></div>';
+      }
+
+      // Days
+      for (let day = 1; day <= lastDay.getDate(); day++) {
+        const date = new Date(state.calendarYear, state.calendarMonth, day);
+        const dateStr = formatDateISO(date);
+        const isToday = date.getTime() === today.getTime();
+        const isPast = date < today;
+        const isSelected = state.selectedDate === dateStr;
+
+        let classes = 'gc-calendar-day';
+        if (isToday) classes += ' today';
+        if (isPast) classes += ' disabled';
+        if (isSelected) classes += ' selected';
+
+        if (isPast) {
+          html += `<div class="${classes}">${day}</div>`;
+        } else {
+          html += `<div class="${classes}" onclick="selectDate('${dateStr}')" role="button">${day}</div>`;
+        }
+      }
+
+      grid.innerHTML = html;
+    }
+
+    function changeMonth(delta) {
+      state.calendarMonth += delta;
+      if (state.calendarMonth > 11) {
+        state.calendarMonth = 0;
+        state.calendarYear++;
+      } else if (state.calendarMonth < 0) {
+        state.calendarMonth = 11;
+        state.calendarYear--;
+      }
+      renderCalendar();
+    }
+
+    async function selectDate(dateStr) {
+      state.selectedDate = dateStr;
+      state.selectedSlot = null;
+      document.getElementById('btnStep2Next').disabled = true;
+
+      renderCalendar();
+
+      // Show selected date badge
+      const badge = document.getElementById('selectedDateBadge');
+      badge.textContent = formatDateFR(dateStr);
+      badge.style.display = '';
+
+      await loadSlots(dateStr);
+    }
+
+    // ==================== SLOTS ====================
+    async function loadSlots(dateStr) {
+      const container = document.getElementById('slotsContainer');
+      container.innerHTML = `
+        <div class="text-center py-4">
+          <div class="spinner-border text-success" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+          <p class="mt-2 text-muted mb-0">Recherche des creneaux disponibles...</p>
+        </div>
+      `;
+
+      try {
+        let slots = [];
+        const params = `date=${dateStr}`;
+
+        if (state.selectedService === 'golf') {
+          const response = await GolfAPI.disponibilites(params);
+          slots = response.data || response.disponibilites || response.creneaux || response || [];
+        } else if (state.selectedService === 'restaurant') {
+          const response = await RestaurantAPI.disponibilites(params);
+          slots = response.data || response.disponibilites || response.creneaux || response || [];
+        } else if (state.selectedService === 'salle') {
+          const response = await CreneauxAPI.disponibles(`${params}&service=salle`);
+          slots = response.data || response.creneaux || response || [];
+        }
+
+        if (!Array.isArray(slots)) slots = [];
+
+        state.availableSlots = slots;
+        renderSlots(slots);
+      } catch (error) {
+        console.error('Erreur chargement creneaux:', error);
+        // Show fallback generated slots
+        const fallbackSlots = generateFallbackSlots(dateStr);
+        state.availableSlots = fallbackSlots;
+        renderSlots(fallbackSlots);
+      }
+    }
+
+    function generateFallbackSlots(dateStr) {
+      const slots = [];
+      let startHour, endHour;
+
+      if (state.selectedService === 'golf') {
+        startHour = 7; endHour = 17;
+      } else if (state.selectedService === 'restaurant') {
+        startHour = 11; endHour = 22;
+      } else {
+        startHour = 8; endHour = 19;
+      }
+
+      for (let h = startHour; h <= endHour; h++) {
+        const remaining = Math.floor(Math.random() * 8) + 1;
+        slots.push({
+          id: `slot-${h}`,
+          heure_debut: `${String(h).padStart(2, '0')}:00`,
+          heure_fin: `${String(h + 1).padStart(2, '0')}:00`,
+          date: dateStr,
+          places_restantes: remaining,
+          capacite_max: 8,
+          disponible: remaining > 0,
+        });
+      }
+      return slots;
+    }
+
+    function renderSlots(slots) {
+      const container = document.getElementById('slotsContainer');
+
+      if (!slots || slots.length === 0) {
+        container.innerHTML = `
+          <div class="gc-empty-state">
+            <i class="fas fa-calendar-times d-block"></i>
+            <p>Aucun creneau disponible pour cette date.</p>
+            <small class="text-muted">Essayez une autre date ou un autre service.</small>
+          </div>
+        `;
+        return;
+      }
+
+      const html = `
+        <div class="row g-2">
+          ${slots.map(slot => {
+            const timeStart = slot.heure_debut || slot.start_time || slot.heure || '';
+            const timeEnd = slot.heure_fin || slot.end_time || '';
+            const remaining = slot.places_restantes ?? slot.remaining ?? slot.capacity ?? '--';
+            const maxCap = slot.capacite_max || slot.max_capacity || 8;
+            const available = slot.disponible !== false && remaining > 0;
+            const slotId = slot.id || slot._id || timeStart;
+
+            let capacityClass = '';
+            let capacityText = `${remaining} place${remaining > 1 ? 's' : ''} restante${remaining > 1 ? 's' : ''}`;
+            if (!available) {
+              capacityClass = 'full';
+              capacityText = 'Complet';
+            } else if (remaining <= 2) {
+              capacityClass = 'low';
+            }
+
+            const displayTime = timeEnd ? `${timeStart} - ${timeEnd}` : timeStart;
+
+            return `
+              <div class="col-6 col-md-4 col-lg-3">
+                <div class="gc-slot ${!available ? 'disabled' : ''} ${state.selectedSlot && state.selectedSlot.id === slotId ? 'selected' : ''}"
+                     ${available ? `onclick="selectSlot('${slotId}', '${timeStart}', '${timeEnd}', ${remaining})"` : ''}
+                     role="button">
+                  <div class="slot-time">${displayTime}</div>
+                  <div class="slot-capacity ${capacityClass}">${capacityText}</div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    function selectSlot(slotId, timeStart, timeEnd, remaining) {
+      state.selectedSlot = { id: slotId, timeStart, timeEnd, remaining };
+
+      // Visual feedback
+      document.querySelectorAll('.gc-slot').forEach(slot => slot.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+
+      document.getElementById('btnStep2Next').disabled = false;
+    }
+
+    // ==================== STEP NAVIGATION ====================
+    function goToStep(step) {
+      // Validation before proceeding
+      if (step === 2 && !state.selectedService) {
+        showAlert(document.getElementById('alertContainer'), 'Veuillez selectionner un service.', 'warning');
+        return;
+      }
+      if (step === 3 && (!state.selectedDate || !state.selectedSlot)) {
+        showAlert(document.getElementById('alertContainer'), 'Veuillez selectionner une date et un creneau horaire.', 'warning');
+        return;
+      }
+
+      // Auth check before step 3
+      if (step === 3 && !isAuthenticated()) {
+        showAlert(document.getElementById('alertContainer'),
+          'Vous devez etre connecte pour finaliser votre reservation. <a href="login.html" class="alert-link">Se connecter</a>', 'warning');
+        setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+        return;
+      }
+
+      state.currentStep = step;
+
+      // Update wizard panels
+      document.querySelectorAll('.gc-wizard-step').forEach(panel => panel.classList.remove('active'));
+      document.getElementById(`step${step}`).classList.add('active');
+
+      // Update stepper indicators
+      document.querySelectorAll('.gc-stepper-step').forEach(s => {
+        const sStep = parseInt(s.dataset.step);
+        s.classList.remove('active', 'completed');
+        if (sStep === step) s.classList.add('active');
+        else if (sStep < step) s.classList.add('completed');
+      });
+
+      // Update stepper lines
+      document.getElementById('line-1-2').classList.toggle('completed', step >= 2);
+      document.getElementById('line-2-3').classList.toggle('completed', step >= 3);
+
+      // Step-specific setup
+      if (step === 2) {
+        renderCalendar();
+      }
+
+      if (step === 3) {
+        setupStep3();
+        updateSummary();
+      }
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setupStep3() {
+      // Show/hide service-specific options
+      document.getElementById('optionsGolf').style.display = state.selectedService === 'golf' ? 'block' : 'none';
+      document.getElementById('optionsRestaurant').style.display = state.selectedService === 'restaurant' ? 'block' : 'none';
+      document.getElementById('optionsSalle').style.display = state.selectedService === 'salle' ? 'block' : 'none';
+
+      // Set max persons based on service
+      const inputPersonnes = document.getElementById('inputPersonnes');
+      if (state.selectedService === 'golf') {
+        inputPersonnes.max = 4;
+        inputPersonnes.value = Math.min(parseInt(inputPersonnes.value) || 1, 4);
+      } else if (state.selectedService === 'restaurant') {
+        inputPersonnes.max = 20;
+      } else {
+        inputPersonnes.max = 50;
+      }
+
+      // Reset conditions checkbox
+      document.getElementById('checkConditions').checked = false;
+      document.getElementById('btnConfirm').disabled = true;
+    }
+
+    // ==================== SUMMARY ====================
+    function updateSummary() {
+      document.getElementById('sumService').textContent = state.selectedServiceName || '--';
+      document.getElementById('sumDate').textContent = state.selectedDate ? formatDateFR(state.selectedDate) : '--';
+
+      if (state.selectedSlot) {
+        const timeDisplay = state.selectedSlot.timeEnd
+          ? `${state.selectedSlot.timeStart} - ${state.selectedSlot.timeEnd}`
+          : state.selectedSlot.timeStart;
+        document.getElementById('sumTime').textContent = timeDisplay;
+      } else {
+        document.getElementById('sumTime').textContent = '--';
+      }
+
+      const personnes = parseInt(document.getElementById('inputPersonnes').value) || 1;
+      document.getElementById('sumPersonnes').textContent = personnes;
+
+      // Calculate total
+      let total = 0;
+      let optionsText = [];
+
+      if (state.selectedService === 'golf') {
+        total = (state.selectedServicePrice || 5000) * personnes;
+        if (document.getElementById('checkCaddie').checked) {
+          total += 5000;
+          optionsText.push('Caddie');
+        }
+        if (document.getElementById('checkVoiturette').checked) {
+          total += 3000;
+          optionsText.push('Voiturette');
+        }
+      } else if (state.selectedService === 'restaurant') {
+        const formuleSelect = document.getElementById('selectFormule');
+        const formulePrice = parseInt(formuleSelect.selectedOptions[0]?.dataset.price) || state.selectedServicePrice || 10000;
+        total = formulePrice * personnes;
+        optionsText.push(formuleSelect.selectedOptions[0]?.text.split(' - ')[0] || '');
+      } else if (state.selectedService === 'salle') {
+        total = state.selectedServicePrice || 30000;
+        if (document.getElementById('checkPause').checked) {
+          total += 2000 * personnes;
+          optionsText.push('Pause café');
+        }
+        if (document.getElementById('checkRepas').checked) {
+          total += 10000 * personnes;
+          optionsText.push('Déjeuner');
+        }
+      }
+
+      // Options display
+      const optionsRow = document.getElementById('sumOptionsRow');
+      if (optionsText.length > 0) {
+        optionsRow.style.display = '';
+        document.getElementById('sumOptions').textContent = optionsText.join(', ');
+      } else {
+        optionsRow.style.display = 'none';
+      }
+
+      document.getElementById('sumTotal').textContent = formatPrice(total);
+    }
+
+    // ==================== CONFIRM RESERVATION ====================
+    async function confirmReservation() {
+      const btnConfirm = document.getElementById('btnConfirm');
+      const originalText = btnConfirm.innerHTML;
+
+      // Auth gate
+      if (!isAuthenticated()) {
+        showAlert(document.getElementById('alertContainer'),
+          'Veuillez vous connecter pour effectuer une reservation. <a href="login.html" class="alert-link">Connexion</a>', 'warning');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Loading state
+      btnConfirm.disabled = true;
+      btnConfirm.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Reservation en cours...';
+
+      const personnes = parseInt(document.getElementById('inputPersonnes').value) || 1;
+      const notes = document.getElementById('inputNotes').value.trim();
+
+      try {
+        let result;
+
+        if (state.selectedService === 'golf') {
+          const data = {
+            date: state.selectedDate,
+            creneau_id: state.selectedSlot.id,
+            heure: state.selectedSlot.timeStart,
+            nombre_joueurs: personnes,
+            niveau: document.getElementById('selectNiveau').value,
+            parcours: document.getElementById('selectParcours').value,
+            caddie: document.getElementById('checkCaddie').checked,
+            voiturette: document.getElementById('checkVoiturette').checked,
+            notes: notes,
+          };
+          result = await GolfAPI.reserver(data);
+
+        } else if (state.selectedService === 'restaurant') {
+          const data = {
+            date: state.selectedDate,
+            creneau_id: state.selectedSlot.id,
+            heure: state.selectedSlot.timeStart,
+            nombre_couverts: personnes,
+            formule: document.getElementById('selectFormule').value,
+            emplacement: document.getElementById('selectEmplacement').value,
+            allergies: document.getElementById('checkAllergies').checked
+              ? document.getElementById('inputAllergies').value.trim()
+              : null,
+            notes: notes,
+          };
+          result = await RestaurantAPI.reserver(data);
+
+        } else {
+          // Salle / generic reservation
+          const equipSelect = document.getElementById('selectEquipement');
+          const equipements = Array.from(equipSelect.selectedOptions).map(o => o.value);
+
+          const data = {
+            service_type: 'salle',
+            date: state.selectedDate,
+            creneau_id: state.selectedSlot.id,
+            heure_debut: state.selectedSlot.timeStart,
+            heure_fin: state.selectedSlot.timeEnd,
+            nombre_personnes: personnes,
+            configuration: document.getElementById('selectConfig').value,
+            equipements: equipements,
+            pause_cafe: document.getElementById('checkPause').checked,
+            dejeuner: document.getElementById('checkRepas').checked,
+            notes: notes,
+          };
+          result = await ReservationsAPI.create(data);
+        }
+
+        // Success - show modal
+        const reservation = result.data || result.reservation || result;
+        showConfirmation(reservation);
+
+      } catch (error) {
+        console.error('Erreur lors de la reservation:', error);
+        const message = error.message || 'Une erreur est survenue lors de la reservation. Veuillez reessayer.';
+        showAlert(document.getElementById('alertContainer'), message, 'danger');
+
+        btnConfirm.disabled = false;
+        btnConfirm.innerHTML = originalText;
+
+        // Re-enable only if conditions still checked
+        if (!document.getElementById('checkConditions').checked) {
+          btnConfirm.disabled = true;
+        }
+      }
+    }
+
+    function showConfirmation(reservation) {
+      const id = reservation.id || reservation._id || reservation.numero || '--';
+      const status = reservation.statut || reservation.status || 'en_attente';
+
+      document.getElementById('confirmNum').textContent = typeof id === 'number' ? `#${id}` : id;
+      document.getElementById('confirmService').textContent = state.selectedServiceName;
+      document.getElementById('confirmDate').textContent = formatDateFR(state.selectedDate);
+
+      const timeDisplay = state.selectedSlot.timeEnd
+        ? `${state.selectedSlot.timeStart} - ${state.selectedSlot.timeEnd}`
+        : state.selectedSlot.timeStart;
+      document.getElementById('confirmTime').textContent = timeDisplay;
+
+      document.getElementById('confirmStatus').innerHTML = formatStatus(status);
+
+      const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+      modal.show();
+    }
+
+    // ==================== RESET ====================
+    function resetWizard() {
+      // Close modal
+      const modalEl = document.getElementById('confirmationModal');
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      if (modal) modal.hide();
+
+      // Reset state
+      state.currentStep = 1;
+      state.selectedService = null;
+      state.selectedServiceName = null;
+      state.selectedServicePrice = 0;
+      state.selectedDate = null;
+      state.selectedSlot = null;
+      state.calendarYear = new Date().getFullYear();
+      state.calendarMonth = new Date().getMonth();
+      state.availableSlots = [];
+
+      // Reset UI
+      document.querySelectorAll('.gc-service-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById('btnStep1Next').disabled = true;
+      document.getElementById('btnStep2Next').disabled = true;
+      document.getElementById('inputPersonnes').value = 1;
+      document.getElementById('inputNotes').value = '';
+      document.getElementById('checkConditions').checked = false;
+      document.getElementById('btnConfirm').disabled = true;
+      document.getElementById('btnConfirm').innerHTML = '<i class="fas fa-check-circle me-2"></i>Confirmer la reservation';
+      document.getElementById('selectedDateBadge').style.display = 'none';
+
+      // Reset slots container
+      document.getElementById('slotsContainer').innerHTML = `
+        <div class="gc-empty-state">
+          <i class="far fa-calendar-alt d-block"></i>
+          <p>Selectionnez une date pour voir les creneaux horaires disponibles.</p>
+        </div>
+      `;
+
+      goToStep(1);
+    }
+
+    // ==================== UTILITY FUNCTIONS ====================
+    function formatDateISO(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function formatDateFR(dateStr) {
+      const parts = dateStr.split('-');
+      const date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      return date.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+    }
+  </script>
+
+</body>
+</html>

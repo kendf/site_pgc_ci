@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(del r.html)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(git -C /c/Users/Kenfr/Documents/site_pgc.ci log --oneline)"
     ]
   }
 }

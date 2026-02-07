@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Espace - Président Golf Club</title>
+
+  <!-- Bootstrap 5.3.2 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome 6.4.0 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link href="css/style.css" rel="stylesheet">
+
+  <style>
+    /* Client-specific layout styles */
+    .gc-layout {
+      display: flex;
+      min-height: calc(100vh - 62px);
+    }
+
+    .gc-sidebar {
+      width: 260px;
+      flex-shrink: 0;
+    }
+
+    .gc-main-content {
+      flex: 1;
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+    }
+
+    .gc-section {
+      display: none;
+    }
+
+    .gc-section.active {
+      display: block;
+    }
+
+    .gc-welcome-card {
+      background: linear-gradient(135deg, var(--gc-primary-dark), var(--gc-primary-light));
+      color: #fff;
+      border-radius: var(--gc-border-radius);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .gc-welcome-card h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .gc-welcome-card p {
+      opacity: 0.9;
+      margin: 0;
+    }
+
+    .gc-quick-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .gc-filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .gc-filter-tab {
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      border: 1px solid #dee2e6;
+      background: #fff;
+      color: #555;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: var(--gc-transition);
+    }
+
+    .gc-filter-tab:hover {
+      border-color: var(--gc-primary-light);
+      color: var(--gc-primary);
+    }
+
+    .gc-filter-tab.active {
+      background: var(--gc-primary);
+      color: #fff;
+      border-color: var(--gc-primary);
+    }
+
+    .gc-golf-stats-summary {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .gc-golf-stat-item {
+      background: #fff;
+      border-radius: var(--gc-border-radius);
+      box-shadow: var(--gc-card-shadow);
+      padding: 1.2rem 1.5rem;
+      text-align: center;
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .gc-golf-stat-item .stat-number {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gc-primary);
+    }
+
+    .gc-golf-stat-item .stat-text {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 0.25rem;
+    }
+
+    .gc-profile-card {
+      background: #fff;
+      border-radius: var(--gc-border-radius);
+      box-shadow: var(--gc-card-shadow);
+      padding: 2rem;
+    }
+
+    .gc-alert-container {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 1050;
+      max-width: 400px;
+    }
+
+    .btn-annuler {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.75rem;
+    }
+
+    .btn-supprimer {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.75rem;
+    }
+
+    .gc-table-container {
+      background: #fff;
+      border-radius: var(--gc-border-radius);
+      box-shadow: var(--gc-card-shadow);
+      overflow: hidden;
+    }
+
+    .gc-table-container .table {
+      margin: 0;
+    }
+
+    .gc-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .gc-section-header h2 {
+      font-size: 1.5rem;
+      color: var(--gc-dark);
+      margin: 0;
+    }
+
+    .gc-loading-overlay {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      .gc-layout {
+        flex-direction: column;
+      }
+
+      .gc-sidebar {
+        width: 100%;
+      }
+
+      .gc-main-content {
+        padding: 1rem;
+      }
+
+      .gc-welcome-card {
+        padding: 1.5rem;
+      }
+
+      .gc-golf-stats-summary {
+        flex-direction: column;
+      }
+
+      .gc-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAVBAR ============ -->
+  <nav class="navbar navbar-expand-lg gc-navbar sticky-top">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand" href="../index.html">
+        <i class="fas fa-golf-ball"></i>
+        Président Golf Club
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarMain">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">
+              <i class="fas fa-home me-1"></i> Accueil
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="reservation.html">
+              <i class="fas fa-calendar-alt me-1"></i> Réservation
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="client.html">
+              <i class="fas fa-user me-1"></i> Mon Espace
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="jeu-golf.html">
+              <i class="fas fa-golf-ball me-1"></i> Jeu de Golf
+            </a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center gap-3">
+          <span class="text-white-50 d-none d-lg-inline" id="navUserName"></span>
+          <button class="btn btn-outline-light" id="btnLogout" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt me-1"></i> Deconnexion
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ ALERT CONTAINER ============ -->
+  <div class="gc-alert-container" id="alertContainer"></div>
+
+  <!-- ============ MAIN LAYOUT ============ -->
+  <div class="gc-layout">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="gc-sidebar">
+      <nav class="nav flex-column">
+        <a class="nav-link active" href="#" data-section="dashboard" onclick="switchSection('dashboard', event)">
+          <i class="fas fa-tachometer-alt"></i> Tableau de bord
+        </a>
+        <a class="nav-link" href="#" data-section="profil" onclick="switchSection('profil', event)">
+          <i class="fas fa-user-circle"></i> Mon Profil
+        </a>
+        <a class="nav-link" href="#" data-section="reservations" onclick="switchSection('reservations', event)">
+          <i class="fas fa-calendar-check"></i> Mes Reservations
+        </a>
+        <a class="nav-link" href="#" data-section="scores" onclick="switchSection('scores', event)">
+          <i class="fas fa-flag"></i> Mes Scores Golf
+        </a>
+      </nav>
+    </aside>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <main class="gc-main-content">
+
+      <!-- ====== SECTION: TABLEAU DE BORD ====== -->
+      <section id="section-dashboard" class="gc-section active">
+        <!-- Welcome Card -->
+        <div class="gc-welcome-card">
+          <h2><i class="fas fa-hand-wave me-2"></i> Bienvenue, <span id="welcomeName">...</span></h2>
+          <p>Retrouvez ici un apercu de votre espace client Hotel du Golf Club.</p>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="row g-4 mb-4">
+          <div class="col-md-4">
+            <div class="gc-stat-card">
+              <div class="stat-icon bg-golf">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="statTotalReservations">
+                  <div class="spinner-border spinner-border-sm" role="status"></div>
+                </div>
+                <div class="stat-label">Total reservations</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="gc-stat-card">
+              <div class="stat-icon bg-restaurant">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="statNextReservation">
+                  <div class="spinner-border spinner-border-sm" role="status"></div>
+                </div>
+                <div class="stat-label">Prochaine reservation</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="gc-stat-card">
+              <div class="stat-icon bg-salle">
+                <i class="fas fa-golf-ball"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="statGolfParties">
+                  <div class="spinner-border spinner-border-sm" role="status"></div>
+                </div>
+                <div class="stat-label">Parties de golf jouees</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="gc-quick-actions">
+          <a href="reservation.html" class="btn btn-gc-primary btn-lg">
+            <i class="fas fa-plus me-2"></i> Nouvelle reservation
+          </a>
+          <a href="jeu-golf.html" class="btn btn-gc-secondary btn-lg">
+            <i class="fas fa-flag me-2"></i> Enregistrer score
+          </a>
+        </div>
+      </section>
+
+      <!-- ====== SECTION: MON PROFIL ====== -->
+      <section id="section-profil" class="gc-section">
+        <div class="gc-section-header">
+          <h2><i class="fas fa-user-circle me-2"></i> Mon Profil</h2>
+        </div>
+
+        <div class="gc-profile-card">
+          <div id="profilLoading" class="gc-loading-overlay">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+
+          <form id="profilForm" class="gc-form" style="display: none;" onsubmit="handleProfileSave(event)">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="inputPrenom" class="form-label">Prenom</label>
+                <input type="text" class="form-control" id="inputPrenom" name="prenom" placeholder="Votre prenom" required>
+              </div>
+              <div class="col-md-6">
+                <label for="inputNom" class="form-label">Nom</label>
+                <input type="text" class="form-control" id="inputNom" name="nom" placeholder="Votre nom" required>
+              </div>
+              <div class="col-md-6">
+                <label for="inputEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="inputEmail" name="email" readonly>
+                <small class="text-muted">L'adresse email ne peut pas etre modifiee.</small>
+              </div>
+              <div class="col-md-6">
+                <label for="inputTelephone" class="form-label">Telephone</label>
+                <input type="tel" class="form-control" id="inputTelephone" name="telephone" placeholder="+33 6 12 34 56 78">
+              </div>
+              <div class="col-12">
+                <label for="inputAdresse" class="form-label">Adresse</label>
+                <textarea class="form-control" id="inputAdresse" name="adresse" rows="2" placeholder="Votre adresse postale"></textarea>
+              </div>
+              <div class="col-12 mt-4">
+                <button type="submit" class="btn btn-gc-primary" id="btnSaveProfil">
+                  <i class="fas fa-save me-2"></i> Enregistrer les modifications
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ====== SECTION: MES RESERVATIONS ====== -->
+      <section id="section-reservations" class="gc-section">
+        <div class="gc-section-header">
+          <h2><i class="fas fa-calendar-check me-2"></i> Mes Reservations</h2>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="gc-filter-tabs">
+          <button class="gc-filter-tab active" data-filter="toutes" onclick="filterReservations('toutes', this)">
+            Toutes
+          </button>
+          <button class="gc-filter-tab" data-filter="en_attente" onclick="filterReservations('en_attente', this)">
+            En attente
+          </button>
+          <button class="gc-filter-tab" data-filter="confirmee" onclick="filterReservations('confirmee', this)">
+            Confirmees
+          </button>
+          <button class="gc-filter-tab" data-filter="passees" onclick="filterReservations('passees', this)">
+            Passees
+          </button>
+        </div>
+
+        <!-- Reservations Table -->
+        <div class="gc-table-container">
+          <div id="reservationsLoading" class="gc-loading-overlay">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+          <div id="reservationsContent" style="display: none;">
+            <div class="table-responsive">
+              <table class="table gc-table">
+                <thead>
+                  <tr>
+                    <th>N&deg; Reservation</th>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Personnes</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="reservationsTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Empty State -->
+          <div id="reservationsEmpty" class="gc-empty-state" style="display: none;">
+            <i class="fas fa-calendar-times d-block"></i>
+            <p>Aucune reservation trouvee.</p>
+            <a href="reservation.html" class="btn btn-gc-primary mt-2">
+              <i class="fas fa-plus me-1"></i> Faire une reservation
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== SECTION: MES SCORES GOLF ====== -->
+      <section id="section-scores" class="gc-section">
+        <div class="gc-section-header">
+          <h2><i class="fas fa-flag me-2"></i> Mes Scores Golf</h2>
+          <a href="jeu-golf.html" class="btn btn-gc-primary">
+            <i class="fas fa-plus me-1"></i> Enregistrer une partie
+          </a>
+        </div>
+
+        <!-- Golf Stats Summary -->
+        <div class="gc-golf-stats-summary" id="golfStatsSummary">
+          <div class="gc-golf-stat-item">
+            <div class="stat-number" id="golfBestScore">--</div>
+            <div class="stat-text">Meilleur score</div>
+          </div>
+          <div class="gc-golf-stat-item">
+            <div class="stat-number" id="golfAvgScore">--</div>
+            <div class="stat-text">Score moyen</div>
+          </div>
+          <div class="gc-golf-stat-item">
+            <div class="stat-number" id="golfTotalParties">--</div>
+            <div class="stat-text">Parties jouees</div>
+          </div>
+        </div>
+
+        <!-- Golf Scores Table -->
+        <div class="gc-table-container">
+          <div id="scoresLoading" class="gc-loading-overlay">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+          <div id="scoresContent" style="display: none;">
+            <div class="table-responsive">
+              <table class="table gc-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Parcours</th>
+                    <th>Trous</th>
+                    <th>Score</th>
+                    <th>Duree</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="scoresTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Empty State -->
+          <div id="scoresEmpty" class="gc-empty-state" style="display: none;">
+            <i class="fas fa-golf-ball d-block"></i>
+            <p>Aucune partie de golf enregistree.</p>
+            <a href="jeu-golf.html" class="btn btn-gc-primary mt-2">
+              <i class="fas fa-plus me-1"></i> Enregistrer votre premiere partie
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- API Module -->
+  <script src="js/api.js"></script>
+
+  <script>
+    // ======================================================
+    //  STATE
+    // ======================================================
+    let currentClient = null;
+    let allReservations = [];
+    let allParties = [];
+    let currentFilter = 'toutes';
+
+    // ======================================================
+    //  AUTH CHECK
+    // ======================================================
+    (function checkAuth() {
+      if (!requireAuth()) return;
+      init();
+    })();
+
+    // ======================================================
+    //  INITIALISATION
+    // ======================================================
+    async function init() {
+      try {
+        await loadClientProfile();
+        loadDashboardStats();
+        loadReservations();
+        loadGolfData();
+      } catch (error) {
+        if (error.status === 401) {
+          handleLogout();
+          return;
+        }
+        showNotification('Erreur lors du chargement des donnees.', 'danger');
+      }
+    }
+
+    // ======================================================
+    //  SIDEBAR NAVIGATION
+    // ======================================================
+    function switchSection(sectionId, event) {
+      if (event) event.preventDefault();
+
+      // Hide all sections
+      document.querySelectorAll('.gc-section').forEach(s => s.classList.remove('active'));
+
+      // Deactivate all sidebar links
+      document.querySelectorAll('.gc-sidebar .nav-link').forEach(l => l.classList.remove('active'));
+
+      // Show selected section
+      const section = document.getElementById('section-' + sectionId);
+      if (section) section.classList.add('active');
+
+      // Activate sidebar link
+      const link = document.querySelector(`.gc-sidebar .nav-link[data-section="${sectionId}"]`);
+      if (link) link.classList.add('active');
+    }
+
+    // ======================================================
+    //  LOAD CLIENT PROFILE
+    // ======================================================
+    async function loadClientProfile() {
+      const token = getToken();
+      if (!token) return;
+
+      // Decode JWT to get user info (Supabase JWT payload)
+      const payload = parseJwt(token);
+      if (!payload) {
+        handleLogout();
+        return;
+      }
+
+      const userId = payload.sub;
+      const userEmail = payload.email;
+
+      try {
+        // Try to get client data via the clients endpoint
+        // The client_id may be the same as the supabase user id
+        const client = await ClientsAPI.get(userId);
+        currentClient = client;
+      } catch (error) {
+        // If client not found by Supabase ID, create a minimal local client object
+        currentClient = {
+          id: userId,
+          prenom: '',
+          nom: '',
+          email: userEmail || '',
+          telephone: '',
+          adresse: ''
+        };
+      }
+
+      // Update UI with client name
+      const displayName = [currentClient.prenom, currentClient.nom].filter(Boolean).join(' ') || currentClient.email || 'Client';
+      document.getElementById('welcomeName').textContent = displayName;
+      document.getElementById('navUserName').textContent = displayName;
+
+      // Fill profile form
+      fillProfileForm(currentClient);
+    }
+
+    function fillProfileForm(client) {
+      const loading = document.getElementById('profilLoading');
+      const form = document.getElementById('profilForm');
+
+      document.getElementById('inputPrenom').value = client.prenom || '';
+      document.getElementById('inputNom').value = client.nom || '';
+      document.getElementById('inputEmail').value = client.email || '';
+      document.getElementById('inputTelephone').value = client.telephone || '';
+      document.getElementById('inputAdresse').value = client.adresse || '';
+
+      loading.style.display = 'none';
+      form.style.display = 'block';
+    }
+
+    // ======================================================
+    //  SAVE PROFILE
+    // ======================================================
+    async function handleProfileSave(event) {
+      event.preventDefault();
+
+      if (!currentClient || !currentClient.id) {
+        showNotification('Impossible de mettre a jour le profil.', 'danger');
+        return;
+      }
+
+      const btn = document.getElementById('btnSaveProfil');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Enregistrement...';
+      btn.disabled = true;
+
+      try {
+        const data = {
+          prenom: document.getElementById('inputPrenom').value.trim(),
+          nom: document.getElementById('inputNom').value.trim(),
+          telephone: document.getElementById('inputTelephone').value.trim(),
+          adresse: document.getElementById('inputAdresse').value.trim()
+        };
+
+        const updated = await ClientsAPI.update(currentClient.id, data);
+        currentClient = { ...currentClient, ...updated };
+
+        // Update name displays
+        const displayName = [currentClient.prenom, currentClient.nom].filter(Boolean).join(' ') || currentClient.email;
+        document.getElementById('welcomeName').textContent = displayName;
+        document.getElementById('navUserName').textContent = displayName;
+
+        showNotification('Profil mis a jour avec succes.', 'success');
+      } catch (error) {
+        showNotification(error.message || 'Erreur lors de la mise a jour du profil.', 'danger');
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    // ======================================================
+    //  DASHBOARD STATS
+    // ======================================================
+    async function loadDashboardStats() {
+      try {
+        // Load reservations count and next reservation
+        const reservations = await ReservationsAPI.mesReservations();
+        allReservations = reservations || [];
+
+        const total = allReservations.length;
+        document.getElementById('statTotalReservations').textContent = total;
+
+        // Find next upcoming reservation (confirmed or en_attente, in the future)
+        const now = new Date();
+        const upcoming = allReservations
+          .filter(r => ['en_attente', 'confirmee'].includes(r.status))
+          .filter(r => {
+            const date = r.creneau?.start_at || r.created_at;
+            return new Date(date) >= now;
+          })
+          .sort((a, b) => {
+            const dateA = new Date(a.creneau?.start_at || a.created_at);
+            const dateB = new Date(b.creneau?.start_at || b.created_at);
+            return dateA - dateB;
+          });
+
+        if (upcoming.length > 0) {
+          const nextDate = upcoming[0].creneau?.start_at || upcoming[0].created_at;
+          document.getElementById('statNextReservation').textContent = formatDateShort(nextDate);
+        } else {
+          document.getElementById('statNextReservation').textContent = 'Aucune';
+          document.getElementById('statNextReservation').style.fontSize = '1rem';
+        }
+      } catch (error) {
+        document.getElementById('statTotalReservations').textContent = '--';
+        document.getElementById('statNextReservation').textContent = '--';
+      }
+
+      try {
+        // Load golf parties count
+        const golfResult = await GolfAPI.mesParties();
+        const parties = golfResult?.data || golfResult || [];
+        allParties = parties;
+
+        const totalParties = golfResult?.pagination?.total || parties.length;
+        document.getElementById('statGolfParties').textContent = totalParties;
+      } catch (error) {
+        document.getElementById('statGolfParties').textContent = '--';
+      }
+    }
+
+    // ======================================================
+    //  RESERVATIONS
+    // ======================================================
+    async function loadReservations() {
+      const loading = document.getElementById('reservationsLoading');
+      const content = document.getElementById('reservationsContent');
+      const empty = document.getElementById('reservationsEmpty');
+
+      loading.style.display = 'flex';
+      content.style.display = 'none';
+      empty.style.display = 'none';
+
+      try {
+        // May already be loaded from dashboard
+        if (allReservations.length === 0) {
+          const reservations = await ReservationsAPI.mesReservations();
+          allReservations = reservations || [];
+        }
+
+        renderReservations(allReservations);
+      } catch (error) {
+        loading.style.display = 'none';
+        showNotification('Erreur lors du chargement des reservations.', 'danger');
+      }
+    }
+
+    function renderReservations(reservations) {
+      const loading = document.getElementById('reservationsLoading');
+      const content = document.getElementById('reservationsContent');
+      const empty = document.getElementById('reservationsEmpty');
+      const tbody = document.getElementById('reservationsTableBody');
+
+      // Apply filter
+      let filtered = reservations;
+      if (currentFilter === 'en_attente') {
+        filtered = reservations.filter(r => r.status === 'en_attente');
+      } else if (currentFilter === 'confirmee') {
+        filtered = reservations.filter(r => r.status === 'confirmee');
+      } else if (currentFilter === 'passees') {
+        filtered = reservations.filter(r => ['terminee', 'annulee', 'refusee'].includes(r.status));
+      }
+
+      loading.style.display = 'none';
+
+      if (filtered.length === 0) {
+        content.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      content.style.display = 'block';
+
+      tbody.innerHTML = filtered.map(r => {
+        const numero = r.reservation_number || r.id.substring(0, 8).toUpperCase();
+        const serviceName = r.service?.nom || r.service_id?.substring(0, 8) || '--';
+        const date = r.creneau?.start_at ? formatDate(r.creneau.start_at) : formatDate(r.created_at);
+        const personnes = r.personnes || 1;
+        const status = formatStatus(r.status);
+        const canCancel = ['en_attente', 'confirmee'].includes(r.status);
+
+        return `
+          <tr>
+            <td><strong>${escapeHtml(numero)}</strong></td>
+            <td>${escapeHtml(serviceName)}</td>
+            <td>${date}</td>
+            <td><span class="badge bg-light text-dark">${personnes} pers.</span></td>
+            <td>${status}</td>
+            <td>
+              ${canCancel
+                ? `<button class="btn btn-outline-danger btn-annuler" onclick="cancelReservation('${r.id}')" title="Annuler cette reservation">
+                     <i class="fas fa-times me-1"></i> Annuler
+                   </button>`
+                : '<span class="text-muted">--</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterReservations(filter, element) {
+      currentFilter = filter;
+
+      // Update active tab
+      document.querySelectorAll('.gc-filter-tab').forEach(t => t.classList.remove('active'));
+      if (element) element.classList.add('active');
+
+      renderReservations(allReservations);
+    }
+
+    async function cancelReservation(id) {
+      if (!confirm('Etes-vous sur de vouloir annuler cette reservation ?')) return;
+
+      try {
+        await ReservationsAPI.annuler(id);
+
+        // Update local data
+        const idx = allReservations.findIndex(r => r.id === id);
+        if (idx !== -1) {
+          allReservations[idx].status = 'annulee';
+        }
+
+        renderReservations(allReservations);
+        showNotification('Reservation annulee avec succes.', 'success');
+
+        // Update dashboard stat
+        document.getElementById('statTotalReservations').textContent = allReservations.length;
+      } catch (error) {
+        showNotification(error.message || 'Erreur lors de l\'annulation.', 'danger');
+      }
+    }
+
+    // ======================================================
+    //  GOLF SCORES
+    // ======================================================
+    async function loadGolfData() {
+      const scoresLoading = document.getElementById('scoresLoading');
+      const scoresContent = document.getElementById('scoresContent');
+      const scoresEmpty = document.getElementById('scoresEmpty');
+
+      scoresLoading.style.display = 'flex';
+      scoresContent.style.display = 'none';
+      scoresEmpty.style.display = 'none';
+
+      try {
+        // Load stats
+        const stats = await GolfAPI.mesStats();
+        if (stats && stats.data) {
+          const s = stats.data;
+          document.getElementById('golfBestScore').textContent = s.meilleur_score ?? '--';
+          document.getElementById('golfAvgScore').textContent = s.score_moyen ?? '--';
+          document.getElementById('golfTotalParties').textContent = s.nombre_parties ?? 0;
+        } else if (stats) {
+          document.getElementById('golfBestScore').textContent = stats.meilleur_score ?? '--';
+          document.getElementById('golfAvgScore').textContent = stats.score_moyen ?? '--';
+          document.getElementById('golfTotalParties').textContent = stats.nombre_parties ?? 0;
+        }
+      } catch (error) {
+        // Stats not critical, keep defaults
+      }
+
+      try {
+        // Load parties
+        const result = await GolfAPI.mesParties();
+        const parties = result?.data || result || [];
+        allParties = parties;
+
+        renderGolfScores(parties);
+      } catch (error) {
+        scoresLoading.style.display = 'none';
+        scoresEmpty.style.display = 'block';
+      }
+    }
+
+    function renderGolfScores(parties) {
+      const loading = document.getElementById('scoresLoading');
+      const content = document.getElementById('scoresContent');
+      const empty = document.getElementById('scoresEmpty');
+      const tbody = document.getElementById('scoresTableBody');
+
+      loading.style.display = 'none';
+
+      if (!parties || parties.length === 0) {
+        content.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      content.style.display = 'block';
+
+      tbody.innerHTML = parties.map(p => {
+        const date = formatDate(p.date_partie);
+        const parcours = p.parcours || 'Parcours principal';
+        const trous = p.nombre_trous || 18;
+        const score = p.score_total;
+        const duree = p.duree_minutes ? formatDuration(p.duree_minutes) : '--';
+
+        return `
+          <tr>
+            <td>${date}</td>
+            <td>${escapeHtml(parcours)}</td>
+            <td><span class="badge bg-light text-dark">${trous} trous</span></td>
+            <td><strong class="text-primary">${score}</strong></td>
+            <td>${duree}</td>
+            <td>
+              <button class="btn btn-outline-danger btn-supprimer" onclick="deleteGolfScore('${p.id}')" title="Supprimer cette partie">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function deleteGolfScore(id) {
+      if (!confirm('Etes-vous sur de vouloir supprimer cette partie ?')) return;
+
+      try {
+        await GolfAPI.supprimerPartie(id);
+
+        // Remove from local data
+        allParties = allParties.filter(p => p.id !== id);
+        renderGolfScores(allParties);
+
+        // Update dashboard stat
+        document.getElementById('statGolfParties').textContent = allParties.length;
+
+        // Reload stats
+        try {
+          const stats = await GolfAPI.mesStats();
+          const s = stats?.data || stats;
+          if (s) {
+            document.getElementById('golfBestScore').textContent = s.meilleur_score ?? '--';
+            document.getElementById('golfAvgScore').textContent = s.score_moyen ?? '--';
+            document.getElementById('golfTotalParties').textContent = s.nombre_parties ?? 0;
+          }
+        } catch (e) { /* ignore stats refresh error */ }
+
+        showNotification('Partie supprimee avec succes.', 'success');
+      } catch (error) {
+        showNotification(error.message || 'Erreur lors de la suppression.', 'danger');
+      }
+    }
+
+    // ======================================================
+    //  LOGOUT
+    // ======================================================
+    function handleLogout() {
+      removeToken();
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    }
+
+    // ======================================================
+    //  UTILITY FUNCTIONS
+    // ======================================================
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function formatDateShort(dateStr) {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+    }
+
+    function formatDuration(minutes) {
+      if (!minutes) return '--';
+      const h = Math.floor(minutes / 60);
+      const m = minutes % 60;
+      if (h > 0 && m > 0) return `${h}h ${m}min`;
+      if (h > 0) return `${h}h`;
+      return `${m}min`;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function showNotification(message, type = 'danger') {
+      const container = document.getElementById('alertContainer');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type} alert-dismissible fade show`;
+      alert.setAttribute('role', 'alert');
+      alert.innerHTML = `
+        ${type === 'success' ? '<i class="fas fa-check-circle me-2"></i>' : '<i class="fas fa-exclamation-circle me-2"></i>'}
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+      `;
+      container.appendChild(alert);
+
+      // Auto-dismiss after 5 seconds
+      setTimeout(() => {
+        if (alert.parentNode) {
+          alert.classList.remove('show');
+          setTimeout(() => alert.remove(), 300);
+        }
+      }, 5000);
+    }
+  </script>
+
+</body>
+</html>

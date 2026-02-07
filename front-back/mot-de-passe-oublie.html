@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mot de passe oublié - Président Golf Club</title>
+
+  <!-- Bootstrap 5.3.2 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome 6.4.0 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link href="css/style.css" rel="stylesheet">
+
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, var(--gc-primary-dark) 0%, var(--gc-primary) 50%, var(--gc-primary-light) 100%);
+    }
+
+    .auth-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .auth-card {
+      background: #fff;
+      border-radius: var(--gc-border-radius);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      max-width: 440px;
+      width: 100%;
+    }
+
+    .auth-header {
+      background: linear-gradient(135deg, var(--gc-primary-dark), var(--gc-primary));
+      color: #fff;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .auth-header .auth-logo {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 2rem;
+    }
+
+    .auth-header h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .auth-header p {
+      opacity: 0.8;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .auth-body {
+      padding: 2rem;
+    }
+
+    .auth-body .form-label {
+      font-weight: 500;
+      color: #555;
+    }
+
+    .auth-body .form-control {
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      border: 1px solid #dee2e6;
+      transition: all 0.3s ease;
+    }
+
+    .auth-body .form-control:focus {
+      border-color: var(--gc-primary-light);
+      box-shadow: 0 0 0 0.2rem rgba(26, 92, 46, 0.15);
+    }
+
+    .btn-auth {
+      background: linear-gradient(135deg, var(--gc-primary), var(--gc-primary-light));
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-weight: 600;
+      font-size: 1rem;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    .btn-auth:hover {
+      background: linear-gradient(135deg, var(--gc-primary-dark), var(--gc-primary));
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(26, 92, 46, 0.3);
+    }
+
+    .btn-auth:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .auth-footer {
+      padding: 0 2rem 2rem;
+      text-align: center;
+    }
+
+    .auth-footer a {
+      color: var(--gc-primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .back-link {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: #fff;
+    }
+
+    #alertContainer {
+      padding: 0 2rem;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gc-primary), var(--gc-primary-light));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 6px 20px rgba(26, 92, 46, 0.3);
+    }
+
+    .step-view {
+      display: none;
+    }
+
+    .step-view.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="login.html" class="back-link">
+    <i class="fas fa-arrow-left"></i> Retour à la connexion
+  </a>
+
+  <div class="auth-container">
+    <div class="auth-card">
+      <!-- Header -->
+      <div class="auth-header">
+        <div class="auth-logo">
+          <i class="fas fa-key"></i>
+        </div>
+        <h1>Mot de passe oublié</h1>
+        <p>Réinitialisez votre mot de passe en quelques étapes</p>
+      </div>
+
+      <!-- Alert -->
+      <div id="alertContainer"></div>
+
+      <!-- Step 1: Email -->
+      <div class="step-view active" id="step-email">
+        <div class="auth-body">
+          <p class="text-muted mb-4" style="font-size: 0.95rem;">
+            Entrez l'adresse email associée à votre compte. Nous vous enverrons un code de réinitialisation.
+          </p>
+          <form id="emailForm" novalidate>
+            <div class="mb-4">
+              <label for="resetEmail" class="form-label">
+                <i class="fas fa-envelope me-1"></i> Adresse email
+              </label>
+              <input type="email" class="form-control" id="resetEmail" placeholder="votre@email.com" required autocomplete="email">
+            </div>
+            <button type="submit" class="btn btn-auth" id="btnSendCode">
+              <i class="fas fa-paper-plane me-2"></i>Envoyer le code
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Step 2: Code verification -->
+      <div class="step-view" id="step-code">
+        <div class="auth-body">
+          <p class="text-muted mb-3" style="font-size: 0.95rem;">
+            Un code de réinitialisation a été envoyé à <strong id="sentEmailDisplay"></strong>.
+            Vérifiez votre boîte de réception.
+          </p>
+          <form id="codeForm" novalidate>
+            <div class="mb-3">
+              <label for="resetCode" class="form-label">
+                <i class="fas fa-shield-alt me-1"></i> Code de réinitialisation
+              </label>
+              <input type="text" class="form-control text-center" id="resetCode"
+                     placeholder="Entrez le code reçu" required
+                     maxlength="6" style="font-size: 1.3rem; letter-spacing: 0.5rem; font-weight: 700;">
+            </div>
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">
+                <i class="fas fa-lock me-1"></i> Nouveau mot de passe
+              </label>
+              <input type="password" class="form-control" id="newPassword"
+                     placeholder="Minimum 6 caractères" required minlength="6" autocomplete="new-password">
+            </div>
+            <div class="mb-4">
+              <label for="newPasswordConfirm" class="form-label">
+                <i class="fas fa-lock me-1"></i> Confirmer le nouveau mot de passe
+              </label>
+              <input type="password" class="form-control" id="newPasswordConfirm"
+                     placeholder="Confirmez votre mot de passe" required autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn btn-auth" id="btnResetPassword">
+              <i class="fas fa-check-circle me-2"></i>Réinitialiser le mot de passe
+            </button>
+          </form>
+          <div class="text-center mt-3">
+            <button class="btn btn-link btn-sm text-muted" id="btnResendCode" onclick="resendCode()">
+              <i class="fas fa-redo me-1"></i> Renvoyer le code
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Success -->
+      <div class="step-view" id="step-success">
+        <div class="auth-body text-center py-4">
+          <div class="success-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <h3 style="color: var(--gc-dark); font-size: 1.3rem;">Mot de passe réinitialisé</h3>
+          <p class="text-muted mb-4">
+            Votre mot de passe a été modifié avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.
+          </p>
+          <a href="login.html" class="btn btn-auth">
+            <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+          </a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="auth-footer">
+        <p class="mb-0">
+          <a href="login.html"><i class="fas fa-arrow-left me-1"></i> Retour à la connexion</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- API Module -->
+  <script src="js/api.js"></script>
+
+  <script>
+    'use strict';
+
+    let resetEmail = '';
+
+    function showStep(stepId) {
+      document.querySelectorAll('.step-view').forEach(s => s.classList.remove('active'));
+      document.getElementById(stepId).classList.add('active');
+    }
+
+    // Step 1: Send reset code
+    document.getElementById('emailForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('resetEmail').value.trim();
+      if (!email) {
+        showAlert(document.getElementById('alertContainer'), 'Veuillez entrer votre adresse email.', 'warning');
+        return;
+      }
+
+      resetEmail = email;
+      const btn = document.getElementById('btnSendCode');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Envoi en cours...';
+
+      try {
+        await apiRequest('/auth/forgot-password', {
+          method: 'POST',
+          body: JSON.stringify({ email }),
+        });
+
+        document.getElementById('sentEmailDisplay').textContent = email;
+        showStep('step-code');
+        showAlert(document.getElementById('alertContainer'), 'Code envoyé avec succès ! Vérifiez votre boîte email.', 'success');
+
+      } catch (error) {
+        // Show success even if email not found (security best practice)
+        document.getElementById('sentEmailDisplay').textContent = email;
+        showStep('step-code');
+        showAlert(document.getElementById('alertContainer'),
+          'Si un compte existe avec cette adresse, un code de réinitialisation a été envoyé.', 'info');
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Envoyer le code';
+    });
+
+    // Step 2: Verify code and reset password
+    document.getElementById('codeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const code = document.getElementById('resetCode').value.trim();
+      const newPassword = document.getElementById('newPassword').value;
+      const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
+
+      if (!code) {
+        showAlert(document.getElementById('alertContainer'), 'Veuillez entrer le code de réinitialisation.', 'warning');
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        showAlert(document.getElementById('alertContainer'), 'Le mot de passe doit contenir au moins 6 caractères.', 'warning');
+        return;
+      }
+
+      if (newPassword !== newPasswordConfirm) {
+        showAlert(document.getElementById('alertContainer'), 'Les mots de passe ne correspondent pas.', 'danger');
+        return;
+      }
+
+      const btn = document.getElementById('btnResetPassword');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Réinitialisation...';
+
+      try {
+        await apiRequest('/auth/reset-password', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: resetEmail,
+            code: code,
+            password: newPassword,
+          }),
+        });
+
+        showStep('step-success');
+
+      } catch (error) {
+        const message = error.message || 'Code invalide ou expiré. Veuillez réessayer.';
+        showAlert(document.getElementById('alertContainer'), message, 'danger');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Réinitialiser le mot de passe';
+      }
+    });
+
+    // Resend code
+    async function resendCode() {
+      const btn = document.getElementById('btnResendCode');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Renvoi...';
+
+      try {
+        await apiRequest('/auth/forgot-password', {
+          method: 'POST',
+          body: JSON.stringify({ email: resetEmail }),
+        });
+        showAlert(document.getElementById('alertContainer'), 'Code renvoyé avec succès.', 'success');
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'), 'Code renvoyé. Vérifiez votre boîte email.', 'info');
+      }
+
+      // Cooldown 30s
+      let countdown = 30;
+      btn.innerHTML = `<i class="fas fa-clock me-1"></i> Renvoyer (${countdown}s)`;
+      const timer = setInterval(() => {
+        countdown--;
+        btn.innerHTML = `<i class="fas fa-clock me-1"></i> Renvoyer (${countdown}s)`;
+        if (countdown <= 0) {
+          clearInterval(timer);
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-redo me-1"></i> Renvoyer le code';
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant (Gestion) - Président Golf Club</title>
+
+  <!-- Bootstrap 5.3.2 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome 6.4.0 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link href="css/style.css" rel="stylesheet">
+
+  <style>
+    /* ============ Restaurant-specific styles ============ */
+    .gc-section { display: none; }
+    .gc-section.active { display: block; }
+
+    .gc-availability-grid {
+      display: grid;
+      grid-template-columns: 100px repeat(7, 1fr);
+      gap: 2px;
+      font-size: 0.82rem;
+    }
+
+    .gc-availability-grid .slot-header {
+      background: var(--gc-primary);
+      color: #fff;
+      padding: 0.6rem 0.4rem;
+      text-align: center;
+      font-weight: 600;
+      border-radius: 4px;
+    }
+
+    .gc-availability-grid .slot-time {
+      background: #f8f9fa;
+      padding: 0.6rem 0.4rem;
+      text-align: center;
+      font-weight: 500;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gc-availability-grid .slot-cell {
+      padding: 0.5rem;
+      text-align: center;
+      border-radius: 6px;
+      cursor: default;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      transition: var(--gc-transition);
+    }
+
+    .gc-availability-grid .slot-cell .slot-count {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .gc-availability-grid .slot-cell .slot-label {
+      font-size: 0.7rem;
+      opacity: 0.85;
+    }
+
+    .slot-available { background: #d4edda; color: #155724; }
+    .slot-almost-full { background: #fff3cd; color: #856404; }
+    .slot-full { background: #f8d7da; color: #721c24; }
+    .slot-empty { background: #f0f0f0; color: #bbb; }
+
+    .reservation-quick-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 1rem;
+    }
+
+    .reservation-quick-item:last-child { border-bottom: none; }
+
+    .reservation-quick-item .rq-time {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--gc-primary);
+      min-width: 55px;
+    }
+
+    .reservation-quick-item .rq-info { flex: 1; }
+
+    .reservation-quick-item .rq-info .rq-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .reservation-quick-item .rq-info .rq-details {
+      font-size: 0.82rem;
+      color: #888;
+    }
+
+    .gc-legend {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .gc-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: #555;
+    }
+
+    .gc-legend-item .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+    }
+
+    .gc-pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .gc-pagination .page-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid #dee2e6;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--gc-transition);
+      font-weight: 500;
+    }
+
+    .gc-pagination .page-btn:hover,
+    .gc-pagination .page-btn.active {
+      background: var(--gc-primary);
+      color: #fff;
+      border-color: var(--gc-primary);
+    }
+
+    .gc-pagination .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .gc-filter-bar {
+      background: #fff;
+      border-radius: var(--gc-border-radius);
+      padding: 1rem 1.25rem;
+      box-shadow: var(--gc-card-shadow);
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 992px) {
+      .gc-availability-grid {
+        grid-template-columns: 80px repeat(7, 1fr);
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .gc-availability-grid {
+        overflow-x: auto;
+        grid-template-columns: 70px repeat(7, minmax(80px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       NAVBAR
+       ============================================================ -->
+  <nav class="navbar navbar-expand-lg gc-navbar sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="../index.html">
+        <i class="fas fa-utensils"></i>
+        PGC - Restaurant
+      </a>
+      <button class="navbar-toggler text-white border-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarRestaurant">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarRestaurant">
+        <ul class="navbar-nav ms-auto align-items-center gap-1">
+          <li class="nav-item">
+            <a class="nav-link active" href="#" data-section="dashboard">
+              <i class="fas fa-gauge-high me-1"></i> Tableau de bord
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="reservations-jour">
+              <i class="fas fa-calendar-day me-1"></i> R&eacute;servations
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="menus">
+              <i class="fas fa-book-open me-1"></i> Menus
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="disponibilites">
+              <i class="fas fa-clock me-1"></i> Disponibilit&eacute;s
+            </a>
+          </li>
+          <li class="nav-item ms-2">
+            <button class="btn btn-outline-light btn-sm" id="btnLogout">
+              <i class="fas fa-sign-out-alt me-1"></i> D&eacute;connexion
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       MAIN LAYOUT: SIDEBAR + CONTENT
+       ============================================================ -->
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- SIDEBAR -->
+      <aside class="col-lg-2 col-md-3 gc-sidebar">
+        <nav class="nav flex-column" id="sidebarNav">
+          <a class="nav-link active" href="#" data-section="dashboard">
+            <i class="fas fa-gauge-high"></i> Tableau de bord
+          </a>
+          <a class="nav-link" href="#" data-section="reservations-jour">
+            <i class="fas fa-calendar-day"></i> R&eacute;servations du jour
+          </a>
+          <a class="nav-link" href="#" data-section="reservations-all">
+            <i class="fas fa-list"></i> Toutes les r&eacute;servations
+          </a>
+          <a class="nav-link" href="#" data-section="menus">
+            <i class="fas fa-book-open"></i> Gestion des menus
+          </a>
+          <a class="nav-link" href="#" data-section="disponibilites">
+            <i class="fas fa-clock"></i> Disponibilit&eacute;s
+          </a>
+        </nav>
+      </aside>
+
+      <!-- CONTENT -->
+      <main class="col-lg-10 col-md-9 py-4 px-lg-4">
+
+        <!-- Alert container -->
+        <div id="alertContainer"></div>
+
+        <!-- =============================================
+             SECTION: TABLEAU DE BORD
+             ============================================= -->
+        <section id="section-dashboard" class="gc-section active">
+          <div class="gc-page-header">
+            <h1><i class="fas fa-gauge-high me-2 text-muted"></i>Tableau de bord</h1>
+            <p>Vue d'ensemble de l'activit&eacute; du restaurant</p>
+          </div>
+
+          <!-- Stat Cards -->
+          <div class="row g-3 mb-4">
+            <div class="col-xl-3 col-md-6">
+              <div class="gc-stat-card">
+                <div class="stat-icon bg-restaurant">
+                  <i class="fas fa-calendar-check"></i>
+                </div>
+                <div>
+                  <div class="stat-value" id="statReservationsToday">--</div>
+                  <div class="stat-label">R&eacute;servations aujourd'hui</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+              <div class="gc-stat-card">
+                <div class="stat-icon bg-danger">
+                  <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div>
+                  <div class="stat-value" id="statPending">--</div>
+                  <div class="stat-label">En attente</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+              <div class="gc-stat-card">
+                <div class="stat-icon bg-salle">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div>
+                  <div class="stat-value" id="statCouverts">--</div>
+                  <div class="stat-label">Couverts du jour</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+              <div class="gc-stat-card">
+                <div class="stat-icon bg-revenue">
+                  <i class="fas fa-book-open"></i>
+                </div>
+                <div>
+                  <div class="stat-value" id="statMenusActifs">--</div>
+                  <div class="stat-label">Menus actifs</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick View: Prochaines reservations -->
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="gc-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <span><i class="fas fa-clock me-2"></i>Prochaines r&eacute;servations</span>
+                  <a href="#" class="text-white text-decoration-none small" data-section="reservations-jour">
+                    Voir tout <i class="fas fa-arrow-right ms-1"></i>
+                  </a>
+                </div>
+                <div class="card-body" id="quickReservationsList">
+                  <div class="gc-empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Chargement...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="gc-card">
+                <div class="card-header">
+                  <i class="fas fa-chart-pie me-2"></i>R&eacute;sum&eacute; du jour
+                </div>
+                <div class="card-body" id="daySummary">
+                  <div class="gc-empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Chargement...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =============================================
+             SECTION: RESERVATIONS DU JOUR
+             ============================================= -->
+        <section id="section-reservations-jour" class="gc-section">
+          <div class="gc-page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h1><i class="fas fa-calendar-day me-2 text-muted"></i>R&eacute;servations du jour</h1>
+              <p>G&eacute;rer les r&eacute;servations de la journ&eacute;e</p>
+            </div>
+            <div class="gc-form">
+              <input type="date" class="form-control" id="filterDateJour" style="min-width: 180px;">
+            </div>
+          </div>
+
+          <div id="reservationsJourContainer">
+            <div class="table-responsive">
+              <table class="table gc-table">
+                <thead>
+                  <tr>
+                    <th>Heure</th>
+                    <th>Client</th>
+                    <th>Personnes</th>
+                    <th>Table</th>
+                    <th>Statut</th>
+                    <th>Note</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="reservationsJourBody">
+                  <tr>
+                    <td colspan="7">
+                      <div class="gc-empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Chargement...</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- =============================================
+             SECTION: TOUTES LES RESERVATIONS
+             ============================================= -->
+        <section id="section-reservations-all" class="gc-section">
+          <div class="gc-page-header">
+            <h1><i class="fas fa-list me-2 text-muted"></i>Toutes les r&eacute;servations</h1>
+            <p>Historique complet des r&eacute;servations du restaurant</p>
+          </div>
+
+          <!-- Filters -->
+          <div class="gc-filter-bar gc-form">
+            <div class="row g-3 align-items-end">
+              <div class="col-md-3">
+                <label class="form-label">Date d&eacute;but</label>
+                <input type="date" class="form-control" id="filterDateStart">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Date fin</label>
+                <input type="date" class="form-control" id="filterDateEnd">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Statut</label>
+                <select class="form-select" id="filterStatus">
+                  <option value="">Tous les statuts</option>
+                  <option value="en_attente">En attente</option>
+                  <option value="confirmee">Confirm&eacute;e</option>
+                  <option value="refusee">Refus&eacute;e</option>
+                  <option value="annulee">Annul&eacute;e</option>
+                  <option value="terminee">Termin&eacute;e</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <button class="btn btn-gc-primary w-100" id="btnFilterAll">
+                  <i class="fas fa-search me-1"></i> Filtrer
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table gc-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Heure</th>
+                  <th>Client</th>
+                  <th>Personnes</th>
+                  <th>Table</th>
+                  <th>Statut</th>
+                  <th>Note</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="reservationsAllBody">
+                <tr>
+                  <td colspan="8">
+                    <div class="gc-empty-state">
+                      <i class="fas fa-spinner fa-spin"></i>
+                      <p>Chargement...</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="gc-pagination" id="paginationAll"></div>
+        </section>
+
+        <!-- =============================================
+             SECTION: GESTION DES MENUS
+             ============================================= -->
+        <section id="section-menus" class="gc-section">
+          <div class="gc-page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h1><i class="fas fa-book-open me-2 text-muted"></i>Gestion des menus</h1>
+              <p>Cr&eacute;er, modifier et g&eacute;rer les menus du restaurant</p>
+            </div>
+            <button class="btn btn-gc-primary" data-bs-toggle="modal" data-bs-target="#menuModal" id="btnAddMenu">
+              <i class="fas fa-plus me-1"></i> Ajouter un menu
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table gc-table">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Cat&eacute;gorie</th>
+                  <th>Description</th>
+                  <th>Prix</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="menusBody">
+                <tr>
+                  <td colspan="6">
+                    <div class="gc-empty-state">
+                      <i class="fas fa-spinner fa-spin"></i>
+                      <p>Chargement...</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- =============================================
+             SECTION: DISPONIBILITES
+             ============================================= -->
+        <section id="section-disponibilites" class="gc-section">
+          <div class="gc-page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h1><i class="fas fa-clock me-2 text-muted"></i>Disponibilit&eacute;s</h1>
+              <p>Vue hebdomadaire des cr&eacute;neaux et capacit&eacute;s</p>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+              <button class="btn btn-outline-secondary btn-sm" id="btnPrevWeek">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <span class="fw-semibold" id="weekLabel">--</span>
+              <button class="btn btn-outline-secondary btn-sm" id="btnNextWeek">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+              <button class="btn btn-gc-secondary btn-sm ms-2" id="btnCurrentWeek">Aujourd'hui</button>
+            </div>
+          </div>
+
+          <div class="gc-card">
+            <div class="card-body">
+              <div class="gc-availability-grid" id="availabilityGrid">
+                <div class="gc-empty-state" style="grid-column: 1 / -1;">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <p>Chargement des disponibilit&eacute;s...</p>
+                </div>
+              </div>
+
+              <!-- Legend -->
+              <div class="gc-legend">
+                <div class="gc-legend-item">
+                  <div class="legend-color slot-available"></div>
+                  <span>Disponible</span>
+                </div>
+                <div class="gc-legend-item">
+                  <div class="legend-color slot-almost-full"></div>
+                  <span>Presque complet</span>
+                </div>
+                <div class="gc-legend-item">
+                  <div class="legend-color slot-full"></div>
+                  <span>Complet</span>
+                </div>
+                <div class="gc-legend-item">
+                  <div class="legend-color slot-empty"></div>
+                  <span>Ferm&eacute;</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: CONFIRM / REFUSE RESERVATION
+       ============================================================ -->
+  <div class="modal fade" id="reservationActionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: var(--gc-border-radius); overflow: hidden;">
+        <div class="modal-header" id="reservationActionHeader" style="border: none;">
+          <h5 class="modal-title" id="reservationActionTitle">Action</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body gc-form">
+          <p id="reservationActionDesc" class="mb-3"></p>
+          <div class="mb-3" id="staffNoteGroup">
+            <label class="form-label">Note (optionnelle)</label>
+            <textarea class="form-control" id="staffNoteInput" rows="3" placeholder="Ajouter une note pour le client..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer" style="border: none;">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn" id="btnConfirmAction">
+            <i class="fas fa-check me-1"></i> Confirmer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: ADD / EDIT MENU
+       ============================================================ -->
+  <div class="modal fade" id="menuModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: var(--gc-border-radius); overflow: hidden;">
+        <div class="modal-header" style="background: linear-gradient(135deg, var(--gc-primary-dark), var(--gc-primary)); color: #fff; border: none;">
+          <h5 class="modal-title" id="menuModalTitle">
+            <i class="fas fa-plus-circle me-2"></i>Ajouter un menu
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body gc-form">
+          <form id="menuForm" novalidate>
+            <input type="hidden" id="menuId">
+            <div class="mb-3">
+              <label for="menuName" class="form-label">Nom du plat / menu <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="menuName" required placeholder="Ex: Filet de boeuf grille">
+              <div class="invalid-feedback">Le nom est obligatoire.</div>
+            </div>
+            <div class="mb-3">
+              <label for="menuCategory" class="form-label">Cat&eacute;gorie <span class="text-danger">*</span></label>
+              <select class="form-select" id="menuCategory" required>
+                <option value="">S&eacute;lectionner une cat&eacute;gorie</option>
+                <option value="entree">Entr&eacute;e</option>
+                <option value="plat">Plat</option>
+                <option value="dessert">Dessert</option>
+                <option value="boisson">Boisson</option>
+                <option value="menu_complet">Menu complet</option>
+              </select>
+              <div class="invalid-feedback">La cat&eacute;gorie est obligatoire.</div>
+            </div>
+            <div class="mb-3">
+              <label for="menuDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="menuDescription" rows="3" placeholder="Description du plat ou du menu..."></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="menuPrice" class="form-label">Prix (&euro;) <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" id="menuPrice" required min="0" step="0.01" placeholder="0.00">
+              <div class="invalid-feedback">Le prix est obligatoire et doit &ecirc;tre positif.</div>
+            </div>
+            <div class="mb-3">
+              <label for="menuStatus" class="form-label">Statut</label>
+              <select class="form-select" id="menuStatus">
+                <option value="actif">Actif</option>
+                <option value="inactif">Inactif</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer" style="border: none;">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-gc-primary" id="btnSaveMenu">
+            <i class="fas fa-save me-1"></i> Enregistrer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: DELETE MENU CONFIRMATION
+       ============================================================ -->
+  <div class="modal fade" id="deleteMenuModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content" style="border-radius: var(--gc-border-radius); overflow: hidden;">
+        <div class="modal-header bg-danger text-white" style="border: none;">
+          <h5 class="modal-title"><i class="fas fa-trash-alt me-2"></i>Supprimer</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Voulez-vous vraiment supprimer le menu <strong id="deleteMenuName"></strong> ?</p>
+          <p class="text-muted small mb-0">Cette action est irr&eacute;versible.</p>
+        </div>
+        <div class="modal-footer" style="border: none;">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-danger btn-sm" id="btnConfirmDeleteMenu">
+            <i class="fas fa-trash-alt me-1"></i> Supprimer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCRIPTS
+       ============================================================ -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+  'use strict';
+
+  // ==================== STATE ====================
+  const state = {
+    currentSection: 'dashboard',
+    reservationsJour: [],
+    reservationsAll: [],
+    menus: [],
+    allCurrentPage: 1,
+    allTotalPages: 1,
+    allPerPage: 15,
+    weekOffset: 0,
+    pendingAction: null,
+    editingMenuId: null,
+    deletingMenuId: null,
+  };
+
+  // ==================== INITIALIZATION ====================
+  document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+    initNavigation();
+    initDateDefaults();
+    initEventListeners();
+    loadDashboard();
+  });
+
+  function checkAuth() {
+    if (!requireRole(['admin', 'superadmin', 'restaurant'])) return;
+  }
+
+  // ==================== NAVIGATION ====================
+  function initNavigation() {
+    // All navigation links (navbar + sidebar)
+    document.querySelectorAll('[data-section]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const section = link.dataset.section;
+        navigateTo(section);
+      });
+    });
+  }
+
+  function navigateTo(sectionName) {
+    state.currentSection = sectionName;
+
+    // Hide all sections
+    document.querySelectorAll('.gc-section').forEach(s => s.classList.remove('active'));
+
+    // Show target section
+    const target = document.getElementById(`section-${sectionName}`);
+    if (target) {
+      target.classList.add('active');
+    }
+
+    // Update sidebar active state
+    document.querySelectorAll('#sidebarNav .nav-link').forEach(link => {
+      link.classList.toggle('active', link.dataset.section === sectionName);
+    });
+
+    // Update navbar active state
+    document.querySelectorAll('.gc-navbar .nav-link[data-section]').forEach(link => {
+      link.classList.toggle('active', link.dataset.section === sectionName);
+    });
+
+    // Load section data
+    switch (sectionName) {
+      case 'dashboard':
+        loadDashboard();
+        break;
+      case 'reservations-jour':
+        loadReservationsJour();
+        break;
+      case 'reservations-all':
+        loadReservationsAll();
+        break;
+      case 'menus':
+        loadMenus();
+        break;
+      case 'disponibilites':
+        loadDisponibilites();
+        break;
+    }
+  }
+
+  // ==================== DATE DEFAULTS ====================
+  function initDateDefaults() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('filterDateJour').value = today;
+
+    // Default date range for "all reservations": last 30 days to next 30 days
+    const thirtyAgo = new Date();
+    thirtyAgo.setDate(thirtyAgo.getDate() - 30);
+    const thirtyAhead = new Date();
+    thirtyAhead.setDate(thirtyAhead.getDate() + 30);
+
+    document.getElementById('filterDateStart').value = thirtyAgo.toISOString().split('T')[0];
+    document.getElementById('filterDateEnd').value = thirtyAhead.toISOString().split('T')[0];
+  }
+
+  // ==================== EVENT LISTENERS ====================
+  function initEventListeners() {
+    // Logout
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      removeToken();
+      window.location.href = 'login.html';
+    });
+
+    // Date picker for day reservations
+    document.getElementById('filterDateJour').addEventListener('change', () => {
+      loadReservationsJour();
+    });
+
+    // Filter button for all reservations
+    document.getElementById('btnFilterAll').addEventListener('click', () => {
+      state.allCurrentPage = 1;
+      loadReservationsAll();
+    });
+
+    // Week navigation for availability
+    document.getElementById('btnPrevWeek').addEventListener('click', () => {
+      state.weekOffset--;
+      loadDisponibilites();
+    });
+    document.getElementById('btnNextWeek').addEventListener('click', () => {
+      state.weekOffset++;
+      loadDisponibilites();
+    });
+    document.getElementById('btnCurrentWeek').addEventListener('click', () => {
+      state.weekOffset = 0;
+      loadDisponibilites();
+    });
+
+    // Menu modal: add new
+    document.getElementById('btnAddMenu').addEventListener('click', () => {
+      resetMenuForm();
+      state.editingMenuId = null;
+      document.getElementById('menuModalTitle').innerHTML = '<i class="fas fa-plus-circle me-2"></i>Ajouter un menu';
+    });
+
+    // Menu save
+    document.getElementById('btnSaveMenu').addEventListener('click', handleSaveMenu);
+
+    // Reservation action confirm
+    document.getElementById('btnConfirmAction').addEventListener('click', handleReservationAction);
+
+    // Delete menu confirm
+    document.getElementById('btnConfirmDeleteMenu').addEventListener('click', handleDeleteMenu);
+  }
+
+  // ==================== DASHBOARD ====================
+  async function loadDashboard() {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+
+      // Load today's reservations and menus in parallel
+      const [reservationsData, menusData] = await Promise.all([
+        ReservationsAPI.list(`?service=restaurant&date=${today}`),
+        RestaurantAPI.menus(),
+      ]);
+
+      const reservations = reservationsData.data || reservationsData || [];
+      const menus = menusData.data || menusData || [];
+
+      // Stat: total today
+      const todayReservations = Array.isArray(reservations) ? reservations : [];
+      document.getElementById('statReservationsToday').textContent = todayReservations.length;
+
+      // Stat: pending
+      const pending = todayReservations.filter(r => r.statut === 'en_attente' || r.status === 'en_attente');
+      document.getElementById('statPending').textContent = pending.length;
+
+      // Stat: couverts
+      const confirmed = todayReservations.filter(r =>
+        r.statut === 'confirmee' || r.status === 'confirmee' ||
+        r.statut === 'en_attente' || r.status === 'en_attente'
+      );
+      const couverts = confirmed.reduce((sum, r) => sum + (r.nb_personnes || r.nombre_personnes || r.guests || 0), 0);
+      document.getElementById('statCouverts').textContent = couverts;
+
+      // Stat: active menus
+      const allMenus = Array.isArray(menus) ? menus : [];
+      const activeMenus = allMenus.filter(m => m.statut === 'actif' || m.status === 'actif' || m.actif === true);
+      document.getElementById('statMenusActifs').textContent = activeMenus.length || allMenus.length;
+
+      // Quick reservations list (next 5, sorted by time)
+      const upcoming = todayReservations
+        .filter(r => r.statut !== 'annulee' && r.status !== 'annulee' && r.statut !== 'refusee' && r.status !== 'refusee')
+        .sort((a, b) => {
+          const timeA = a.heure || a.date_reservation || a.date || '';
+          const timeB = b.heure || b.date_reservation || b.date || '';
+          return timeA.localeCompare(timeB);
+        })
+        .slice(0, 5);
+
+      renderQuickReservations(upcoming);
+      renderDaySummary(todayReservations);
+
+    } catch (error) {
+      console.error('Erreur chargement dashboard:', error);
+      document.getElementById('statReservationsToday').textContent = '0';
+      document.getElementById('statPending').textContent = '0';
+      document.getElementById('statCouverts').textContent = '0';
+      document.getElementById('statMenusActifs').textContent = '0';
+      renderQuickReservations([]);
+      renderDaySummary([]);
+    }
+  }
+
+  function renderQuickReservations(reservations) {
+    const container = document.getElementById('quickReservationsList');
+
+    if (!reservations.length) {
+      container.innerHTML = `
+        <div class="gc-empty-state">
+          <i class="fas fa-calendar-xmark"></i>
+          <p>Aucune r&eacute;servation &agrave; venir</p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = reservations.map(r => {
+      const time = r.heure || formatTime(r.date_reservation || r.date || '');
+      const name = r.client_nom || r.client?.nom || r.nom || 'Client';
+      const nb = r.nb_personnes || r.nombre_personnes || r.guests || '-';
+      const status = r.statut || r.status || 'en_attente';
+
+      return `
+        <div class="reservation-quick-item">
+          <div class="rq-time">${escapeHtml(time)}</div>
+          <div class="rq-info">
+            <div class="rq-name">${escapeHtml(name)}</div>
+            <div class="rq-details">${nb} personne${nb > 1 ? 's' : ''}</div>
+          </div>
+          <div>${formatStatus(status)}</div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderDaySummary(reservations) {
+    const container = document.getElementById('daySummary');
+    const total = reservations.length;
+    const confirmed = reservations.filter(r => (r.statut || r.status) === 'confirmee').length;
+    const pending = reservations.filter(r => (r.statut || r.status) === 'en_attente').length;
+    const refused = reservations.filter(r => (r.statut || r.status) === 'refusee').length;
+    const terminated = reservations.filter(r => (r.statut || r.status) === 'terminee').length;
+    const cancelled = reservations.filter(r => (r.statut || r.status) === 'annulee').length;
+
+    container.innerHTML = `
+      <div class="d-flex flex-column gap-2">
+        <div class="d-flex justify-content-between align-items-center py-1">
+          <span class="text-muted">Total</span>
+          <span class="fw-bold">${total}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-1">
+          <span><span class="badge bg-success me-1">&#8226;</span> Confirm&eacute;es</span>
+          <span class="fw-bold">${confirmed}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-1">
+          <span><span class="badge bg-warning text-dark me-1">&#8226;</span> En attente</span>
+          <span class="fw-bold">${pending}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-1">
+          <span><span class="badge bg-info me-1">&#8226;</span> Termin&eacute;es</span>
+          <span class="fw-bold">${terminated}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-1">
+          <span><span class="badge bg-danger me-1">&#8226;</span> Refus&eacute;es</span>
+          <span class="fw-bold">${refused}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-1">
+          <span><span class="badge bg-secondary me-1">&#8226;</span> Annul&eacute;es</span>
+          <span class="fw-bold">${cancelled}</span>
+        </div>
+      </div>`;
+  }
+
+  // ==================== RESERVATIONS DU JOUR ====================
+  async function loadReservationsJour() {
+    const tbody = document.getElementById('reservationsJourBody');
+    showLoading(tbody.parentElement.parentElement);
+
+    try {
+      const date = document.getElementById('filterDateJour').value;
+      const data = await ReservationsAPI.list(`?service=restaurant&date=${date}`);
+      const reservations = data.data || data || [];
+      state.reservationsJour = Array.isArray(reservations) ? reservations : [];
+
+      renderReservationsJourTable();
+    } catch (error) {
+      console.error('Erreur chargement reservations jour:', error);
+      tbody.innerHTML = `
+        <tr><td colspan="7">
+          <div class="gc-empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Erreur lors du chargement des r&eacute;servations</p>
+          </div>
+        </td></tr>`;
+    }
+  }
+
+  function renderReservationsJourTable() {
+    const tbody = document.getElementById('reservationsJourBody');
+    const container = document.getElementById('reservationsJourContainer');
+
+    // Restore the table structure if showLoading replaced it
+    if (!container.querySelector('table')) {
+      container.innerHTML = `
+        <div class="table-responsive">
+          <table class="table gc-table">
+            <thead>
+              <tr>
+                <th>Heure</th>
+                <th>Client</th>
+                <th>Personnes</th>
+                <th>Table</th>
+                <th>Statut</th>
+                <th>Note</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reservationsJourBody"></tbody>
+          </table>
+        </div>`;
+    }
+
+    const target = document.getElementById('reservationsJourBody');
+
+    if (!state.reservationsJour.length) {
+      target.innerHTML = `
+        <tr><td colspan="7">
+          <div class="gc-empty-state">
+            <i class="fas fa-calendar-xmark"></i>
+            <p>Aucune r&eacute;servation pour cette date</p>
+          </div>
+        </td></tr>`;
+      return;
+    }
+
+    target.innerHTML = state.reservationsJour.map(r => {
+      const id = r.id || r._id;
+      const time = r.heure || formatTime(r.date_reservation || r.date || '');
+      const name = r.client_nom || r.client?.nom || r.nom || 'Client';
+      const nb = r.nb_personnes || r.nombre_personnes || r.guests || '-';
+      const table = r.table_numero || r.table || r.numero_table || '-';
+      const status = r.statut || r.status || 'en_attente';
+      const note = r.note || r.staff_note || r.commentaire || '';
+
+      let actions = '';
+      if (status === 'en_attente') {
+        actions = `
+          <button class="btn btn-success btn-sm me-1" onclick="openActionModal('${id}', 'confirmer')" title="Confirmer">
+            <i class="fas fa-check"></i>
+          </button>
+          <button class="btn btn-danger btn-sm me-1" onclick="openActionModal('${id}', 'refuser')" title="Refuser">
+            <i class="fas fa-times"></i>
+          </button>`;
+      } else if (status === 'confirmee') {
+        actions = `
+          <button class="btn btn-info btn-sm text-white" onclick="handleTerminer('${id}')" title="Terminer">
+            <i class="fas fa-flag-checkered"></i>
+          </button>`;
+      }
+
+      return `
+        <tr>
+          <td><strong>${escapeHtml(time)}</strong></td>
+          <td>${escapeHtml(name)}</td>
+          <td><span class="badge bg-light text-dark">${nb}</span></td>
+          <td>${escapeHtml(String(table))}</td>
+          <td>${formatStatus(status)}</td>
+          <td><small class="text-muted">${escapeHtml(note)}</small></td>
+          <td>${actions}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  // ==================== TOUTES LES RESERVATIONS ====================
+  async function loadReservationsAll() {
+    const tbody = document.getElementById('reservationsAllBody');
+    tbody.innerHTML = `
+      <tr><td colspan="8">
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+        </div>
+      </td></tr>`;
+
+    try {
+      const dateStart = document.getElementById('filterDateStart').value;
+      const dateEnd = document.getElementById('filterDateEnd').value;
+      const status = document.getElementById('filterStatus').value;
+
+      let params = '?service=restaurant';
+      if (dateStart) params += `&date_start=${dateStart}`;
+      if (dateEnd) params += `&date_end=${dateEnd}`;
+      if (status) params += `&status=${status}`;
+      params += `&page=${state.allCurrentPage}&limit=${state.allPerPage}`;
+
+      const data = await ReservationsAPI.list(params);
+      const reservations = data.data || data || [];
+      state.reservationsAll = Array.isArray(reservations) ? reservations : [];
+
+      // Pagination metadata
+      if (data.pagination) {
+        state.allTotalPages = data.pagination.total_pages || data.pagination.totalPages || 1;
+      } else if (data.total) {
+        state.allTotalPages = Math.ceil(data.total / state.allPerPage);
+      } else {
+        state.allTotalPages = 1;
+      }
+
+      renderReservationsAllTable();
+      renderPagination();
+    } catch (error) {
+      console.error('Erreur chargement toutes reservations:', error);
+      tbody.innerHTML = `
+        <tr><td colspan="8">
+          <div class="gc-empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Erreur lors du chargement des r&eacute;servations</p>
+          </div>
+        </td></tr>`;
+    }
+  }
+
+  function renderReservationsAllTable() {
+    const tbody = document.getElementById('reservationsAllBody');
+
+    if (!state.reservationsAll.length) {
+      tbody.innerHTML = `
+        <tr><td colspan="8">
+          <div class="gc-empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>Aucune r&eacute;servation trouv&eacute;e</p>
+          </div>
+        </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = state.reservationsAll.map(r => {
+      const id = r.id || r._id;
+      const dateStr = r.date_reservation || r.date || '';
+      const date = dateStr ? formatDate(dateStr) : '-';
+      const time = r.heure || formatTime(dateStr);
+      const name = r.client_nom || r.client?.nom || r.nom || 'Client';
+      const nb = r.nb_personnes || r.nombre_personnes || r.guests || '-';
+      const table = r.table_numero || r.table || r.numero_table || '-';
+      const status = r.statut || r.status || 'en_attente';
+      const note = r.note || r.staff_note || r.commentaire || '';
+
+      let actions = '';
+      if (status === 'en_attente') {
+        actions = `
+          <button class="btn btn-success btn-sm me-1" onclick="openActionModal('${id}', 'confirmer')" title="Confirmer">
+            <i class="fas fa-check"></i>
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="openActionModal('${id}', 'refuser')" title="Refuser">
+            <i class="fas fa-times"></i>
+          </button>`;
+      } else if (status === 'confirmee') {
+        actions = `
+          <button class="btn btn-info btn-sm text-white" onclick="handleTerminer('${id}')" title="Terminer">
+            <i class="fas fa-flag-checkered"></i>
+          </button>`;
+      }
+
+      return `
+        <tr>
+          <td><small>${date}</small></td>
+          <td><strong>${escapeHtml(time)}</strong></td>
+          <td>${escapeHtml(name)}</td>
+          <td><span class="badge bg-light text-dark">${nb}</span></td>
+          <td>${escapeHtml(String(table))}</td>
+          <td>${formatStatus(status)}</td>
+          <td><small class="text-muted">${escapeHtml(note)}</small></td>
+          <td>${actions}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  function renderPagination() {
+    const container = document.getElementById('paginationAll');
+    if (state.allTotalPages <= 1) {
+      container.innerHTML = '';
+      return;
+    }
+
+    let html = '';
+
+    // Previous button
+    html += `<button class="page-btn" ${state.allCurrentPage <= 1 ? 'disabled' : ''} onclick="goToPage(${state.allCurrentPage - 1})">
+      <i class="fas fa-chevron-left"></i>
+    </button>`;
+
+    // Page numbers
+    const maxVisible = 5;
+    let startPage = Math.max(1, state.allCurrentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(state.allTotalPages, startPage + maxVisible - 1);
+    if (endPage - startPage + 1 < maxVisible) {
+      startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+
+    if (startPage > 1) {
+      html += `<button class="page-btn" onclick="goToPage(1)">1</button>`;
+      if (startPage > 2) html += `<span class="text-muted px-1">...</span>`;
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      html += `<button class="page-btn ${i === state.allCurrentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+    }
+
+    if (endPage < state.allTotalPages) {
+      if (endPage < state.allTotalPages - 1) html += `<span class="text-muted px-1">...</span>`;
+      html += `<button class="page-btn" onclick="goToPage(${state.allTotalPages})">${state.allTotalPages}</button>`;
+    }
+
+    // Next button
+    html += `<button class="page-btn" ${state.allCurrentPage >= state.allTotalPages ? 'disabled' : ''} onclick="goToPage(${state.allCurrentPage + 1})">
+      <i class="fas fa-chevron-right"></i>
+    </button>`;
+
+    container.innerHTML = html;
+  }
+
+  function goToPage(page) {
+    if (page < 1 || page > state.allTotalPages) return;
+    state.allCurrentPage = page;
+    loadReservationsAll();
+    // Scroll to top of table
+    document.getElementById('section-reservations-all').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ==================== RESERVATION ACTIONS ====================
+  function openActionModal(id, action) {
+    state.pendingAction = { id, action };
+
+    const modal = document.getElementById('reservationActionModal');
+    const header = document.getElementById('reservationActionHeader');
+    const title = document.getElementById('reservationActionTitle');
+    const desc = document.getElementById('reservationActionDesc');
+    const noteGroup = document.getElementById('staffNoteGroup');
+    const confirmBtn = document.getElementById('btnConfirmAction');
+
+    document.getElementById('staffNoteInput').value = '';
+
+    if (action === 'confirmer') {
+      header.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+      header.style.color = '#fff';
+      title.innerHTML = '<i class="fas fa-check-circle me-2"></i>Confirmer la r&eacute;servation';
+      desc.textContent = 'Confirmez-vous cette r\u00e9servation ? Le client sera notifi\u00e9.';
+      noteGroup.style.display = 'block';
+      confirmBtn.className = 'btn btn-success';
+      confirmBtn.innerHTML = '<i class="fas fa-check me-1"></i> Confirmer';
+    } else if (action === 'refuser') {
+      header.style.background = 'linear-gradient(135deg, #c0392b, #e74c3c)';
+      header.style.color = '#fff';
+      title.innerHTML = '<i class="fas fa-times-circle me-2"></i>Refuser la r&eacute;servation';
+      desc.textContent = 'Refusez-vous cette r\u00e9servation ? Vous pouvez ajouter une note explicative.';
+      noteGroup.style.display = 'block';
+      confirmBtn.className = 'btn btn-danger';
+      confirmBtn.innerHTML = '<i class="fas fa-times me-1"></i> Refuser';
+    }
+
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+  }
+
+  async function handleReservationAction() {
+    if (!state.pendingAction) return;
+
+    const { id, action } = state.pendingAction;
+    const note = document.getElementById('staffNoteInput').value.trim();
+    const confirmBtn = document.getElementById('btnConfirmAction');
+    const originalContent = confirmBtn.innerHTML;
+
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Traitement...';
+
+    try {
+      if (action === 'confirmer') {
+        await ReservationsAPI.confirmer(id);
+        showAlert(document.getElementById('alertContainer'), 'R\u00e9servation confirm\u00e9e avec succ\u00e8s.', 'success');
+      } else if (action === 'refuser') {
+        await ReservationsAPI.refuser(id, note);
+        showAlert(document.getElementById('alertContainer'), 'R\u00e9servation refus\u00e9e.', 'warning');
+      }
+
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('reservationActionModal'));
+      if (modal) modal.hide();
+
+      // Reload data
+      state.pendingAction = null;
+      if (state.currentSection === 'reservations-jour') {
+        await loadReservationsJour();
+      } else if (state.currentSection === 'reservations-all') {
+        await loadReservationsAll();
+      }
+      loadDashboard(); // Refresh stats silently
+
+    } catch (error) {
+      console.error('Erreur action reservation:', error);
+      showAlert(document.getElementById('alertContainer'), error.message || 'Erreur lors du traitement de la r\u00e9servation.', 'danger');
+    } finally {
+      confirmBtn.disabled = false;
+      confirmBtn.innerHTML = originalContent;
+    }
+  }
+
+  async function handleTerminer(id) {
+    if (!confirm('Marquer cette r\u00e9servation comme termin\u00e9e ?')) return;
+
+    try {
+      await ReservationsAPI.terminer(id);
+      showAlert(document.getElementById('alertContainer'), 'R\u00e9servation marqu\u00e9e comme termin\u00e9e.', 'info');
+
+      if (state.currentSection === 'reservations-jour') {
+        await loadReservationsJour();
+      } else if (state.currentSection === 'reservations-all') {
+        await loadReservationsAll();
+      }
+      loadDashboard();
+    } catch (error) {
+      console.error('Erreur terminer reservation:', error);
+      showAlert(document.getElementById('alertContainer'), error.message || 'Erreur lors du traitement.', 'danger');
+    }
+  }
+
+  // ==================== MENUS ====================
+  async function loadMenus() {
+    const tbody = document.getElementById('menusBody');
+    tbody.innerHTML = `
+      <tr><td colspan="6">
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+        </div>
+      </td></tr>`;
+
+    try {
+      const data = await RestaurantAPI.menus();
+      const menus = data.data || data || [];
+      state.menus = Array.isArray(menus) ? menus : [];
+
+      renderMenusTable();
+    } catch (error) {
+      console.error('Erreur chargement menus:', error);
+      tbody.innerHTML = `
+        <tr><td colspan="6">
+          <div class="gc-empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Erreur lors du chargement des menus</p>
+          </div>
+        </td></tr>`;
+    }
+  }
+
+  function renderMenusTable() {
+    const tbody = document.getElementById('menusBody');
+
+    if (!state.menus.length) {
+      tbody.innerHTML = `
+        <tr><td colspan="6">
+          <div class="gc-empty-state">
+            <i class="fas fa-book-open"></i>
+            <p>Aucun menu enregistr&eacute;</p>
+          </div>
+        </td></tr>`;
+      return;
+    }
+
+    const categoryLabels = {
+      entree: 'Entr\u00e9e',
+      plat: 'Plat',
+      dessert: 'Dessert',
+      boisson: 'Boisson',
+      menu_complet: 'Menu complet',
+    };
+
+    tbody.innerHTML = state.menus.map(m => {
+      const id = m.id || m._id;
+      const name = m.nom || m.name || '-';
+      const category = m.categorie || m.category || '';
+      const categoryLabel = categoryLabels[category] || category;
+      const description = m.description || '';
+      const price = m.prix || m.price || 0;
+      const status = m.statut || m.status || 'actif';
+      const isActive = status === 'actif';
+
+      const statusBadge = isActive
+        ? '<span class="badge bg-success">Actif</span>'
+        : '<span class="badge bg-secondary">Inactif</span>';
+
+      return `
+        <tr>
+          <td><strong>${escapeHtml(name)}</strong></td>
+          <td><span class="badge badge-restaurant">${escapeHtml(categoryLabel)}</span></td>
+          <td><small class="text-muted">${escapeHtml(truncate(description, 60))}</small></td>
+          <td><strong>${formatPrice(price)}</strong></td>
+          <td>${statusBadge}</td>
+          <td>
+            <button class="btn btn-gc-secondary btn-sm me-1" onclick="openEditMenu('${id}')" title="Modifier">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-outline-danger btn-sm" onclick="openDeleteMenu('${id}', '${escapeHtml(name)}')" title="Supprimer">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  function resetMenuForm() {
+    document.getElementById('menuForm').reset();
+    document.getElementById('menuForm').classList.remove('was-validated');
+    document.getElementById('menuId').value = '';
+    document.getElementById('menuStatus').value = 'actif';
+  }
+
+  function openEditMenu(id) {
+    const menu = state.menus.find(m => (m.id || m._id) === id || String(m.id || m._id) === String(id));
+    if (!menu) return;
+
+    state.editingMenuId = id;
+    document.getElementById('menuModalTitle').innerHTML = '<i class="fas fa-edit me-2"></i>Modifier le menu';
+    document.getElementById('menuId').value = id;
+    document.getElementById('menuName').value = menu.nom || menu.name || '';
+    document.getElementById('menuCategory').value = menu.categorie || menu.category || '';
+    document.getElementById('menuDescription').value = menu.description || '';
+    document.getElementById('menuPrice').value = menu.prix || menu.price || '';
+    document.getElementById('menuStatus').value = menu.statut || menu.status || 'actif';
+
+    const bsModal = new bootstrap.Modal(document.getElementById('menuModal'));
+    bsModal.show();
+  }
+
+  async function handleSaveMenu() {
+    const form = document.getElementById('menuForm');
+    form.classList.add('was-validated');
+
+    if (!form.checkValidity()) return;
+
+    const saveBtn = document.getElementById('btnSaveMenu');
+    const originalContent = saveBtn.innerHTML;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Enregistrement...';
+
+    const data = {
+      nom: document.getElementById('menuName').value.trim(),
+      categorie: document.getElementById('menuCategory').value,
+      description: document.getElementById('menuDescription').value.trim(),
+      prix: parseFloat(document.getElementById('menuPrice').value),
+      statut: document.getElementById('menuStatus').value,
+    };
+
+    try {
+      if (state.editingMenuId) {
+        await RestaurantAPI.updateMenu(state.editingMenuId, data);
+        showAlert(document.getElementById('alertContainer'), 'Menu mis \u00e0 jour avec succ\u00e8s.', 'success');
+      } else {
+        await RestaurantAPI.createMenu(data);
+        showAlert(document.getElementById('alertContainer'), 'Menu cr\u00e9\u00e9 avec succ\u00e8s.', 'success');
+      }
+
+      // Close modal and reload
+      const modal = bootstrap.Modal.getInstance(document.getElementById('menuModal'));
+      if (modal) modal.hide();
+      state.editingMenuId = null;
+      resetMenuForm();
+      await loadMenus();
+
+    } catch (error) {
+      console.error('Erreur sauvegarde menu:', error);
+      showAlert(document.getElementById('alertContainer'), error.message || 'Erreur lors de l\'enregistrement du menu.', 'danger');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = originalContent;
+    }
+  }
+
+  function openDeleteMenu(id, name) {
+    state.deletingMenuId = id;
+    document.getElementById('deleteMenuName').textContent = name;
+    const bsModal = new bootstrap.Modal(document.getElementById('deleteMenuModal'));
+    bsModal.show();
+  }
+
+  async function handleDeleteMenu() {
+    if (!state.deletingMenuId) return;
+
+    const btn = document.getElementById('btnConfirmDeleteMenu');
+    const originalContent = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Suppression...';
+
+    try {
+      await RestaurantAPI.deleteMenu(state.deletingMenuId);
+      showAlert(document.getElementById('alertContainer'), 'Menu supprim\u00e9 avec succ\u00e8s.', 'success');
+
+      const modal = bootstrap.Modal.getInstance(document.getElementById('deleteMenuModal'));
+      if (modal) modal.hide();
+      state.deletingMenuId = null;
+      await loadMenus();
+
+    } catch (error) {
+      console.error('Erreur suppression menu:', error);
+      showAlert(document.getElementById('alertContainer'), error.message || 'Erreur lors de la suppression du menu.', 'danger');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalContent;
+    }
+  }
+
+  // ==================== DISPONIBILITES ====================
+  async function loadDisponibilites() {
+    const grid = document.getElementById('availabilityGrid');
+    grid.innerHTML = `
+      <div class="gc-empty-state" style="grid-column: 1 / -1;">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Chargement des disponibilit&eacute;s...</p>
+      </div>`;
+
+    try {
+      // Calculate the week dates
+      const weekDates = getWeekDates(state.weekOffset);
+      updateWeekLabel(weekDates);
+
+      const startDate = weekDates[0].toISOString().split('T')[0];
+      const endDate = weekDates[6].toISOString().split('T')[0];
+
+      const data = await RestaurantAPI.disponibilites(`date_start=${startDate}&date_end=${endDate}`);
+      const slots = data.data || data.disponibilites || data || [];
+
+      renderAvailabilityGrid(weekDates, slots);
+
+    } catch (error) {
+      console.error('Erreur chargement disponibilites:', error);
+      // Show a placeholder grid even on error
+      const weekDates = getWeekDates(state.weekOffset);
+      updateWeekLabel(weekDates);
+      renderAvailabilityGrid(weekDates, []);
+    }
+  }
+
+  function getWeekDates(offset) {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1) + (offset * 7));
+
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      dates.push(d);
+    }
+    return dates;
+  }
+
+  function updateWeekLabel(weekDates) {
+    const options = { day: 'numeric', month: 'short' };
+    const start = weekDates[0].toLocaleDateString('fr-FR', options);
+    const end = weekDates[6].toLocaleDateString('fr-FR', options);
+    const year = weekDates[0].getFullYear();
+    document.getElementById('weekLabel').textContent = `${start} - ${end} ${year}`;
+  }
+
+  function renderAvailabilityGrid(weekDates, slotsData) {
+    const grid = document.getElementById('availabilityGrid');
+    const dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+    const timeSlots = [
+      '12:00', '12:30', '13:00', '13:30', '14:00',
+      '19:00', '19:30', '20:00', '20:30', '21:00',
+    ];
+
+    // Build slot map for quick lookup
+    const slotMap = {};
+    if (Array.isArray(slotsData)) {
+      slotsData.forEach(slot => {
+        const date = (slot.date || '').split('T')[0];
+        const time = slot.heure || slot.time || '';
+        const key = `${date}_${time}`;
+        slotMap[key] = {
+          capacity: slot.capacite || slot.capacity || slot.places_total || 0,
+          reserved: slot.reserves || slot.reserved || slot.places_reservees || 0,
+          remaining: slot.restant || slot.remaining || slot.places_disponibles || 0,
+        };
+      });
+    }
+
+    let html = '';
+
+    // Header row
+    html += '<div class="slot-header">Heure</div>';
+    weekDates.forEach((d, i) => {
+      const dayLabel = dayNames[i];
+      const dateLabel = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+      html += `<div class="slot-header">${dayLabel}<br><small>${dateLabel}</small></div>`;
+    });
+
+    // Time slot rows
+    timeSlots.forEach(time => {
+      html += `<div class="slot-time">${time}</div>`;
+      weekDates.forEach(d => {
+        const dateStr = d.toISOString().split('T')[0];
+        const key = `${dateStr}_${time}`;
+        const slot = slotMap[key];
+
+        if (slot && slot.capacity > 0) {
+          const remaining = slot.remaining;
+          const capacity = slot.capacity;
+          const pct = capacity > 0 ? (remaining / capacity) : 0;
+          let cls = 'slot-available';
+          if (remaining <= 0) {
+            cls = 'slot-full';
+          } else if (pct <= 0.25) {
+            cls = 'slot-almost-full';
+          }
+          html += `
+            <div class="slot-cell ${cls}" title="${remaining}/${capacity} places disponibles">
+              <span class="slot-count">${remaining}</span>
+              <span class="slot-label">/ ${capacity}</span>
+            </div>`;
+        } else {
+          // No data: show as available with default capacity or empty
+          const isSunday = d.getDay() === 0;
+          if (isSunday) {
+            html += `<div class="slot-cell slot-empty" title="Ferm&eacute;">
+              <span class="slot-label">Ferm&eacute;</span>
+            </div>`;
+          } else {
+            const defaultCapacity = 40;
+            html += `
+              <div class="slot-cell slot-available" title="${defaultCapacity} places disponibles">
+                <span class="slot-count">${defaultCapacity}</span>
+                <span class="slot-label">/ ${defaultCapacity}</span>
+              </div>`;
+          }
+        }
+      });
+    });
+
+    grid.innerHTML = html;
+  }
+
+  // ==================== UTILITY FUNCTIONS ====================
+  function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+  }
+
+  function truncate(str, maxLength) {
+    if (!str) return '';
+    return str.length > maxLength ? str.substring(0, maxLength) + '...' : str;
+  }
+  </script>
+</body>
+</html>

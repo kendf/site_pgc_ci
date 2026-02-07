@@ -19,9 +19,154 @@
     
     <!-- CSS Principal -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Loading Screen Styles -->
+    <style>
+        .loading-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0d3b1e 0%, #1a6b3c 100%);
+            background-image:
+                linear-gradient(135deg, rgba(13, 59, 30, 0.85) 0%, rgba(26, 107, 60, 0.85) 100%),
+                url('https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease;
+        }
+        .loading-page.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loader-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #three-canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+        .css-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            z-index: 2;
+        }
+        .loader-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+        .loader-ring-outer {
+            width: 100%;
+            height: 100%;
+            border-top-color: #4CAF50;
+            border-right-color: rgba(76, 175, 80, 0.3);
+            animation: rotateClockwise 3s infinite;
+        }
+        .loader-ring-middle {
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            border-top-color: rgba(255, 255, 255, 0.8);
+            border-right-color: rgba(255, 255, 255, 0.2);
+            animation: rotateCounterClockwise 4s infinite;
+        }
+        .loader-ring-inner {
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: 30%;
+            border-top-color: rgba(129, 199, 132, 0.8);
+            border-right-color: rgba(129, 199, 132, 0.2);
+            animation: rotateClockwise 5s infinite;
+        }
+        @keyframes rotateClockwise {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes rotateCounterClockwise {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+        .loading-text {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 1.8rem;
+            text-align: center;
+            z-index: 3;
+            opacity: 0.9;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .loading-page .progress-container {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            z-index: 3;
+        }
+        .loading-page .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        @media (max-width: 768px) {
+            .css-loader {
+                width: 400px;
+                height: 400px;
+            }
+        }
+    </style>
 </head>
 
 <body>
+
+<!-- ============================================ -->
+<!-- LOADING SCREEN (affiché une seule fois par session) -->
+<!-- ============================================ -->
+<div class="loading-page" id="loadingPage" style="display:none;">
+    <div class="loader-container">
+        <div class="css-loader">
+            <div class="loader-ring loader-ring-outer"></div>
+            <div class="loader-ring loader-ring-middle"></div>
+            <div class="loader-ring loader-ring-inner"></div>
+        </div>
+        <canvas id="three-canvas"></canvas>
+        <div class="loading-text">Chargement...</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+</div>
 
 <!-- ============================================ -->
 <!-- HEADER / NAVIGATION -->
@@ -76,6 +221,19 @@
                             <li><a href="apropos.html">Historique</a></li>
                             <li><a href="apropos.html#mot_dg">Mot du Directeur</a></li>
                             <li><a href="apropos.html#equipe">Équipe dirigeante</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item nav-hover">
+                        <a class="nav-link" href="front-back/reservation.html">Réservation</a>
+                    </li>
+
+                    <li class="nav-item nav-hover">
+                        <a class="nav-link" href="#">Mon Espace</a>
+                        <ul class="dropdown-menu-custom">
+                            <li><a href="front-back/client.html">Espace Client</a></li>
+                            <li><a href="front-back/jeu-golf.html">Jeu de Golf</a></li>
+                            <li><a href="front-back/login.html">Connexion</a></li>
                         </ul>
                     </li>
 
@@ -382,7 +540,7 @@
                 <i class="bi bi-envelope"></i> Contact par email
             </a>
            
-            <a href="Reservations.html" class="btn btn-primary">
+            <a href="front-back/reservation.html" class="btn btn-primary">
                 <i class="bi bi-calendar-check"></i> Réserver en ligne
              </a>
         </div>
@@ -406,6 +564,122 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="feuille_css-js/script.js"></script>
+
+<!-- ============================================ -->
+<!-- LOADING SCREEN SCRIPT (une seule fois par session) -->
+<!-- ============================================ -->
+<script>
+(function() {
+    const loadingPage = document.getElementById('loadingPage');
+    const alreadyLoaded = sessionStorage.getItem('pgc_loaded');
+
+    // Si déjà chargé dans cette session, ne pas afficher
+    if (alreadyLoaded) {
+        loadingPage.style.display = 'none';
+        return;
+    }
+
+    // Afficher le loading
+    loadingPage.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Charger Three.js dynamiquement
+    const threeScript = document.createElement('script');
+    threeScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+    threeScript.onload = function() {
+        initLoadingAnimation();
+    };
+    threeScript.onerror = function() {
+        // Fallback si Three.js ne charge pas : juste la barre de progression
+        simulateLoading();
+    };
+    document.head.appendChild(threeScript);
+
+    function initLoadingAnimation() {
+        const canvas = document.getElementById('three-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0);
+
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 5, 5);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x404040));
+
+        const textureLoader = new THREE.TextureLoader();
+        const bumpMap = textureLoader.load('https://media.istockphoto.com/id/1614733639/vector/seamless-golf-ball-pattern.jpg?s=612x612&w=0&k=20&c=cHOak9Z8dbINAP7rDcX9wmLdVdt1yLtjyZHgDagmx1I=');
+
+        const geometry = new THREE.SphereGeometry(4, 64, 64);
+        const material = new THREE.MeshStandardMaterial({
+            color: 0xffffff, roughness: 0.5, metalness: 0, bumpMap: bumpMap, bumpScale: 0.05
+        });
+        const ball = new THREE.Mesh(geometry, material);
+        scene.add(ball);
+        camera.position.z = 15;
+
+        let time = 0;
+        let animationId;
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+            ball.rotation.x += 0.01;
+            ball.rotation.y += 0.01;
+            time += 0.05;
+            ball.position.y = Math.sin(time) * 0.05;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', function() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Stocker animationId pour cleanup
+        loadingPage.dataset.animationId = animationId;
+
+        simulateLoading();
+    }
+
+    function simulateLoading() {
+        const progressBar = document.getElementById('progressBar');
+        let progress = 0;
+
+        const interval = setInterval(function() {
+            progress += Math.random() * 7 + 7;
+            if (progress > 100) {
+                progress = 100;
+                clearInterval(interval);
+
+                setTimeout(function() {
+                    finishLoading();
+                }, 400);
+            }
+            progressBar.style.width = progress + '%';
+        }, 200);
+    }
+
+    function finishLoading() {
+        // Marquer comme chargé pour cette session
+        sessionStorage.setItem('pgc_loaded', '1');
+
+        // Fade out
+        loadingPage.classList.add('fade-out');
+
+        setTimeout(function() {
+            loadingPage.style.display = 'none';
+            document.body.style.overflow = '';
+
+            // Cleanup Three.js animation
+            if (loadingPage.dataset.animationId) {
+                cancelAnimationFrame(parseInt(loadingPage.dataset.animationId));
+            }
+        }, 800);
+    }
+})();
+</script>
 
 </body>
 </html>

@@ -1,362 +1,515 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Détails - Président Golf Club</title>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- CSS Principal -->
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="detail-page">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="detail-page">
     <!-- Header -->
     <header class="detail-header">
-        <div class="header-container">
-            <a href="index.html" class="logo">
-                <i class="fas fa-golf-ball"></i> Président<span>Golf</span>Club
-            </a>
-            <a href="index.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                Retour à l'accueil
-            </a>
-        </div>
+      <div class="header-container">
+        <a href="index.html" class="logo">
+          <i class="fas fa-golf-ball"></i> Président<span>Golf</span>Club
+        </a>
+        <a href="index.html" class="back-btn">
+          <i class="fas fa-arrow-left"></i>
+          Retour à l'accueil
+        </a>
+      </div>
     </header>
 
     <!-- Breadcrumb -->
     <div class="breadcrumb">
-        <div class="breadcrumb-content">
-            <a href="index.html">Accueil</a>
-            <i class="fas fa-chevron-right"></i>
-            <a href="#">Nos Espaces</a>
-            <i class="fas fa-chevron-right"></i>
-            <span id="current-section">Chargement...</span>
-        </div>
+      <div class="breadcrumb-content">
+        <a href="index.html">Accueil</a>
+        <i class="fas fa-chevron-right"></i>
+        <a href="#">Nos Espaces</a>
+        <i class="fas fa-chevron-right"></i>
+        <span id="current-section">Chargement...</span>
+      </div>
     </div>
 
     <!-- Loading State -->
     <div id="loading" class="loading-container">
-        <div class="loading-spinner"></div>
-        <h2>Chargement des informations...</h2>
-        <p>Veuillez patienter</p>
+      <div class="loading-spinner"></div>
+      <h2>Chargement des informations...</h2>
+      <p>Veuillez patienter</p>
     </div>
 
     <!-- Hero Section (Will be populated dynamically) -->
-    <section id="hero-section" class="detail-hero" style="display: none;">
-        <img id="hero-image" src="" alt="" class="hero-bg">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <span class="hero-badge" id="section-category">Espace Premium</span>
-            <h1 class="hero-title" id="section-title">Titre de la section</h1>
-            <p class="hero-subtitle" id="section-description">Description de la section</p>
-        </div>
+    <section id="hero-section" class="detail-hero" style="display: none">
+      <img id="hero-image" src="" alt="" class="hero-bg" />
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-badge" id="section-category">Espace Premium</span>
+        <h1 class="hero-title" id="section-title">Titre de la section</h1>
+        <p class="hero-subtitle" id="section-description">
+          Description de la section
+        </p>
+      </div>
     </section>
 
     <!-- Main Content (Will be populated dynamically) -->
-    <main id="main-content" class="detail-container" style="display: none;">
-        <!-- Overview Card -->
-        <div class="content-card fade-in">
-            <div class="info-grid">
-                <!-- Will be populated dynamically -->
-            </div>
+    <main id="main-content" class="detail-container" style="display: none">
+      <!-- Overview Card -->
+      <div class="content-card fade-in">
+        <div class="info-grid">
+          <!-- Will be populated dynamically -->
         </div>
+      </div>
 
-        <!-- Features Card -->
-        <div class="content-card fade-in" id="features-section" style="display: none;">
-            <h2 class="section-title">Caractéristiques</h2>
-            <div class="features-grid" id="features-grid">
-                <!-- Will be populated dynamically -->
-            </div>
+      <!-- Features Card -->
+      <div
+        class="content-card fade-in"
+        id="features-section"
+        style="display: none"
+      >
+        <h2 class="section-title">Caractéristiques</h2>
+        <div class="features-grid" id="features-grid">
+          <!-- Will be populated dynamically -->
         </div>
+      </div>
 
-        <!-- Gallery Card -->
-        <div class="content-card fade-in" id="gallery-section" style="display: none;">
-            <h2 class="section-title">Galerie Photos</h2>
-            <div class="gallery-grid" id="gallery-grid">
-                <!-- Will be populated dynamically -->
-            </div>
+      <!-- Gallery Card -->
+      <div
+        class="content-card fade-in"
+        id="gallery-section"
+        style="display: none"
+      >
+        <h2 class="section-title">Galerie Photos</h2>
+        <div class="gallery-grid" id="gallery-grid">
+          <!-- Will be populated dynamically -->
         </div>
+      </div>
 
-        <!-- CTA Section -->
-        <div class="cta-section fade-in">
-            <h2 class="cta-title">Visitez notre espace</h2>
-            <p class="cta-text">Réservez votre visite ou demandez plus d'informations</p>
-            <div class="cta-buttons">
-                <a href="tel:+2250123456789" class="btn btn-primary">
-                    <i class="fas fa-phone"></i> Nous appeler
-                </a>
-                <a href="mailto:contact@presidentgolfclub.ci" class="btn btn-secondary">
-                    <i class="fas fa-envelope"></i> Contact par email
-                </a>
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bookingModal">
-                    <i class="fas fa-calendar-alt"></i> Réserver en ligne
-                </button>
-            </div>
+      <!-- CTA Section -->
+      <div class="cta-section fade-in">
+        <h2 class="cta-title">Visitez notre espace</h2>
+        <p class="cta-text">
+          Réservez votre visite ou demandez plus d'informations
+        </p>
+        <div class="cta-buttons">
+          <a href="tel:+2250123456789" class="btn btn-primary">
+            <i class="fas fa-phone"></i> Nous appeler
+          </a>
+          <a
+            href="mailto:contact@presidentgolfclub.ci"
+            class="btn btn-secondary"
+          >
+            <i class="fas fa-envelope"></i> Contact par email
+          </a>
+          <a href="front-back/reservation.html" class="btn btn-secondary">
+            <i class="fas fa-calendar-alt"></i> Réserver en ligne
+          </a>
         </div>
+      </div>
     </main>
 
-    
     <script>
-        // Données dynamiques des sections
-        const sectionsData = {
-            "restau": {
-                title: "Restaurant Cora",
-                category: "Restaurant",
-                description: "Cuisine raffinée avec vue panoramique sur le parcours de golf",
-                heroImage: "images/Nos_espaces/restau.png",
-                color: "#1a5fb4",
-                overview: {
-                    presentation: "Un ensemble cloisonné sur une surface de 160 m² avec terrasse en hauteur offrant une vue large sur le parcours.",
-                    schedule: "Ouvert 6j/7 (du mardi au dimanche) et les jours fériés de 07 H à 18 H",
-                    dimension: "90 m²",
-                    capacity: "150 Couverts",
-                    usage: "Réceptions entre collègues, familles, et moments privilégiés en couple."
-                },
-                features: [
-                    { icon: "fa-users", label: "Capacité", value: "150 personnes" },
-                    { icon: "fa-utensils", label: "Type de menu", value: "Africain, Européen" },
-                    { icon: "fa-concierge-bell", label: "Service", value: "Buffet et à la carte" },
-                    { icon: "fa-crown", label: "Salon VIP", value: "Disponible" },
-                    { icon: "fa-wifi", label: "Connexion", value: "Wi-Fi gratuit" },
-                    { icon: "fa-parking", label: "Parking", value: "Gratuit" }
-                ],
-                gallery: [
-                    "images/3.jpg",
-                    "images/5.jpg",
-                    "images/restau1.jpg",
-                    "images/restau2.jpg"
-                ]
+      // Données dynamiques des sections
+      const sectionsData = {
+        restau: {
+          title: "Restaurant Cora",
+          category: "Restaurant",
+          description:
+            "Cuisine raffinée avec vue panoramique sur le parcours de golf",
+          heroImage: "images/Nos_espaces/restau.png",
+          color: "#1a5fb4",
+          overview: {
+            presentation:
+              "Un ensemble cloisonné sur une surface de 160 m² avec terrasse en hauteur offrant une vue large sur le parcours.",
+            schedule:
+              "Ouvert 6j/7 (du mardi au dimanche) et les jours fériés de 07 H à 18 H",
+            dimension: "90 m²",
+            capacity: "150 Couverts",
+            usage:
+              "Réceptions entre collègues, familles, et moments privilégiés en couple.",
+          },
+          features: [
+            { icon: "fa-users", label: "Capacité", value: "150 personnes" },
+            {
+              icon: "fa-utensils",
+              label: "Type de menu",
+              value: "Africain, Européen",
             },
-            "bar": {
-                title: "Bar Green 19",
-                category: "Bar & Lounge",
-                description: "Lieu de rencontre convivial après une partie de golf",
-                heroImage: "images/Nos_espaces/fresh-cocktails.jpg",
-                color: "#22274f",
-                overview: {
-                    presentation: "Après un parcours de 18 trous, le Green 19 vous accueille avec ses jus de fruits du terroir et son café ivoirien d'exception.",
-                    schedule: "Ouvert 7j/7 de 07 H à 18 H",
-                    dimension: "70 m²",
-                    capacity: "45 places"
-                },
-                features: [
-                    { icon: "fa-tv", label: "Écrans TV", value: "Sport en direct" },
-                    { icon: "fa-wine-glass", label: "Spécialités", value: "Cocktails premium" },
-                    { icon: "fa-music", label: "Ambiance", value: "Musique lounge" },
-                    { icon: "fa-wifi", label: "Wi-Fi", value: "Haut débit" },
-                    { icon: "fa-thermometer-half", label: "Climatisation", value: "Oui" },
-                    { icon: "fa-smoking", label: "Zone fumeurs", value: "Espace dédié" }
-                ],
-                gallery: [
-                    "images/Acc_bar.jpg",
-                    "images/Nos_espaces/b1.jpg",
-                    "images/bar1.jpg",
-                    "images/bar2.jpg"
-                ]
+            {
+              icon: "fa-concierge-bell",
+              label: "Service",
+              value: "Buffet et à la carte",
             },
-            "salle-poly": {
-                title: "Salle Polyvalente",
-                category: "Événements",
-                description: "Espace modulable pour tous vos événements et réceptions",
-                heroImage: "images/Nos_espaces/salle_poly.jpg",
-                color: "#22274f",
-                overview: {
-                    presentation: "Un ensemble de trois salles modulables pour mariages, baptêmes, conférences et réunions d'affaires.",
-                    schedule: "Ouvert 6j/7 (du mardi au dimanche) et les jours fériés de 07 H à 18 H",
-                    dimension: "200 m²",
-                    capacity: "150 places",
-                    usage: "Cocktails, dîners assis, buffets dansants, conférences et projections."
-                },
-                features: [
-                    { icon: "fa-expand", label: "Modulable", value: "Plusieurs configurations" },
-                    { icon: "fa-video", label: "Équipement", value: "Projecteur disponible" },
-                    { icon: "fa-volume-up", label: "Sonorisation", value: "Professionnelle" },
-                    { icon: "fa-snowflake", label: "Climatisation", value: "oui" },
-                    { icon: "fa-lightbulb", label: "Éclairage", value: "LED ajustable" },
-                    { icon: "fa-chair", label: "Mobilier", value: "Moderne et confortable" }
-                ],
-                gallery: [
-                    "images/4.jpg",
-                    "images/Nos_espaces/Sp2.jpg",
-                    "images/salle1.jpg",
-                    "images/salle2.jpg"
-                ]
+            { icon: "fa-crown", label: "Salon VIP", value: "Disponible" },
+            { icon: "fa-wifi", label: "Connexion", value: "Wi-Fi gratuit" },
+            { icon: "fa-parking", label: "Parking", value: "Gratuit" },
+          ],
+          gallery: [
+            "images/3.jpg",
+            "images/5.jpg",
+            "images/restau1.jpg",
+            "images/restau2.jpg",
+          ],
+        },
+        bar: {
+          title: "Bar Green 19",
+          category: "Bar & Lounge",
+          description: "Lieu de rencontre convivial après une partie de golf",
+          heroImage: "images/Nos_espaces/fresh-cocktails.jpg",
+          color: "#22274f",
+          overview: {
+            presentation:
+              "Après un parcours de 18 trous, le Green 19 vous accueille avec ses jus de fruits du terroir et son café ivoirien d'exception.",
+            schedule: "Ouvert 7j/7 de 07 H à 18 H",
+            dimension: "70 m²",
+            capacity: "45 places",
+          },
+          features: [
+            { icon: "fa-tv", label: "Écrans TV", value: "Sport en direct" },
+            {
+              icon: "fa-wine-glass",
+              label: "Spécialités",
+              value: "Cocktails premium",
             },
-            "salle-reunion": {
-                title: "Salle de Réunion",
-                category: "Business",
-                description: "Cadre professionnel pour vos réunions d'affaires",
-                heroImage: "images/Nos_espaces/salle-reunion.jpg",
-                color: "#22274f",
-                overview: {
-                    presentation: "Salle de réunion (ou Salle Bridge) offrant un cadre propice à la concentration et aux échanges professionnels.",
-                    schedule: "Ouvert 09h à 18h du mardi au dimanche et les jours fériés",
-                    dimension: "50 m²",
-                    capacity: "30 places",
-                    amenities: "Espace aménagé, tables et chaises ergonomiques, vitres teintées."
-                },
-                features: [
-                    { icon: "fa-chalkboard", label: "Tableau", value: "Blanc interactif" },
-                    { icon: "fa-video", label: "Visioconférence", value: "Équipement fourni" },
-                    { icon: "fa-print", label: "Imprimante", value: "Disponible" },
-                    { icon: "fa-coffee", label: "Coffee break", value: "Service inclus" },
-                    { icon: "fa-wifi", label: "Wi-Fi", value: "Fibre optique" },
-                    { icon: "fa-plug", label: "Prises", value: "Multiples prises RJ45" }
-                ],
-                gallery: [
-                    "images/sr.jpg",
-                    "images/Nos_espaces/salle-reunion.jpg",
-                    "images/reunion1.jpg",
-                    "images/reunion2.jpg"
-                ]
+            { icon: "fa-music", label: "Ambiance", value: "Musique lounge" },
+            { icon: "fa-wifi", label: "Wi-Fi", value: "Haut débit" },
+            {
+              icon: "fa-thermometer-half",
+              label: "Climatisation",
+              value: "Oui",
             },
-            "piscine": {
-                title: "Piscine Panoramique",
-                category: "Loisirs",
-                description: "Piscine avec vue exceptionnelle sur le parcours de golf",
-                heroImage: "images/Nos_espaces/refresh_pool.jpg",
-                color: "#22274f",
-                overview: {
-                    presentation: "Piscine en forme de croissant lunaire située sur la terrasse du Club house avec vue panoramique sur le parcours.",
-                    schedule: "Du mardi au dimanche et les jours fériés de 09 H à 18 H",
-                    dimension: "Bassin principal : 25m × 10m<br>Petit bassin : pour enfants",
-                    activities: "Baignade, détente, cours de natation avec maîtres-nageurs diplômés.",
-                    capacity: "60 personnes maximum"
-                },
-                features: [
-                    { icon: "fa-swimmer", label: "Maître-nageur", value: "Toujours présent" },
-                    { icon: "fa-child", label: "Piscine enfants", value: "Bassin sécurisé" },
-                    { icon: "fa-graduation-cap", label: "Cours", value: "Natation tous niveaux" },
-                    { icon: "fa-sun", label: "Terasse", value: "Transats et parasols" },
-                    { icon: "fa-shower", label: "Douches", value: "Chaudes et froides" },
-                    { icon: "fa-umbrella-beach", label: "Service", value: "Bar de piscine" }
-                ],
-                gallery: [
-                    "images/pisc1.jpg",
-                    "images/pisc2.jpg",
-                    "images/piscine1.jpg",
-                    "images/piscine2.jpg"
-                ]
+            {
+              icon: "fa-smoking",
+              label: "Zone fumeurs",
+              value: "Espace dédié",
             },
-            "golf": {
-                title: "Parcours de Golf",
-                category: "Sport",
-                description: "L'un des plus beaux parcours d'Afrique",
-                heroImage: "images/Nos_espaces/golf-course-landscape.jpg",
-                color: "#22274f",
-                overview: {
-                    presentation: "Parcours classé parmi les plus beaux d'Afrique, toujours impeccablement entretenu pour le plaisir des golfeurs.",
-                    schedule: "Ouvert 6j/7 (du mardi au dimanche) et les jours fériés de 07H30 à 18 H",
-                    activities: "Initiation individuelle et en entreprise, coaching, training de moniteurs, tournois et compétitions."
-                },
-                features: [
-                    { icon: "fa-tree", label: "Paysage", value: "Vallonné et boisé" },
-                    { icon: "fa-water", label: "Obstacles", value: "Plans d'eau naturels" },
-                    { icon: "fa-golf-ball", label: "Matériel", value: "Location disponible" },
-                    { icon: "fa-user-tie", label: "Professionnels", value: "Moniteurs diplômés" },
-                    { icon: "fa-flag", label: "18 trous", value: "Parcours complet" },
-                    { icon: "fa-car", label: "Voiturettes", value: "Électriques" }
-                ],
-                gallery: [
-                    "images/1-3.jpg",
-                    "images/Nos_espaces/golf-course-landscape.jpg",
-                    "images/golf1.jpg",
-                    "images/golf2.jpg"
-                ]
+          ],
+          gallery: [
+            "images/Acc_bar.jpg",
+            "images/Nos_espaces/b1.jpg",
+            "images/bar1.jpg",
+            "images/bar2.jpg",
+          ],
+        },
+        "salle-poly": {
+          title: "Salle Polyvalente",
+          category: "Événements",
+          description:
+            "Espace modulable pour tous vos événements et réceptions",
+          heroImage: "images/Nos_espaces/salle_poly.jpg",
+          color: "#22274f",
+          overview: {
+            presentation:
+              "Un ensemble de trois salles modulables pour mariages, baptêmes, conférences et réunions d'affaires.",
+            schedule:
+              "Ouvert 6j/7 (du mardi au dimanche) et les jours fériés de 07 H à 18 H",
+            dimension: "200 m²",
+            capacity: "150 places",
+            usage:
+              "Cocktails, dîners assis, buffets dansants, conférences et projections.",
+          },
+          features: [
+            {
+              icon: "fa-expand",
+              label: "Modulable",
+              value: "Plusieurs configurations",
             },
-            "fitness": {
-                title: "Centre de Fitness",
-                category: "Sport & Santé",
-                description: "Salle de remise en forme et musculation moderne",
-                heroImage: "images/Nos_espaces/equipment.jpg",
-                color: "#22274f",
-                overview: {
-                    presentation: "Centre de fitness entièrement équipé pour la préparation physique et la remise en forme.",
-                    schedule: "De 08 h à 18 h / mardi au dimanche et jours fériés",
-                    dimension: "60 m²",
-                    specs: "Grand miroir mural, aération centrale, appareils de musculation haut de gamme."
-                },
-                features: [
-                    { icon: "fa-running", label: "Cardio", value: "Tapis, vélos, elliptiques" },
-                    { icon: "fa-dumbbell", label: "Musculation", value: "Appareils professionnels" },
-                    { icon: "fa-user-friends", label: "Coaching", value: "Personnalisé" },
-                    { icon: "fa-snowflake", label: "Climatisation", value: "Régulée" },
-                    { icon: "fa-music", label: "Ambiance", value: "Playlist énergisante" },
-                    { icon: "fa-lock", label: "Casiers", value: "Sécurisés" }
-                ],
-                gallery: [
-                    "images/Nos_espaces/fit2.jpg",
-                    "images/Nos_espaces/equipment.jpg",
-                    "images/fitness1.jpg",
-                    "images/fitness2.jpg"
-                ]
-            }
-        };
+            {
+              icon: "fa-video",
+              label: "Équipement",
+              value: "Projecteur disponible",
+            },
+            {
+              icon: "fa-volume-up",
+              label: "Sonorisation",
+              value: "Professionnelle",
+            },
+            { icon: "fa-snowflake", label: "Climatisation", value: "oui" },
+            {
+              icon: "fa-lightbulb",
+              label: "Éclairage",
+              value: "LED ajustable",
+            },
+            {
+              icon: "fa-chair",
+              label: "Mobilier",
+              value: "Moderne et confortable",
+            },
+          ],
+          gallery: [
+            "images/4.jpg",
+            "images/Nos_espaces/Sp2.jpg",
+            "images/salle1.jpg",
+            "images/salle2.jpg",
+          ],
+        },
+        "salle-reunion": {
+          title: "Salle de Réunion",
+          category: "Business",
+          description: "Cadre professionnel pour vos réunions d'affaires",
+          heroImage: "images/Nos_espaces/salle-reunion.jpg",
+          color: "#22274f",
+          overview: {
+            presentation:
+              "Salle de réunion (ou Salle Bridge) offrant un cadre propice à la concentration et aux échanges professionnels.",
+            schedule:
+              "Ouvert 09h à 18h du mardi au dimanche et les jours fériés",
+            dimension: "50 m²",
+            capacity: "30 places",
+            amenities:
+              "Espace aménagé, tables et chaises ergonomiques, vitres teintées.",
+          },
+          features: [
+            {
+              icon: "fa-chalkboard",
+              label: "Tableau",
+              value: "Blanc interactif",
+            },
+            {
+              icon: "fa-video",
+              label: "Visioconférence",
+              value: "Équipement fourni",
+            },
+            { icon: "fa-print", label: "Imprimante", value: "Disponible" },
+            {
+              icon: "fa-coffee",
+              label: "Coffee break",
+              value: "Service inclus",
+            },
+            { icon: "fa-wifi", label: "Wi-Fi", value: "Fibre optique" },
+            {
+              icon: "fa-plug",
+              label: "Prises",
+              value: "Multiples prises RJ45",
+            },
+          ],
+          gallery: [
+            "images/sr.jpg",
+            "images/Nos_espaces/salle-reunion.jpg",
+            "images/reunion1.jpg",
+            "images/reunion2.jpg",
+          ],
+        },
+        piscine: {
+          title: "Piscine Panoramique",
+          category: "Loisirs",
+          description:
+            "Piscine avec vue exceptionnelle sur le parcours de golf",
+          heroImage: "images/Nos_espaces/refresh_pool.jpg",
+          color: "#22274f",
+          overview: {
+            presentation:
+              "Piscine en forme de croissant lunaire située sur la terrasse du Club house avec vue panoramique sur le parcours.",
+            schedule: "Du mardi au dimanche et les jours fériés de 09 H à 18 H",
+            dimension:
+              "Bassin principal : 25m × 10m<br>Petit bassin : pour enfants",
+            activities:
+              "Baignade, détente, cours de natation avec maîtres-nageurs diplômés.",
+            capacity: "60 personnes maximum",
+          },
+          features: [
+            {
+              icon: "fa-swimmer",
+              label: "Maître-nageur",
+              value: "Toujours présent",
+            },
+            {
+              icon: "fa-child",
+              label: "Piscine enfants",
+              value: "Bassin sécurisé",
+            },
+            {
+              icon: "fa-graduation-cap",
+              label: "Cours",
+              value: "Natation tous niveaux",
+            },
+            { icon: "fa-sun", label: "Terasse", value: "Transats et parasols" },
+            {
+              icon: "fa-shower",
+              label: "Douches",
+              value: "Chaudes et froides",
+            },
+            {
+              icon: "fa-umbrella-beach",
+              label: "Service",
+              value: "Bar de piscine",
+            },
+          ],
+          gallery: [
+            "images/pisc1.jpg",
+            "images/pisc2.jpg",
+            "images/piscine1.jpg",
+            "images/piscine2.jpg",
+          ],
+        },
+        golf: {
+          title: "Parcours de Golf",
+          category: "Sport",
+          description: "L'un des plus beaux parcours d'Afrique",
+          heroImage: "images/Nos_espaces/golf-course-landscape.jpg",
+          color: "#22274f",
+          overview: {
+            presentation:
+              "Parcours classé parmi les plus beaux d'Afrique, toujours impeccablement entretenu pour le plaisir des golfeurs.",
+            schedule:
+              "Ouvert 6j/7 (du mardi au dimanche) et les jours fériés de 07H30 à 18 H",
+            activities:
+              "Initiation individuelle et en entreprise, coaching, training de moniteurs, tournois et compétitions.",
+          },
+          features: [
+            { icon: "fa-tree", label: "Paysage", value: "Vallonné et boisé" },
+            {
+              icon: "fa-water",
+              label: "Obstacles",
+              value: "Plans d'eau naturels",
+            },
+            {
+              icon: "fa-golf-ball",
+              label: "Matériel",
+              value: "Location disponible",
+            },
+            {
+              icon: "fa-user-tie",
+              label: "Professionnels",
+              value: "Moniteurs diplômés",
+            },
+            { icon: "fa-flag", label: "18 trous", value: "Parcours complet" },
+            { icon: "fa-car", label: "Voiturettes", value: "Électriques" },
+          ],
+          gallery: [
+            "images/1-3.jpg",
+            "images/Nos_espaces/golf-course-landscape.jpg",
+            "images/golf1.jpg",
+            "images/golf2.jpg",
+          ],
+        },
+        fitness: {
+          title: "Centre de Fitness",
+          category: "Sport & Santé",
+          description: "Salle de remise en forme et musculation moderne",
+          heroImage: "images/Nos_espaces/equipment.jpg",
+          color: "#22274f",
+          overview: {
+            presentation:
+              "Centre de fitness entièrement équipé pour la préparation physique et la remise en forme.",
+            schedule: "De 08 h à 18 h / mardi au dimanche et jours fériés",
+            dimension: "60 m²",
+            specs:
+              "Grand miroir mural, aération centrale, appareils de musculation haut de gamme.",
+          },
+          features: [
+            {
+              icon: "fa-running",
+              label: "Cardio",
+              value: "Tapis, vélos, elliptiques",
+            },
+            {
+              icon: "fa-dumbbell",
+              label: "Musculation",
+              value: "Appareils professionnels",
+            },
+            {
+              icon: "fa-user-friends",
+              label: "Coaching",
+              value: "Personnalisé",
+            },
+            { icon: "fa-snowflake", label: "Climatisation", value: "Régulée" },
+            {
+              icon: "fa-music",
+              label: "Ambiance",
+              value: "Playlist énergisante",
+            },
+            { icon: "fa-lock", label: "Casiers", value: "Sécurisés" },
+          ],
+          gallery: [
+            "images/Nos_espaces/fit2.jpg",
+            "images/Nos_espaces/equipment.jpg",
+            "images/fitness1.jpg",
+            "images/fitness2.jpg",
+          ],
+        },
+      };
 
-        // Fonction pour charger une section
-        async function loadSection(sectionId) {
-            const loadingEl = document.getElementById('loading');
-            const heroEl = document.getElementById('hero-section');
-            const mainEl = document.getElementById('main-content');
-            const breadcrumbEl = document.getElementById('current-section');
+      // Fonction pour charger une section
+      async function loadSection(sectionId) {
+        const loadingEl = document.getElementById("loading");
+        const heroEl = document.getElementById("hero-section");
+        const mainEl = document.getElementById("main-content");
+        const breadcrumbEl = document.getElementById("current-section");
 
-            try {
-                // Récupérer les données
-                const sectionData = sectionsData[sectionId];
+        try {
+          // Récupérer les données
+          const sectionData = sectionsData[sectionId];
 
-                if (!sectionData) {
-                    throw new Error(`Section "${sectionId}" non trouvée`);
-                }
+          if (!sectionData) {
+            throw new Error(`Section "${sectionId}" non trouvée`);
+          }
 
-                // Mettre à jour le titre de la page
-                document.title = `${sectionData.title} - Président Golf Club`;
+          // Mettre à jour le titre de la page
+          document.title = `${sectionData.title} - Président Golf Club`;
 
-                // Mettre à jour le breadcrumb
-                breadcrumbEl.textContent = sectionData.title;
+          // Mettre à jour le breadcrumb
+          breadcrumbEl.textContent = sectionData.title;
 
-                // Masquer le loading
-                loadingEl.style.display = 'none';
+          // Masquer le loading
+          loadingEl.style.display = "none";
 
-                // Afficher la section hero
-                document.getElementById('section-title').textContent = sectionData.title;
-                document.getElementById('section-category').textContent = sectionData.category;
-                document.getElementById('section-description').textContent = sectionData.description;
-                document.getElementById('hero-image').src = sectionData.heroImage;
-                document.getElementById('hero-image').alt = sectionData.title;
+          // Afficher la section hero
+          document.getElementById("section-title").textContent =
+            sectionData.title;
+          document.getElementById("section-category").textContent =
+            sectionData.category;
+          document.getElementById("section-description").textContent =
+            sectionData.description;
+          document.getElementById("hero-image").src = sectionData.heroImage;
+          document.getElementById("hero-image").alt = sectionData.title;
 
-                // Appliquer la couleur primaire
-                document.documentElement.style.setProperty('--detail-primary', sectionData.color);
+          // Appliquer la couleur primaire
+          document.documentElement.style.setProperty(
+            "--detail-primary",
+            sectionData.color,
+          );
 
-                heroEl.style.display = 'block';
+          heroEl.style.display = "block";
 
-                // Afficher le contenu principal
-                mainEl.style.display = 'block';
+          // Afficher le contenu principal
+          mainEl.style.display = "block";
 
-                // Générer le contenu
-                generateOverview(sectionData.overview);
-                generateFeatures(sectionData.features);
-                generateGallery(sectionData.gallery);
+          // Générer le contenu
+          generateOverview(sectionData.overview);
+          generateFeatures(sectionData.features);
+          generateGallery(sectionData.gallery);
 
-                // Animation
-                setTimeout(() => {
-                    const fadeElements = document.querySelectorAll('.fade-in');
-                    fadeElements.forEach(el => {
-                        el.style.opacity = '0';
-                        el.style.animation = 'fadeIn 0.8s ease forwards';
-                    });
-                }, 100);
-
-            } catch (error) {
-                console.error('Erreur:', error);
-                loadingEl.innerHTML = `
+          // Animation
+          setTimeout(() => {
+            const fadeElements = document.querySelectorAll(".fade-in");
+            fadeElements.forEach((el) => {
+              el.style.opacity = "0";
+              el.style.animation = "fadeIn 0.8s ease forwards";
+            });
+          }, 100);
+        } catch (error) {
+          console.error("Erreur:", error);
+          loadingEl.innerHTML = `
                     <div style="text-align: center;">
                         <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #d32f2f; margin-bottom: 20px;"></i>
                         <h2>Section non trouvée</h2>
@@ -366,52 +519,86 @@
                         </a>
                     </div>
                 `;
-            }
         }
+      }
 
-        // Générer la section overview
-        function generateOverview(overview) {
-            const gridEl = document.querySelector('.info-grid');
-            gridEl.innerHTML = '';
+      // Générer la section overview
+      function generateOverview(overview) {
+        const gridEl = document.querySelector(".info-grid");
+        gridEl.innerHTML = "";
 
-            const overviewItems = [
-                { icon: 'fa-info-circle', title: 'Présentation', content: overview.presentation },
-                { icon: 'fa-clock', title: 'Horaires', content: overview.schedule },
-                { icon: 'fa-expand', title: 'Dimensions', content: overview.dimension, show: overview.dimension },
-                { icon: 'fa-users', title: 'Capacité', content: overview.capacity, show: overview.capacity },
-                { icon: 'fa-calendar-check', title: 'Utilisation', content: overview.usage, show: overview.usage },
-                { icon: 'fa-swimmer', title: 'Activités', content: overview.activities, show: overview.activities },
-                { icon: 'fa-check-circle', title: 'Commodités', content: overview.amenities, show: overview.amenities },
-                { icon: 'fa-list-alt', title: 'Spécifications', content: overview.specs, show: overview.specs }
-            ];
+        const overviewItems = [
+          {
+            icon: "fa-info-circle",
+            title: "Présentation",
+            content: overview.presentation,
+          },
+          { icon: "fa-clock", title: "Horaires", content: overview.schedule },
+          {
+            icon: "fa-expand",
+            title: "Dimensions",
+            content: overview.dimension,
+            show: overview.dimension,
+          },
+          {
+            icon: "fa-users",
+            title: "Capacité",
+            content: overview.capacity,
+            show: overview.capacity,
+          },
+          {
+            icon: "fa-calendar-check",
+            title: "Utilisation",
+            content: overview.usage,
+            show: overview.usage,
+          },
+          {
+            icon: "fa-swimmer",
+            title: "Activités",
+            content: overview.activities,
+            show: overview.activities,
+          },
+          {
+            icon: "fa-check-circle",
+            title: "Commodités",
+            content: overview.amenities,
+            show: overview.amenities,
+          },
+          {
+            icon: "fa-list-alt",
+            title: "Spécifications",
+            content: overview.specs,
+            show: overview.specs,
+          },
+        ];
 
-            overviewItems.forEach(item => {
-                if (item.show !== undefined && !item.show) return;
+        overviewItems.forEach((item) => {
+          if (item.show !== undefined && !item.show) return;
 
-                const card = document.createElement('div');
-                card.className = 'info-card';
-                card.innerHTML = `
+          const card = document.createElement("div");
+          card.className = "info-card";
+          card.innerHTML = `
                     <i class="fas ${item.icon} info-icon"></i>
                     <h3>${item.title}</h3>
-                    ${item.content.includes('<') ? item.content : `<p>${item.content}</p>`}
+                    ${item.content.includes("<") ? item.content : `<p>${item.content}</p>`}
                 `;
-                gridEl.appendChild(card);
-            });
-        }
+          gridEl.appendChild(card);
+        });
+      }
 
-        // Générer les caractéristiques
-        function generateFeatures(features) {
-            const featuresSection = document.getElementById('features-section');
-            const featuresGrid = document.getElementById('features-grid');
+      // Générer les caractéristiques
+      function generateFeatures(features) {
+        const featuresSection = document.getElementById("features-section");
+        const featuresGrid = document.getElementById("features-grid");
 
-            if (features && features.length > 0) {
-                featuresSection.style.display = 'block';
-                featuresGrid.innerHTML = '';
+        if (features && features.length > 0) {
+          featuresSection.style.display = "block";
+          featuresGrid.innerHTML = "";
 
-                features.forEach(feature => {
-                    const item = document.createElement('div');
-                    item.className = 'feature-item';
-                    item.innerHTML = `
+          features.forEach((feature) => {
+            const item = document.createElement("div");
+            item.className = "feature-item";
+            item.innerHTML = `
                         <div class="feature-icon">
                             <i class="fas ${feature.icon}"></i>
                         </div>
@@ -420,44 +607,44 @@
                             <span>${feature.value}</span>
                         </div>
                     `;
-                    featuresGrid.appendChild(item);
-                });
-            }
+            featuresGrid.appendChild(item);
+          });
         }
+      }
 
-        // Générer la galerie
-        function generateGallery(gallery) {
-            const gallerySection = document.getElementById('gallery-section');
-            const galleryGrid = document.getElementById('gallery-grid');
+      // Générer la galerie
+      function generateGallery(gallery) {
+        const gallerySection = document.getElementById("gallery-section");
+        const galleryGrid = document.getElementById("gallery-grid");
 
-            if (gallery && gallery.length > 0) {
-                gallerySection.style.display = 'block';
-                galleryGrid.innerHTML = '';
+        if (gallery && gallery.length > 0) {
+          gallerySection.style.display = "block";
+          galleryGrid.innerHTML = "";
 
-                gallery.forEach((imgSrc, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'gallery-item';
-                    item.innerHTML = `
+          gallery.forEach((imgSrc, index) => {
+            const item = document.createElement("div");
+            item.className = "gallery-item";
+            item.innerHTML = `
                         <img src="${imgSrc}" alt="Photo ${index + 1}">
                         <div class="gallery-overlay">
                             <p>Vue ${index + 1}</p>
                         </div>
                     `;
 
-                    // Click pour agrandir l'image
-                    item.addEventListener('click', () => {
-                        openLightbox(imgSrc);
-                    });
+            // Click pour agrandir l'image
+            item.addEventListener("click", () => {
+              openLightbox(imgSrc);
+            });
 
-                    galleryGrid.appendChild(item);
-                });
-            }
+            galleryGrid.appendChild(item);
+          });
         }
+      }
 
-        // Lightbox pour les images
-        function openLightbox(imgSrc) {
-            const lightbox = document.createElement('div');
-            lightbox.style.cssText = `
+      // Lightbox pour les images
+      function openLightbox(imgSrc) {
+        const lightbox = document.createElement("div");
+        lightbox.style.cssText = `
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -471,51 +658,51 @@
                 cursor: pointer;
             `;
 
-            const img = document.createElement('img');
-            img.src = imgSrc;
-            img.style.cssText = `
+        const img = document.createElement("img");
+        img.src = imgSrc;
+        img.style.cssText = `
                 max-width: 90%;
                 max-height: 90%;
                 object-fit: contain;
                 border-radius: 10px;
             `;
 
-            lightbox.appendChild(img);
-            document.body.appendChild(lightbox);
+        lightbox.appendChild(img);
+        document.body.appendChild(lightbox);
 
-            lightbox.addEventListener('click', () => {
-                document.body.removeChild(lightbox);
-            });
+        lightbox.addEventListener("click", () => {
+          document.body.removeChild(lightbox);
+        });
+      }
+
+      // Au chargement de la page
+      document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sectionName = urlParams.get("section");
+
+        if (sectionName && sectionsData[sectionName]) {
+          loadSection(sectionName);
+        } else {
+          // Par défaut, charger la première section
+          const firstSection = Object.keys(sectionsData)[0];
+          loadSection(firstSection);
         }
+      });
 
-        // Au chargement de la page
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const sectionName = urlParams.get('section');
-
-            if (sectionName && sectionsData[sectionName]) {
-                loadSection(sectionName);
-            } else {
-                // Par défaut, charger la première section
-                const firstSection = Object.keys(sectionsData)[0];
-                loadSection(firstSection);
-            }
-        });
-
-        // Gestion responsive du header
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('.detail-header');
-            if (window.scrollY > 100) {
-                header.style.background = 'rgba(255, 255, 255, 0.98)';
-                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.15)';
-            } else {
-                header.style.background = 'rgba(255, 255, 255, 0.95)';
-                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
-            }
-        });
+      // Gestion responsive du header
+      window.addEventListener("scroll", () => {
+        const header = document.querySelector(".detail-header");
+        if (window.scrollY > 100) {
+          header.style.background = "rgba(255, 255, 255, 0.98)";
+          header.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.15)";
+        } else {
+          header.style.background = "rgba(255, 255, 255, 0.95)";
+          header.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.1)";
+        }
+      });
     </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+  </body>
 </html>
