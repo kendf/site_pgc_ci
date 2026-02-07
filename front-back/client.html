@@ -598,14 +598,15 @@
         const client = await ClientsAPI.get(userId);
         currentClient = client;
       } catch (error) {
-        // If client not found by Supabase ID, create a minimal local client object
+        // If client not found by Supabase ID, use stored user data from login/register
+        const storedUser = getUser() || {};
         currentClient = {
           id: userId,
-          prenom: '',
-          nom: '',
-          email: userEmail || '',
-          telephone: '',
-          adresse: ''
+          prenom: storedUser.prenom || '',
+          nom: storedUser.nom || '',
+          email: storedUser.email || userEmail || '',
+          telephone: storedUser.telephone || '',
+          adresse: storedUser.adresse || ''
         };
       }
 
