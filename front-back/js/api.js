@@ -6,7 +6,7 @@
 // ===== CONFIGURATION =====
 // Remplacez cette URL par celle de votre backend Render une fois déployé
 // Exemple : const API_BASE_URL = 'https://votre-api.onrender.com/api';
-const API_BASE_URL = window.API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = window.API_BASE_URL || 'https://golf-club-backend.onrender.com/api';
 
 // Token Supabase stocké après connexion
 function getToken() {
