@@ -786,7 +786,8 @@
 
       try {
         const response = await GolfAPI.classement(20);
-        const classement = response.data || response.classement || response;
+        const payload = response?.data || response;
+        const classement = payload || response?.classement || response;
 
         loadingEl.innerHTML = '';
 
@@ -811,7 +812,7 @@
             <td>
               <strong>${escapeHtml(joueur.nom || joueur.joueur || 'Joueur anonyme')}</strong>
             </td>
-            <td>${joueur.parties_jouees || joueur.nb_parties || 0}</td>
+            <td>${joueur.nombre_parties ?? joueur.parties_jouees ?? joueur.nb_parties ?? 0}</td>
             <td>
               <span class="badge bg-success">${joueur.meilleur_score || joueur.best_score || '--'}</span>
             </td>
@@ -850,7 +851,7 @@
           <div class="gc-podium-name">${escapeHtml(joueur.nom || joueur.joueur || 'Joueur')}</div>
           <div class="gc-podium-stat">Meilleur : <strong>${joueur.meilleur_score || joueur.best_score || '--'}</strong></div>
           <div class="gc-podium-stat">Moyenne : <strong>${joueur.score_moyen || joueur.avg_score ? Number(joueur.score_moyen || joueur.avg_score).toFixed(1) : '--'}</strong></div>
-          <div class="gc-podium-stat">Parties : <strong>${joueur.parties_jouees || joueur.nb_parties || 0}</strong></div>
+          <div class="gc-podium-stat">Parties : <strong>${joueur.nombre_parties ?? joueur.parties_jouees ?? joueur.nb_parties ?? 0}</strong></div>
         `;
 
         container.appendChild(item);
@@ -874,8 +875,9 @@
 
       try {
         const response = await GolfAPI.mesParties(page);
-        const parties = response.data || response.parties || response;
-        const pagination = response.pagination || null;
+        const payload = response?.data || response || {};
+        const parties = Array.isArray(payload) ? payload : (payload.data || []);
+        const pagination = payload.pagination || response?.pagination || null;
 
         loadingEl.innerHTML = '';
 
@@ -895,7 +897,7 @@
             <td>${partie.duree_minutes ? formatDuration(partie.duree_minutes) : '--'}</td>
             <td>${renderWeatherBadge(partie.meteo)}</td>
             <td>
-              <button class="btn btn-outline-danger btn-sm" onclick="confirmDelete(${partie.id})" title="Supprimer cette partie">
+              <button class="btn btn-outline-danger btn-sm" onclick="confirmDelete('${partie.id}')" title="Supprimer cette partie">
                 <i class="fas fa-trash-alt"></i>
               </button>
             </td>
@@ -906,8 +908,9 @@
         tableEl.classList.remove('d-none');
 
         // Pagination
-        if (pagination && pagination.total_pages > 1) {
-          totalPartiesPages = pagination.total_pages;
+        const totalPages = pagination?.pages || pagination?.total_pages || 1;
+        if (pagination && totalPages > 1) {
+          totalPartiesPages = totalPages;
           renderPagination(pagination);
           paginationEl.classList.remove('d-none');
         } else {
@@ -922,7 +925,7 @@
     function renderPagination(pagination) {
       const container = document.querySelector('#partiesPagination .pagination');
       const currentPage = pagination.page || pagination.current_page || currentPartiesPage;
-      const totalPages = pagination.total_pages || 1;
+      const totalPages = pagination.pages || pagination.total_pages || 1;
 
       let html = '';
 
@@ -1082,16 +1085,17 @@
       try {
         const response = await GolfAPI.mesStats();
         const stats = response.data || response.stats || response;
+        const partiesCount = stats?.nombre_parties ?? stats?.parties_jouees ?? stats?.nb_parties ?? 0;
 
         loadingEl.innerHTML = '';
 
-        if (!stats || (stats.parties_jouees === 0 && stats.nb_parties === 0)) {
+        if (!stats || partiesCount === 0) {
           emptyEl.classList.remove('d-none');
           cardsEl.classList.remove('d-none');
           return;
         }
 
-        document.getElementById('statParties').textContent = stats.parties_jouees || stats.nb_parties || 0;
+        document.getElementById('statParties').textContent = partiesCount;
         document.getElementById('statMeilleur').textContent = stats.meilleur_score || stats.best_score || '--';
         document.getElementById('statMoyen').textContent = stats.score_moyen || stats.avg_score ? Number(stats.score_moyen || stats.avg_score).toFixed(1) : '--';
         document.getElementById('statDuree').textContent = stats.duree_moyenne || stats.avg_duration ? formatDuration(Number(stats.duree_moyenne || stats.avg_duration)) : '--';
