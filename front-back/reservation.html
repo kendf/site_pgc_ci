@@ -670,47 +670,93 @@
   <div class="gc-wizard-step" id="step2">
     <div class="container py-4">
       <div class="text-center mb-4">
-        <h3 class="mb-2">Choisissez la date et l'horaire</h3>
-        <p class="text-muted">Selectionnez un jour puis un creneau horaire disponible.</p>
+        <h3 class="mb-2" id="step2Title">Choisissez la date et l'horaire</h3>
+        <p class="text-muted" id="step2Subtitle">Selectionnez un jour puis un creneau horaire disponible.</p>
       </div>
 
-      <div class="row g-4">
-        <!-- Calendar -->
-        <div class="col-lg-5">
-          <div class="gc-calendar">
-            <div class="gc-calendar-header">
-              <button onclick="changeMonth(-1)" aria-label="Mois precedent">
-                <i class="fas fa-chevron-left"></i>
-              </button>
-              <h5 id="calendarTitle"></h5>
-              <button onclick="changeMonth(1)" aria-label="Mois suivant">
-                <i class="fas fa-chevron-right"></i>
-              </button>
+      <!-- Mode calendrier + créneaux (Golf & Restaurant) -->
+      <div id="step2ModeSlots">
+        <div class="row g-4">
+          <!-- Calendar -->
+          <div class="col-lg-5">
+            <div class="gc-calendar">
+              <div class="gc-calendar-header">
+                <button onclick="changeMonth(-1)" aria-label="Mois precedent">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <h5 id="calendarTitle"></h5>
+                <button onclick="changeMonth(1)" aria-label="Mois suivant">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+              <div class="gc-calendar-grid" id="calendarGrid">
+                <!-- Filled by JS -->
+              </div>
             </div>
-            <div class="gc-calendar-grid" id="calendarGrid">
-              <!-- Filled by JS -->
+
+            <div class="mt-3 p-3 bg-white rounded-3 shadow-sm">
+              <small class="text-muted">
+                <i class="fas fa-info-circle me-1 text-primary"></i>
+                Cliquez sur une date pour voir les creneaux disponibles. Les dates grisees ne sont pas disponibles.
+              </small>
             </div>
           </div>
 
-          <div class="mt-3 p-3 bg-white rounded-3 shadow-sm">
-            <small class="text-muted">
-              <i class="fas fa-info-circle me-1 text-primary"></i>
-              Cliquez sur une date pour voir les creneaux disponibles. Les dates grisees ne sont pas disponibles.
-            </small>
+          <!-- Time Slots -->
+          <div class="col-lg-7">
+            <div class="gc-card">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <span><i class="far fa-clock me-2"></i>Creneaux disponibles</span>
+                <span class="badge bg-light text-dark" id="selectedDateBadge" style="display: none;"></span>
+              </div>
+              <div class="card-body" id="slotsContainer">
+                <div class="gc-empty-state">
+                  <i class="far fa-calendar-alt d-block"></i>
+                  <p>Selectionnez une date pour voir les creneaux horaires disponibles.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <!-- Time Slots -->
-        <div class="col-lg-7">
-          <div class="gc-card">
-            <div class="card-header d-flex align-items-center justify-content-between">
-              <span><i class="far fa-clock me-2"></i>Creneaux disponibles</span>
-              <span class="badge bg-light text-dark" id="selectedDateBadge" style="display: none;"></span>
-            </div>
-            <div class="card-body" id="slotsContainer">
-              <div class="gc-empty-state">
-                <i class="far fa-calendar-alt d-block"></i>
-                <p>Selectionnez une date pour voir les creneaux horaires disponibles.</p>
+      <!-- Mode plage de dates (Salle) -->
+      <div id="step2ModeSalle" style="display: none;">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="gc-card card">
+              <div class="card-body p-4">
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                      <i class="fas fa-calendar-day me-1 text-success"></i> Date de debut *
+                    </label>
+                    <input type="date" class="form-control form-control-lg" id="salleDateDebut"
+                           onchange="updateSalleDates()" min="">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                      <i class="fas fa-calendar-day me-1 text-success"></i> Date de fin *
+                    </label>
+                    <input type="date" class="form-control form-control-lg" id="salleDateFin"
+                           onchange="updateSalleDates()" min="">
+                  </div>
+                </div>
+                <div id="salleDateSummary" class="mt-4 p-3 bg-light rounded-3" style="display: none;">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-building fa-2x text-success me-3"></i>
+                    <div>
+                      <h6 class="mb-1" id="salleDureeText"></h6>
+                      <p class="text-muted mb-0 small" id="salleDatesText"></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-3 p-3 bg-white rounded-3 border">
+                  <small class="text-muted">
+                    <i class="fas fa-info-circle me-1 text-primary"></i>
+                    La reservation de salle se fait a la journee. Selectionnez la date de debut et de fin de votre evenement.
+                  </small>
+                </div>
               </div>
             </div>
           </div>
@@ -1032,6 +1078,9 @@
       calendarMonth: new Date().getMonth(),
       availableSlots: [],
       services: [],
+      salleDateDebut: null,
+      salleDateFin: null,
+      salleNbJours: 0,
     };
 
     const DAYS_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
@@ -1375,7 +1424,12 @@
         showAlert(document.getElementById('alertContainer'), 'Veuillez selectionner un service.', 'warning');
         return;
       }
-      if (step === 3 && (!state.selectedDate || !state.selectedSlot)) {
+      if (step === 3 && state.selectedService === 'salle') {
+        if (!state.salleDateDebut || !state.salleDateFin) {
+          showAlert(document.getElementById('alertContainer'), 'Veuillez selectionner les dates de debut et de fin.', 'warning');
+          return;
+        }
+      } else if (step === 3 && (!state.selectedDate || !state.selectedSlot)) {
         showAlert(document.getElementById('alertContainer'), 'Veuillez selectionner une date et un creneau horaire.', 'warning');
         return;
       }
@@ -1408,7 +1462,23 @@
 
       // Step-specific setup
       if (step === 2) {
-        renderCalendar();
+        const isSalle = state.selectedService === 'salle';
+        document.getElementById('step2ModeSlots').style.display = isSalle ? 'none' : '';
+        document.getElementById('step2ModeSalle').style.display = isSalle ? '' : 'none';
+
+        if (isSalle) {
+          document.getElementById('step2Title').textContent = 'Choisissez les dates de votre evenement';
+          document.getElementById('step2Subtitle').textContent = 'La reservation de salle se fait a la journee.';
+          // Set min date to today
+          const today = new Date().toISOString().split('T')[0];
+          document.getElementById('salleDateDebut').min = today;
+          document.getElementById('salleDateFin').min = today;
+          document.getElementById('btnStep2Next').disabled = true;
+        } else {
+          document.getElementById('step2Title').textContent = 'Choisissez la date et l\'horaire';
+          document.getElementById('step2Subtitle').textContent = 'Selectionnez un jour puis un creneau horaire disponible.';
+          renderCalendar();
+        }
       }
 
       if (step === 3) {
@@ -1418,6 +1488,42 @@
 
       // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateSalleDates() {
+      const debut = document.getElementById('salleDateDebut').value;
+      const fin = document.getElementById('salleDateFin').value;
+
+      // Sync min date of fin to debut
+      if (debut) {
+        document.getElementById('salleDateFin').min = debut;
+        if (fin && fin < debut) document.getElementById('salleDateFin').value = debut;
+      }
+
+      const summary = document.getElementById('salleDateSummary');
+
+      if (debut && fin && fin >= debut) {
+        const d1 = new Date(debut);
+        const d2 = new Date(fin);
+        const nbJours = Math.round((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+
+        state.salleDateDebut = debut;
+        state.salleDateFin = fin;
+        state.salleNbJours = nbJours;
+        // Set date/slot for step 3 compatibility
+        state.selectedDate = debut;
+        state.selectedSlot = { id: 'salle-range', timeStart: debut, timeEnd: fin, remaining: 1 };
+
+        document.getElementById('salleDureeText').textContent = nbJours + ' jour' + (nbJours > 1 ? 's' : '') + ' de reservation';
+        document.getElementById('salleDatesText').textContent = 'Du ' + formatDateFR(debut) + ' au ' + formatDateFR(fin);
+        summary.style.display = '';
+        document.getElementById('btnStep2Next').disabled = false;
+      } else {
+        state.salleDateDebut = null;
+        state.salleDateFin = null;
+        summary.style.display = 'none';
+        document.getElementById('btnStep2Next').disabled = true;
+      }
     }
 
     function setupStep3() {
@@ -1498,15 +1604,22 @@
     // ==================== SUMMARY ====================
     function updateSummary() {
       document.getElementById('sumService').textContent = state.selectedServiceName || '--';
-      document.getElementById('sumDate').textContent = state.selectedDate ? formatDateFR(state.selectedDate) : '--';
 
-      if (state.selectedSlot) {
-        const timeDisplay = state.selectedSlot.timeEnd
-          ? `${state.selectedSlot.timeStart} - ${state.selectedSlot.timeEnd}`
-          : state.selectedSlot.timeStart;
-        document.getElementById('sumTime').textContent = timeDisplay;
+      // Date display
+      if (state.selectedService === 'salle' && state.salleDateDebut) {
+        const nbJours = state.salleNbJours || 1;
+        document.getElementById('sumDate').textContent = formatDateFR(state.salleDateDebut) + (state.salleDateFin && state.salleDateFin !== state.salleDateDebut ? ' au ' + formatDateFR(state.salleDateFin) : '');
+        document.getElementById('sumTime').textContent = nbJours + ' jour' + (nbJours > 1 ? 's' : '');
       } else {
-        document.getElementById('sumTime').textContent = '--';
+        document.getElementById('sumDate').textContent = state.selectedDate ? formatDateFR(state.selectedDate) : '--';
+        if (state.selectedSlot) {
+          const timeDisplay = state.selectedSlot.timeEnd
+            ? `${state.selectedSlot.timeStart} - ${state.selectedSlot.timeEnd}`
+            : state.selectedSlot.timeStart;
+          document.getElementById('sumTime').textContent = timeDisplay;
+        } else {
+          document.getElementById('sumTime').textContent = '--';
+        }
       }
 
       const personnes = parseInt(document.getElementById('inputPersonnes').value) || 1;
@@ -1532,14 +1645,17 @@
         total = formulePrice * personnes;
         optionsText.push(formuleSelect.selectedOptions[0]?.text.split(' - ')[0] || '');
       } else if (state.selectedService === 'salle') {
-        total = state.selectedServicePrice || 30000;
+        const nbJours = state.salleNbJours || 1;
+        const prixParJour = state.selectedServicePrice || 150000;
+        total = prixParJour * nbJours;
+        optionsText.push(nbJours + ' jour' + (nbJours > 1 ? 's' : ''));
         if (document.getElementById('checkPause').checked) {
-          total += 2000 * personnes;
-          optionsText.push('Pause café');
+          total += 2000 * personnes * nbJours;
+          optionsText.push('Pause cafe');
         }
         if (document.getElementById('checkRepas').checked) {
-          total += 10000 * personnes;
-          optionsText.push('Déjeuner');
+          total += 10000 * personnes * nbJours;
+          optionsText.push('Dejeuner');
         }
       }
 
