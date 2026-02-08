@@ -4,8 +4,6 @@
  */
 
 // ===== CONFIGURATION =====
-// Remplacez cette URL par celle de votre backend Render une fois déployé
-// Exemple : const API_BASE_URL = 'https://votre-api.onrender.com/api';
 const API_BASE_URL = window.API_BASE_URL || 'https://golf-club-backend.onrender.com/api';
 
 // Token stocké après connexion
@@ -80,25 +78,41 @@ function getUser() {
 
 function setUser(user, options = {}) {
   const remember = options.remember !== false;
-  const value = JSON.stringify(user);
-  if (remember) {
-    localStorage.setItem('user', value);
-    sessionStorage.removeItem('user');
-  } else {
-    sessionStorage.setItem('user', value);
-    localStorage.removeItem('user');
-  }
+  const storage = remember ? localStorage : sessionStorage;
+  const otherStorage = remember ? sessionStorage : localStorage;
+
+  const role = user?.role || user?.type || 'client';
+  const email = user?.email || '';
+  const name = [user?.prenom, user?.nom].filter(Boolean).join(' ').trim() || user?.name || email;
+
+  storage.setItem('user_role', role);
+  storage.setItem('user_email', email);
+  storage.setItem('user_name', name);
+  storage.setItem('user', JSON.stringify(user));
+
+  otherStorage.removeItem('user_role');
+  otherStorage.removeItem('user_email');
+  otherStorage.removeItem('user_name');
+  otherStorage.removeItem('user');
 }
 
 function removeUser() {
   localStorage.removeItem('user');
+  localStorage.removeItem('user_role');
+  localStorage.removeItem('user_email');
+  localStorage.removeItem('user_name');
   sessionStorage.removeItem('user');
+  sessionStorage.removeItem('user_role');
+  sessionStorage.removeItem('user_email');
+  sessionStorage.removeItem('user_name');
 }
 
 /**
  * Récupère le rôle de l'utilisateur connecté
  */
 function getUserRole() {
+  const storedRole = localStorage.getItem('user_role') || sessionStorage.getItem('user_role');
+  if (storedRole) return storedRole;
   const user = getUser();
   return user ? (user.role || user.type || 'client') : null;
 }
