@@ -785,22 +785,28 @@
                 <div class="form-check mb-3">
                   <input class="form-check-input" type="checkbox" id="checkVoiturette" onchange="updateSummary()">
                   <label class="form-check-label" for="checkVoiturette">
-                    Location voiturette (+3 000 FCFA)
+                    Location voiturette (+5 000 FCFA)
                   </label>
                 </div>
               </div>
 
               <!-- Restaurant specific options -->
               <div id="optionsRestaurant" style="display: none;">
+                <!-- Carte du restaurant -->
+                <div class="mb-3">
+                  <label class="form-label fw-bold">
+                    <i class="fas fa-book-open me-1"></i> Notre Carte
+                  </label>
+                  <div id="menuCarteContainer">
+                    <div class="text-center py-2"><div class="spinner-border spinner-border-sm text-success"></div> Chargement des menus...</div>
+                  </div>
+                </div>
                 <div class="mb-3">
                   <label for="selectFormule" class="form-label">
                     <i class="fas fa-utensils me-1"></i> Formule
                   </label>
                   <select class="form-select" id="selectFormule" onchange="updateSummary()">
-                    <option value="menu_dejeuner" data-price="10000">Menu déjeuner - 10 000 FCFA</option>
-                    <option value="menu_diner" data-price="15000">Menu dîner - 15 000 FCFA</option>
-                    <option value="menu_gastronomique" data-price="25000">Menu gastronomique - 25 000 FCFA</option>
-                    <option value="brunch" data-price="12000">Brunch du dimanche - 12 000 FCFA</option>
+                    <option value="a_la_carte" data-price="0">A la carte</option>
                   </select>
                 </div>
                 <div class="mb-3">
@@ -1308,10 +1314,19 @@
       const html = `
         <div class="row g-2">
           ${slots.map(slot => {
-            const timeStart = slot.heure_debut || slot.start_time || slot.heure || '';
-            const timeEnd = slot.heure_fin || slot.end_time || '';
-            const remaining = slot.places_restantes ?? slot.remaining ?? slot.capacity ?? '--';
-            const maxCap = slot.capacite_max || slot.max_capacity || 8;
+            let timeStart = slot.heure_debut || slot.start_time || slot.heure || '';
+            let timeEnd = slot.heure_fin || slot.end_time || '';
+            // Parse ISO dates (start_at/end_at) if specific fields are missing
+            if (!timeStart && slot.start_at) {
+              const d = new Date(slot.start_at);
+              timeStart = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            }
+            if (!timeEnd && slot.end_at) {
+              const d = new Date(slot.end_at);
+              timeEnd = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            }
+            const remaining = slot.places_restantes ?? slot.remaining_capacity ?? slot.remaining ?? slot.capacity ?? '--';
+            const maxCap = slot.capacite_max || slot.max_capacity || slot.capacity || 8;
             const available = slot.disponible !== false && remaining > 0;
             const slotId = slot.id || slot._id || timeStart;
 
@@ -1418,6 +1433,7 @@
         inputPersonnes.value = Math.min(parseInt(inputPersonnes.value) || 1, 4);
       } else if (state.selectedService === 'restaurant') {
         inputPersonnes.max = 20;
+        loadMenuCarte();
       } else {
         inputPersonnes.max = 50;
       }
@@ -1425,6 +1441,58 @@
       // Reset conditions checkbox
       document.getElementById('checkConditions').checked = false;
       document.getElementById('btnConfirm').disabled = true;
+    }
+
+    async function loadMenuCarte() {
+      const container = document.getElementById('menuCarteContainer');
+      try {
+        const response = await RestaurantAPI.menus();
+        const menus = response.data || response.menus || response || [];
+        if (!Array.isArray(menus) || menus.length === 0) {
+          container.innerHTML = '<p class="text-muted small">Aucun menu disponible.</p>';
+          return;
+        }
+        const categories = { entree: 'Entrees', plat: 'Plats', dessert: 'Desserts', boisson: 'Boissons' };
+        const grouped = {};
+        menus.forEach(m => {
+          const cat = m.category || 'plat';
+          if (!grouped[cat]) grouped[cat] = [];
+          grouped[cat].push(m);
+        });
+
+        let html = '<div class="accordion accordion-flush" id="menuAccordion">';
+        Object.entries(categories).forEach(([key, label], i) => {
+          const items = grouped[key];
+          if (!items || !items.length) return;
+          html += `
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header">
+                <button class="accordion-button ${i > 0 ? 'collapsed' : ''} py-2 px-0 fw-bold small" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#menuCat${key}" style="background:none;font-size:0.9rem;">
+                  ${label} <span class="badge bg-success ms-2">${items.length}</span>
+                </button>
+              </h2>
+              <div id="menuCat${key}" class="accordion-collapse collapse ${i === 0 ? 'show' : ''}">
+                <div class="accordion-body p-0 pb-2">
+                  ${items.map(m => `
+                    <div class="d-flex justify-content-between align-items-start py-1 border-bottom" style="font-size:0.85rem;">
+                      <div>
+                        <span class="fw-semibold">${m.name}</span>
+                        ${m.description ? `<br><small class="text-muted">${m.description}</small>` : ''}
+                      </div>
+                      <span class="text-success fw-bold ms-2 text-nowrap">${Number(m.price).toLocaleString('fr-FR')} F</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>`;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+      } catch (error) {
+        console.error('Erreur chargement menus:', error);
+        container.innerHTML = '<p class="text-muted small">Impossible de charger les menus.</p>';
+      }
     }
 
     // ==================== SUMMARY ====================
@@ -1455,7 +1523,7 @@
           optionsText.push('Caddie');
         }
         if (document.getElementById('checkVoiturette').checked) {
-          total += 3000;
+          total += 5000;
           optionsText.push('Voiturette');
         }
       } else if (state.selectedService === 'restaurant') {

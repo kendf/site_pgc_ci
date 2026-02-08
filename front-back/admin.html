@@ -372,6 +372,11 @@
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="#" data-section="menus">
+              <i class="fas fa-utensils me-1"></i> Menus
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="#" data-section="creneaux">
               <i class="fas fa-clock me-1"></i> Cr&eacute;neaux
             </a>
@@ -407,6 +412,9 @@
         </a>
         <a class="nav-link" href="#" data-section="services">
           <i class="fas fa-concierge-bell"></i> Services
+        </a>
+        <a class="nav-link" href="#" data-section="menus">
+          <i class="fas fa-utensils"></i> Menus Restaurant
         </a>
         <a class="nav-link" href="#" data-section="creneaux">
           <i class="fas fa-clock"></i> Cr&eacute;neaux
@@ -715,6 +723,74 @@
           </div>
         </div>
       </section>
+
+      <!-- ==================== SECTION: MENUS RESTAURANT ==================== -->
+      <section id="section-menus" class="admin-section">
+        <div class="gc-page-header d-flex justify-content-between align-items-center">
+          <div>
+            <h1><i class="fas fa-utensils me-2"></i>Menus Restaurant</h1>
+            <p>G&eacute;rer la carte du restaurant</p>
+          </div>
+          <button class="btn btn-gc-primary" onclick="showMenuModal()">
+            <i class="fas fa-plus me-1"></i> Ajouter un plat
+          </button>
+        </div>
+
+        <div class="gc-card card">
+          <div class="card-body">
+            <div id="menusContainer">
+              <div class="text-center py-4">
+                <div class="spinner-border text-primary"></div>
+                <p class="mt-2 text-muted">Chargement des menus...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modal: Add/Edit Menu Item -->
+      <div class="modal fade" id="modalMenu" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+              <h5 class="modal-title" id="modalMenuTitle"><i class="fas fa-utensils me-2"></i>Ajouter un plat</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <form id="formMenu">
+                <input type="hidden" id="menuEditId">
+                <div class="mb-3">
+                  <label class="form-label">Cat&eacute;gorie *</label>
+                  <select class="form-select" id="menuCategory" required>
+                    <option value="entree">Entr&eacute;e</option>
+                    <option value="plat" selected>Plat principal</option>
+                    <option value="dessert">Dessert</option>
+                    <option value="boisson">Boisson</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Nom du plat *</label>
+                  <input type="text" class="form-control" id="menuName" required placeholder="Ex: Poulet Brais&eacute;">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Description</label>
+                  <textarea class="form-control" id="menuDescription" rows="2" placeholder="Description courte du plat..."></textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Prix (FCFA) *</label>
+                  <input type="number" class="form-control" id="menuPrice" required min="0" placeholder="Ex: 12000">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="button" class="btn btn-success" id="btnSaveMenu" onclick="saveMenu()">
+                <i class="fas fa-save me-1"></i> Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- ==================== SECTION: CRENEAUX ==================== -->
       <section id="section-creneaux" class="admin-section">
@@ -1129,6 +1205,9 @@
           break;
         case 'services':
           if (!state.servicesLoaded) loadServices();
+          break;
+        case 'menus':
+          loadMenus();
           break;
         case 'creneaux':
           if (!state.creneauxLoaded) loadCreneaux();
@@ -1811,6 +1890,117 @@
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-save me-1"></i> Enregistrer';
+      }
+    }
+
+    // ============ MENUS RESTAURANT ============
+    async function loadMenus() {
+      const container = document.getElementById('menusContainer');
+      container.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>';
+      try {
+        const response = await RestaurantAPI.menus();
+        const menus = response.data || response.menus || response || [];
+        renderMenus(Array.isArray(menus) ? menus : []);
+      } catch (error) {
+        console.error('Erreur chargement menus:', error);
+        container.innerHTML = '<div class="text-center text-danger py-4"><i class="fas fa-exclamation-triangle fa-2x mb-2"></i><p>Erreur lors du chargement des menus</p></div>';
+      }
+    }
+
+    function renderMenus(menus) {
+      const container = document.getElementById('menusContainer');
+      if (!menus.length) {
+        container.innerHTML = '<div class="gc-empty-state"><i class="fas fa-utensils"></i><p>Aucun menu configur&eacute;</p></div>';
+        return;
+      }
+      const categories = { entree: 'Entr\u00e9es', plat: 'Plats Principaux', dessert: 'Desserts', boisson: 'Boissons' };
+      const grouped = {};
+      menus.forEach(m => {
+        const cat = m.category || 'plat';
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(m);
+      });
+
+      let html = '';
+      Object.entries(categories).forEach(([key, label]) => {
+        const items = grouped[key];
+        if (!items || !items.length) return;
+        html += `<h5 class="mt-3 mb-2 text-success"><i class="fas fa-${key === 'entree' ? 'leaf' : key === 'plat' ? 'drumstick-bite' : key === 'dessert' ? 'ice-cream' : 'glass-martini-alt'} me-2"></i>${label}</h5>`;
+        html += '<div class="table-responsive"><table class="table table-hover table-sm align-middle"><thead><tr><th>Nom</th><th>Description</th><th>Prix</th><th style="width:120px">Actions</th></tr></thead><tbody>';
+        items.forEach(m => {
+          html += `<tr>
+            <td class="fw-semibold">${escapeHtml(m.name)}</td>
+            <td class="text-muted small">${m.description ? escapeHtml(m.description) : '-'}</td>
+            <td class="text-success fw-bold text-nowrap">${Number(m.price).toLocaleString('fr-FR')} F</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-1" onclick="editMenu('${m.id}','${escapeHtml(m.name).replace(/'/g,"\\'")}','${(m.description||'').replace(/'/g,"\\'")}',${m.price},'${m.category}')">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteMenu('${m.id}','${escapeHtml(m.name).replace(/'/g,"\\'")}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>`;
+        });
+        html += '</tbody></table></div>';
+      });
+      container.innerHTML = html;
+    }
+
+    function showMenuModal() {
+      document.getElementById('menuEditId').value = '';
+      document.getElementById('menuName').value = '';
+      document.getElementById('menuDescription').value = '';
+      document.getElementById('menuPrice').value = '';
+      document.getElementById('menuCategory').value = 'plat';
+      document.getElementById('modalMenuTitle').textContent = 'Ajouter un plat';
+      new bootstrap.Modal(document.getElementById('modalMenu')).show();
+    }
+
+    function editMenu(id, name, description, price, category) {
+      document.getElementById('menuEditId').value = id;
+      document.getElementById('menuName').value = name;
+      document.getElementById('menuDescription').value = description;
+      document.getElementById('menuPrice').value = price;
+      document.getElementById('menuCategory').value = category;
+      document.getElementById('modalMenuTitle').textContent = 'Modifier le plat';
+      new bootstrap.Modal(document.getElementById('modalMenu')).show();
+    }
+
+    async function saveMenu() {
+      const id = document.getElementById('menuEditId').value;
+      const data = {
+        name: document.getElementById('menuName').value.trim(),
+        description: document.getElementById('menuDescription').value.trim(),
+        price: parseInt(document.getElementById('menuPrice').value),
+        category: document.getElementById('menuCategory').value,
+      };
+      if (!data.name || !data.price) return alert('Veuillez remplir le nom et le prix.');
+
+      const btn = document.getElementById('btnSaveMenu');
+      btn.disabled = true;
+      try {
+        if (id) {
+          await RestaurantAPI.updateMenu(id, data);
+        } else {
+          await RestaurantAPI.createMenu(data);
+        }
+        bootstrap.Modal.getInstance(document.getElementById('modalMenu')).hide();
+        await loadMenus();
+      } catch (error) {
+        alert('Erreur: ' + (error.message || 'Impossible de sauvegarder le menu'));
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteMenu(id, name) {
+      if (!confirm('Supprimer "' + name + '" de la carte ?')) return;
+      try {
+        await RestaurantAPI.deleteMenu(id);
+        await loadMenus();
+      } catch (error) {
+        alert('Erreur: ' + (error.message || 'Impossible de supprimer'));
       }
     }
 
