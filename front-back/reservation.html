@@ -891,17 +891,17 @@
                   </select>
                 </div>
                 <div class="mb-3">
-                  <label for="selectEquipement" class="form-label">
-                    <i class="fas fa-tv me-1"></i> Equipement
+                  <label class="form-label">
+                    <i class="fas fa-tv me-1"></i> Equipements <small class="text-muted">(3 max)</small>
                   </label>
-                  <select class="form-select" id="selectEquipement" multiple size="3">
-                    <option value="videoprojecteur" selected>Videoprojecteur</option>
-                    <option value="ecran">Ecran geant</option>
-                    <option value="micro">Microphone et sonorisation</option>
-                    <option value="paperboard">Paperboard</option>
-                    <option value="visioconference">Systeme de visioconference</option>
-                  </select>
-                  <small class="text-muted">Maintenez Ctrl pour selectionner plusieurs elements.</small>
+                  <div id="equipementsCheckboxes">
+                    <div class="form-check"><input class="form-check-input equip-check" type="checkbox" value="videoprojecteur" id="eqVideo" checked onchange="limitEquipements()"><label class="form-check-label" for="eqVideo">Videoprojecteur</label></div>
+                    <div class="form-check"><input class="form-check-input equip-check" type="checkbox" value="ecran" id="eqEcran" onchange="limitEquipements()"><label class="form-check-label" for="eqEcran">Ecran geant</label></div>
+                    <div class="form-check"><input class="form-check-input equip-check" type="checkbox" value="micro" id="eqMicro" onchange="limitEquipements()"><label class="form-check-label" for="eqMicro">Microphone et sonorisation</label></div>
+                    <div class="form-check"><input class="form-check-input equip-check" type="checkbox" value="paperboard" id="eqPaper" onchange="limitEquipements()"><label class="form-check-label" for="eqPaper">Paperboard</label></div>
+                    <div class="form-check"><input class="form-check-input equip-check" type="checkbox" value="visioconference" id="eqVisio" onchange="limitEquipements()"><label class="form-check-label" for="eqVisio">Systeme de visioconference</label></div>
+                  </div>
+                  <small class="text-muted" id="equipLimitMsg"></small>
                 </div>
                 <div class="form-check mb-3">
                   <input class="form-check-input" type="checkbox" id="checkPause" onchange="updateSummary()">
@@ -1081,6 +1081,7 @@
       salleDateDebut: null,
       salleDateFin: null,
       salleNbJours: 0,
+      selectedServiceId: null,
     };
 
     const DAYS_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
@@ -1168,7 +1169,7 @@
 
         return `
           <div class="col-lg-4 col-md-6">
-            <div class="gc-service-card position-relative" data-service="${code}" onclick="selectService('${code}', '${name.replace(/'/g, "\\'")}', ${price})">
+            <div class="gc-service-card position-relative" data-service="${code}" onclick="selectService('${code}', '${name.replace(/'/g, "\\'")}', ${price}, '${service.id || ''}')">
               <div class="check-mark"><i class="fas fa-check"></i></div>
               <div class="service-icon ${iconInfo.class}">
                 <i class="${iconInfo.icon}"></i>
@@ -1182,10 +1183,11 @@
       }).join('');
     }
 
-    function selectService(code, name, price) {
+    function selectService(code, name, price, serviceId) {
       state.selectedService = code;
       state.selectedServiceName = name;
       state.selectedServicePrice = price || 0;
+      state.selectedServiceId = serviceId || null;
 
       // Visual feedback
       document.querySelectorAll('.gc-service-card').forEach(card => {
@@ -1197,6 +1199,8 @@
       // Reset downstream selections
       state.selectedDate = null;
       state.selectedSlot = null;
+      state.salleDateDebut = null;
+      state.salleDateFin = null;
       document.getElementById('btnStep2Next').disabled = true;
     }
 
@@ -1672,11 +1676,29 @@
     }
 
     // ==================== CONFIRM RESERVATION ====================
+    function limitEquipements() {
+      const checks = document.querySelectorAll('.equip-check');
+      const checked = document.querySelectorAll('.equip-check:checked');
+      const msg = document.getElementById('equipLimitMsg');
+      if (checked.length >= 3) {
+        checks.forEach(c => { if (!c.checked) c.disabled = true; });
+        msg.textContent = 'Maximum 3 equipements atteint.';
+        msg.classList.add('text-warning');
+      } else {
+        checks.forEach(c => c.disabled = false);
+        msg.textContent = checked.length + '/3 selectionne(s)';
+        msg.classList.remove('text-warning');
+      }
+    }
+
+    function getSelectedEquipements() {
+      return Array.from(document.querySelectorAll('.equip-check:checked')).map(c => c.value);
+    }
+
     async function confirmReservation() {
       const btnConfirm = document.getElementById('btnConfirm');
       const originalText = btnConfirm.innerHTML;
 
-      // Auth gate
       if (!isAuthenticated()) {
         showAlert(document.getElementById('alertContainer'),
           'Veuillez vous connecter pour effectuer une reservation. <a href="login.html" class="alert-link">Connexion</a>', 'warning');
@@ -1684,7 +1706,6 @@
         return;
       }
 
-      // Loading state
       btnConfirm.disabled = true;
       btnConfirm.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Reservation en cours...';
 
@@ -1695,56 +1716,69 @@
         let result;
 
         if (state.selectedService === 'golf') {
-          const data = {
-            date: state.selectedDate,
+          result = await GolfAPI.reserver({
+            service_code: 'golf',
             creneau_id: state.selectedSlot.id,
-            heure: state.selectedSlot.timeStart,
-            nombre_joueurs: personnes,
-            niveau: document.getElementById('selectNiveau').value,
-            parcours: document.getElementById('selectParcours').value,
-            caddie: document.getElementById('checkCaddie').checked,
-            voiturette: document.getElementById('checkVoiturette').checked,
-            notes: notes,
-          };
-          result = await GolfAPI.reserver(data);
+            personnes: personnes,
+            details: {
+              date: state.selectedDate,
+              heure: state.selectedSlot.timeStart,
+              niveau: document.getElementById('selectNiveau').value,
+              parcours: document.getElementById('selectParcours').value,
+              caddie: document.getElementById('checkCaddie').checked,
+              voiturette: document.getElementById('checkVoiturette').checked,
+              voiturette_count: document.getElementById('checkVoiturette').checked ? 1 : 0,
+              notes: notes,
+            },
+          });
 
         } else if (state.selectedService === 'restaurant') {
-          const data = {
-            date: state.selectedDate,
+          result = await RestaurantAPI.reserver({
+            service_code: 'restaurant',
             creneau_id: state.selectedSlot.id,
-            heure: state.selectedSlot.timeStart,
-            nombre_couverts: personnes,
-            formule: document.getElementById('selectFormule').value,
-            emplacement: document.getElementById('selectEmplacement').value,
-            allergies: document.getElementById('checkAllergies').checked
-              ? document.getElementById('inputAllergies').value.trim()
-              : null,
-            notes: notes,
-          };
-          result = await RestaurantAPI.reserver(data);
+            personnes: personnes,
+            details: {
+              date: state.selectedDate,
+              heure: state.selectedSlot.timeStart,
+              formule: document.getElementById('selectFormule').value,
+              emplacement: document.getElementById('selectEmplacement').value,
+              allergies: document.getElementById('checkAllergies').checked
+                ? document.getElementById('inputAllergies').value.trim()
+                : null,
+              notes: notes,
+            },
+          });
 
         } else {
-          // Salle / generic reservation
-          const equipSelect = document.getElementById('selectEquipement');
-          const equipements = Array.from(equipSelect.selectedOptions).map(o => o.value);
+          // Salle - use generic reservation endpoint
+          // Find a valid creneau for the start date
+          let creneauId = state.selectedSlot.id;
+          if (creneauId === 'salle-range') {
+            // Fetch real creneau for the start date
+            try {
+              const slotsResp = await CreneauxAPI.disponibles('date=' + state.salleDateDebut + '&service=salle');
+              const slots = slotsResp.data || slotsResp.creneaux || slotsResp || [];
+              if (Array.isArray(slots) && slots.length > 0) creneauId = slots[0].id;
+            } catch (e) { console.warn('Could not fetch salle creneaux:', e); }
+          }
 
-          const data = {
-            service_type: 'salle',
-            date: state.selectedDate,
-            creneau_id: state.selectedSlot.id,
-            heure_debut: state.selectedSlot.timeStart,
-            heure_fin: state.selectedSlot.timeEnd,
-            nombre_personnes: personnes,
-            configuration: document.getElementById('selectConfig').value,
-            equipements: equipements,
-            pause_cafe: document.getElementById('checkPause').checked,
-            dejeuner: document.getElementById('checkRepas').checked,
-            notes: notes,
-          };
-          result = await ReservationsAPI.create(data);
+          result = await ReservationsAPI.create({
+            service_id: state.selectedServiceId,
+            creneau_id: creneauId,
+            personnes: personnes,
+            details: {
+              date_debut: state.salleDateDebut,
+              date_fin: state.salleDateFin,
+              nb_jours: state.salleNbJours,
+              configuration: document.getElementById('selectConfig').value,
+              equipements: getSelectedEquipements(),
+              pause_cafe: document.getElementById('checkPause').checked,
+              dejeuner: document.getElementById('checkRepas').checked,
+              notes: notes,
+            },
+          });
         }
 
-        // Success - show modal
         const reservation = result.data || result.reservation || result;
         showConfirmation(reservation);
 
@@ -1756,7 +1790,6 @@
         btnConfirm.disabled = false;
         btnConfirm.innerHTML = originalText;
 
-        // Re-enable only if conditions still checked
         if (!document.getElementById('checkConditions').checked) {
           btnConfirm.disabled = true;
         }
