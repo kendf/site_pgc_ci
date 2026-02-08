@@ -109,15 +109,27 @@ async function apiRequest(endpoint, options = {}) {
     const response = await fetch(url, {
       ...options,
       headers,
+      cache: 'no-store',
     });
 
-    const data = await response.json();
+    if (response.status === 304) return null;
+
+    let data = null;
+    const contentType = response.headers.get('content-type') || '';
+    if (response.status !== 204 && response.status !== 205) {
+      if (contentType.includes('application/json')) {
+        const text = await response.text();
+        data = text ? JSON.parse(text) : null;
+      } else {
+        data = await response.text();
+      }
+    }
 
     if (!response.ok) {
       throw {
         status: response.status,
-        message: data.message || data.error || 'Erreur serveur',
-        code: data.code || 'UNKNOWN_ERROR',
+        message: data?.message || data?.error || (typeof data === 'string' && data) || 'Erreur serveur',
+        code: data?.code || 'UNKNOWN_ERROR',
       };
     }
 
