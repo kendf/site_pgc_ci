@@ -278,6 +278,9 @@
         <a class="nav-link" href="#" data-section="scores" onclick="switchSection('scores', event)">
           <i class="fas fa-flag"></i> Mes Scores Golf
         </a>
+        <a class="nav-link" href="#" data-section="paiements" onclick="switchSection('paiements', event)">
+          <i class="fas fa-credit-card"></i> Paiements
+        </a>
       </nav>
     </aside>
 
@@ -511,6 +514,72 @@
         </div>
       </section>
 
+      <!-- ====== SECTION: PAIEMENTS ====== -->
+      <section id="section-paiements" class="gc-section">
+        <div class="gc-section-header">
+          <h2><i class="fas fa-credit-card me-2"></i> Mes Paiements</h2>
+        </div>
+
+        <div class="gc-table-container">
+          <div id="paiementsLoading" class="gc-loading-overlay">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+          <div id="paiementsContent" style="display: none;">
+            <div class="table-responsive">
+              <table class="table gc-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Reservation</th>
+                    <th>Service</th>
+                    <th>Montant</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="paiementsTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="paiementsEmpty" class="gc-empty-state" style="display: none;">
+            <i class="fas fa-credit-card d-block"></i>
+            <p>Aucun paiement en cours.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modal Upload Recu -->
+      <div class="modal fade" id="modalRecu" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Envoyer le recu de paiement</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <div id="recuPaiementInfo" class="mb-3"></div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Recu de paiement (image ou PDF)</label>
+                <input type="file" class="form-control" id="recuFile" accept="image/*,.pdf">
+                <div class="form-text">Formats acceptes : JPEG, PNG, PDF. Max 5 Mo.</div>
+              </div>
+              <div id="recuPreview" class="mb-3" style="display:none;">
+                <img id="recuPreviewImg" class="img-fluid rounded" style="max-height:200px;" alt="Apercu">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="button" class="btn btn-gc-primary" onclick="submitRecu()">
+                <i class="fas fa-upload me-1"></i> Envoyer le recu
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 
@@ -526,7 +595,9 @@
     let currentClient = null;
     let allReservations = [];
     let allParties = [];
+    let allPaiements = [];
     let currentFilter = 'toutes';
+    let currentRecuPaiementId = null;
 
     // ======================================================
     //  AUTH CHECK
@@ -545,6 +616,7 @@
         loadDashboardStats();
         loadReservations();
         loadGolfData();
+        loadPaiements();
       } catch (error) {
         if (error.status === 401) {
           handleLogout();
@@ -947,6 +1019,142 @@
         showNotification('Partie supprimee avec succes.', 'success');
       } catch (error) {
         showNotification(error.message || 'Erreur lors de la suppression.', 'danger');
+      }
+    }
+
+    // ======================================================
+    //  PAIEMENTS
+    // ======================================================
+    async function loadPaiements() {
+      const loading = document.getElementById('paiementsLoading');
+      const content = document.getElementById('paiementsContent');
+      const empty = document.getElementById('paiementsEmpty');
+
+      try {
+        allPaiements = await PaiementsAPI.mesPaiements();
+
+        loading.style.display = 'none';
+
+        if (!allPaiements || allPaiements.length === 0) {
+          empty.style.display = 'block';
+          content.style.display = 'none';
+          return;
+        }
+
+        empty.style.display = 'none';
+        content.style.display = 'block';
+
+        const tbody = document.getElementById('paiementsTableBody');
+        tbody.innerHTML = allPaiements.map(p => {
+          const resNum = p.reservation?.reservation_number || p.reservation_id?.substring(0, 8);
+          const serviceName = p.reservation?.service?.nom || '--';
+          const montant = Number(p.montant).toLocaleString('fr-FR') + ' FCFA';
+          const date = formatDateShort(p.created_at);
+          const statutBadge = formatPaiementStatut(p.statut);
+
+          let actions = '';
+          if (p.statut === 'en_attente') {
+            if (p.wave_payment_url) {
+              actions += `<a href="${escapeHtml(p.wave_payment_url)}" target="_blank" class="btn btn-sm btn-primary me-1" title="Payer avec Wave"><i class="fas fa-money-bill-wave"></i></a>`;
+            }
+            actions += `<button class="btn btn-sm btn-outline-primary" onclick="openRecuModal('${p.id}', '${escapeHtml(resNum)}', '${montant}')" title="Envoyer le recu"><i class="fas fa-upload"></i></button>`;
+          } else if (p.statut === 'paye') {
+            actions = '<span class="text-muted small">En verification...</span>';
+          } else if (p.statut === 'verifie') {
+            actions = '<i class="fas fa-check-circle text-success"></i> Verifie';
+          } else if (p.statut === 'rembourse') {
+            actions = '<i class="fas fa-undo text-info"></i> Rembourse';
+          }
+
+          if (p.recu_url) {
+            actions += ` <a href="${escapeHtml(p.recu_url)}" target="_blank" class="btn btn-sm btn-outline-secondary ms-1" title="Voir le recu"><i class="fas fa-receipt"></i></a>`;
+          }
+
+          return `<tr>
+            <td>${date}</td>
+            <td>${escapeHtml(resNum)}</td>
+            <td>${escapeHtml(serviceName)}</td>
+            <td><strong>${montant}</strong><br><small class="text-muted">${p.pourcentage}%</small></td>
+            <td>${statutBadge}</td>
+            <td>${actions}</td>
+          </tr>`;
+        }).join('');
+
+      } catch (error) {
+        loading.style.display = 'none';
+        if (error.status !== 401) {
+          empty.style.display = 'block';
+        }
+      }
+    }
+
+    function formatPaiementStatut(statut) {
+      const map = {
+        en_attente: '<span class="badge bg-warning text-dark">En attente</span>',
+        paye: '<span class="badge bg-info">Recu envoye</span>',
+        verifie: '<span class="badge bg-success">Verifie</span>',
+        rembourse: '<span class="badge bg-secondary">Rembourse</span>',
+        echoue: '<span class="badge bg-danger">Echoue</span>',
+      };
+      return map[statut] || `<span class="badge bg-light text-dark">${statut}</span>`;
+    }
+
+    function openRecuModal(paiementId, resNum, montant) {
+      currentRecuPaiementId = paiementId;
+      document.getElementById('recuPaiementInfo').innerHTML = `
+        <div class="alert alert-info mb-0">
+          <strong>Reservation:</strong> ${resNum}<br>
+          <strong>Montant:</strong> ${montant}
+        </div>
+      `;
+      document.getElementById('recuFile').value = '';
+      document.getElementById('recuPreview').style.display = 'none';
+      new bootstrap.Modal(document.getElementById('modalRecu')).show();
+    }
+
+    // Preview du fichier
+    document.addEventListener('DOMContentLoaded', () => {
+      const fileInput = document.getElementById('recuFile');
+      if (fileInput) {
+        fileInput.addEventListener('change', function() {
+          const file = this.files[0];
+          if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = e => {
+              document.getElementById('recuPreviewImg').src = e.target.result;
+              document.getElementById('recuPreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+          } else {
+            document.getElementById('recuPreview').style.display = 'none';
+          }
+        });
+      }
+    });
+
+    async function submitRecu() {
+      if (!currentRecuPaiementId) return;
+      const fileInput = document.getElementById('recuFile');
+      const file = fileInput.files[0];
+      if (!file) {
+        showNotification('Veuillez selectionner un fichier.', 'danger');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showNotification('Le fichier ne doit pas depasser 5 Mo.', 'danger');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('recu', file);
+
+      try {
+        await PaiementsAPI.uploadRecu(currentRecuPaiementId, formData);
+        bootstrap.Modal.getInstance(document.getElementById('modalRecu')).hide();
+        showNotification('Recu envoye avec succes ! La reception va le verifier.', 'success');
+        loadPaiements();
+      } catch (error) {
+        showNotification(error.message || 'Erreur lors de l\'envoi du recu.', 'danger');
       }
     }
 

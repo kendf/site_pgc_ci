@@ -381,6 +381,11 @@
               <i class="fas fa-clock me-1"></i> Cr&eacute;neaux
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="paiements">
+              <i class="fas fa-credit-card me-1"></i> Paiements
+            </a>
+          </li>
         </ul>
         <div class="d-flex align-items-center gap-3">
           <span class="text-light small" id="adminUserName"></span>
@@ -421,6 +426,9 @@
         </a>
         <a class="nav-link" href="#" data-section="statistiques">
           <i class="fas fa-chart-bar"></i> Statistiques
+        </a>
+        <a class="nav-link" href="#" data-section="paiements">
+          <i class="fas fa-credit-card"></i> Paiements
         </a>
         <a class="nav-link" href="#" data-section="export">
           <i class="fas fa-file-export"></i> Export
@@ -934,10 +942,96 @@
         </div>
       </section>
 
+      <!-- ==================== SECTION: PAIEMENTS ==================== -->
+      <section id="section-paiements" class="admin-section">
+        <div class="gc-page-header">
+          <h1><i class="fas fa-credit-card me-2"></i>Gestion des Paiements</h1>
+          <p>G&eacute;rer les demandes de paiement et v&eacute;rifier les re&ccedil;us</p>
+        </div>
+
+        <!-- Filtres -->
+        <div class="d-flex gap-2 mb-3 flex-wrap">
+          <button class="btn btn-sm btn-outline-primary active" onclick="filterPaiements('tous', this)">Tous</button>
+          <button class="btn btn-sm btn-outline-warning" onclick="filterPaiements('en_attente', this)">En attente</button>
+          <button class="btn btn-sm btn-outline-info" onclick="filterPaiements('paye', this)">Re&ccedil;u envoy&eacute;</button>
+          <button class="btn btn-sm btn-outline-success" onclick="filterPaiements('verifie', this)">V&eacute;rifi&eacute;s</button>
+          <button class="btn btn-sm btn-outline-secondary" onclick="filterPaiements('rembourse', this)">Rembours&eacute;s</button>
+        </div>
+
+        <div class="gc-table-container">
+          <div id="paiementsAdminLoading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+          <div id="paiementsAdminContent" style="display:none;">
+            <div class="table-responsive">
+              <table class="table gc-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>R&eacute;servation</th>
+                    <th>Client</th>
+                    <th>Service</th>
+                    <th>Montant</th>
+                    <th>Statut</th>
+                    <th>Re&ccedil;u</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="paiementsAdminBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div id="paiementsAdminEmpty" class="text-center py-5 text-muted" style="display:none;">
+            <i class="fas fa-credit-card fa-3x mb-3 d-block"></i>
+            <p>Aucun paiement trouv&eacute;</p>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
   <!-- ===================== MODALS ===================== -->
+
+  <!-- Modal: Demander un paiement -->
+  <div class="modal fade" id="modalPaiement" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-credit-card me-2"></i>Demander un paiement</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body gc-form">
+          <input type="hidden" id="paiementReservationId">
+          <div id="paiementResInfo" class="alert alert-info mb-3"></div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Pourcentage &agrave; payer</label>
+            <select class="form-select" id="paiementPourcentage">
+              <option value="40">Acompte 40%</option>
+              <option value="50">Acompte 50%</option>
+              <option value="100" selected>Paiement int&eacute;gral 100%</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Montant calcul&eacute;</label>
+            <div id="paiementMontantPreview" class="fs-4 fw-bold text-primary">-- FCFA</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Note (optionnelle)</label>
+            <textarea class="form-control" id="paiementNote" rows="2" placeholder="Message pour le client..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-gc-primary" onclick="submitPaiementRequest()">
+            <i class="fas fa-paper-plane me-1"></i> Envoyer la demande
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal: Refuser une reservation -->
   <div class="modal fade" id="modalRefuse" tabindex="-1">
@@ -1215,6 +1309,9 @@
         case 'statistiques':
           if (!state.statsLoaded) loadStatistiques();
           break;
+        case 'paiements':
+          loadPaiementsAdmin();
+          break;
       }
     }
 
@@ -1448,6 +1545,9 @@
             </button>`;
         } else if (statut === 'confirmee') {
           actions = `
+            <button class="btn btn-warning btn-action" onclick="openPaiementModal('${r.id}', '${escapeHtml(serviceName)}', ${prix})" title="Demander paiement">
+              <i class="fas fa-credit-card"></i>
+            </button>
             <button class="btn btn-primary btn-action" onclick="terminerReservation(${r.id})" title="Terminer">
               <i class="fas fa-flag-checkered"></i>
             </button>`;
@@ -2374,6 +2474,176 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+    }
+
+    // ============ PAIEMENTS ADMIN ============
+    let allPaiementsAdmin = [];
+    let paiementsFilter = 'tous';
+
+    async function loadPaiementsAdmin() {
+      const loading = document.getElementById('paiementsAdminLoading');
+      const content = document.getElementById('paiementsAdminContent');
+      const empty = document.getElementById('paiementsAdminEmpty');
+
+      loading.style.display = 'block';
+      content.style.display = 'none';
+      empty.style.display = 'none';
+
+      try {
+        allPaiementsAdmin = await PaiementsAPI.list();
+        renderPaiementsAdmin();
+      } catch (error) {
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+        empty.querySelector('p').textContent = 'Erreur: ' + (error.message || 'Impossible de charger');
+      }
+    }
+
+    function renderPaiementsAdmin() {
+      const loading = document.getElementById('paiementsAdminLoading');
+      const content = document.getElementById('paiementsAdminContent');
+      const empty = document.getElementById('paiementsAdminEmpty');
+      const tbody = document.getElementById('paiementsAdminBody');
+
+      loading.style.display = 'none';
+
+      let filtered = allPaiementsAdmin;
+      if (paiementsFilter !== 'tous') {
+        filtered = allPaiementsAdmin.filter(p => p.statut === paiementsFilter);
+      }
+
+      if (!filtered.length) {
+        content.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      content.style.display = 'block';
+
+      tbody.innerHTML = filtered.map(p => {
+        const res = p.reservation || {};
+        const resNum = res.reservation_number || p.reservation_id?.substring(0, 8) || '--';
+        const clientName = res.client ? `${res.client.prenom || ''} ${res.client.nom || ''}`.trim() : '--';
+        const serviceName = res.service?.nom || '--';
+        const montant = Number(p.montant).toLocaleString('fr-FR') + ' FCFA';
+        const date = new Date(p.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+        const statutBadge = formatPaiementStatutAdmin(p.statut);
+
+        let recuCol = '--';
+        if (p.recu_url) {
+          recuCol = `<a href="${escapeHtml(p.recu_url)}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-receipt me-1"></i>Voir</a>`;
+        }
+
+        let actions = '';
+        if (p.statut === 'paye') {
+          actions = `
+            <button class="btn btn-sm btn-success" onclick="verifierPaiement('${p.id}')"><i class="fas fa-check me-1"></i>Valider</button>
+            <button class="btn btn-sm btn-outline-danger ms-1" onclick="rembourserPaiement('${p.id}')"><i class="fas fa-undo"></i></button>`;
+        } else if (p.statut === 'verifie') {
+          actions = `<span class="text-success"><i class="fas fa-check-circle"></i> OK</span>`;
+          if (p.verifier) {
+            actions += `<br><small class="text-muted">par ${escapeHtml(p.verifier.prenom || '')} ${escapeHtml(p.verifier.nom || '')}</small>`;
+          }
+        } else if (p.statut === 'en_attente') {
+          actions = `<span class="text-muted small">En attente du client</span>`;
+        } else if (p.statut === 'rembourse') {
+          actions = `<span class="text-secondary"><i class="fas fa-undo"></i> Rembourse</span>`;
+        }
+
+        return `<tr>
+          <td>${date}</td>
+          <td><strong>#${escapeHtml(resNum)}</strong></td>
+          <td>${escapeHtml(clientName)}</td>
+          <td>${escapeHtml(serviceName)}</td>
+          <td><strong>${montant}</strong><br><small class="text-muted">${p.pourcentage}%</small></td>
+          <td>${statutBadge}</td>
+          <td>${recuCol}</td>
+          <td>${actions}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function formatPaiementStatutAdmin(statut) {
+      const map = {
+        en_attente: '<span class="badge bg-warning text-dark">En attente</span>',
+        paye: '<span class="badge bg-info text-white">Recu envoye</span>',
+        verifie: '<span class="badge bg-success">Verifie</span>',
+        rembourse: '<span class="badge bg-secondary">Rembourse</span>',
+        echoue: '<span class="badge bg-danger">Echoue</span>',
+      };
+      return map[statut] || `<span class="badge bg-light text-dark">${statut}</span>`;
+    }
+
+    function filterPaiements(statut, btn) {
+      paiementsFilter = statut;
+      document.querySelectorAll('#section-paiements .btn-outline-primary, #section-paiements .btn-outline-warning, #section-paiements .btn-outline-info, #section-paiements .btn-outline-success, #section-paiements .btn-outline-secondary').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderPaiementsAdmin();
+    }
+
+    function openPaiementModal(reservationId, serviceName, totalPrice) {
+      document.getElementById('paiementReservationId').value = reservationId;
+      document.getElementById('paiementResInfo').innerHTML = `
+        <strong>Service:</strong> ${escapeHtml(serviceName)}<br>
+        <strong>Prix total:</strong> ${formatPrice(totalPrice)}
+      `;
+      document.getElementById('paiementNote').value = '';
+      const select = document.getElementById('paiementPourcentage');
+      select.value = '100';
+      updatePaiementPreview(totalPrice);
+
+      select.onchange = () => updatePaiementPreview(totalPrice);
+
+      new bootstrap.Modal(document.getElementById('modalPaiement')).show();
+    }
+
+    function updatePaiementPreview(totalPrice) {
+      const pct = parseInt(document.getElementById('paiementPourcentage').value);
+      const montant = Math.round(totalPrice * pct / 100);
+      document.getElementById('paiementMontantPreview').textContent = formatPrice(montant);
+    }
+
+    async function submitPaiementRequest() {
+      const reservationId = document.getElementById('paiementReservationId').value;
+      const pourcentage = parseInt(document.getElementById('paiementPourcentage').value);
+      const note = document.getElementById('paiementNote').value;
+
+      try {
+        await PaiementsAPI.create({
+          reservation_id: reservationId,
+          pourcentage,
+          note_reception: note || null,
+        });
+
+        bootstrap.Modal.getInstance(document.getElementById('modalPaiement')).hide();
+        showAlert(document.getElementById('alertContainer'), 'Demande de paiement envoyee avec succes', 'success');
+        loadPaiementsAdmin();
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'), 'Erreur: ' + (error.message || 'Impossible de creer le paiement'));
+      }
+    }
+
+    async function verifierPaiement(id) {
+      if (!confirm('Confirmer la verification de ce paiement ?')) return;
+      try {
+        await PaiementsAPI.verifier(id);
+        showAlert(document.getElementById('alertContainer'), 'Paiement verifie avec succes', 'success');
+        loadPaiementsAdmin();
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'), 'Erreur: ' + (error.message || 'Impossible de verifier'));
+      }
+    }
+
+    async function rembourserPaiement(id) {
+      if (!confirm('Confirmer le remboursement de ce paiement ?')) return;
+      try {
+        await PaiementsAPI.rembourser(id);
+        showAlert(document.getElementById('alertContainer'), 'Paiement marque comme rembourse', 'info');
+        loadPaiementsAdmin();
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'), 'Erreur: ' + (error.message || 'Impossible de rembourser'));
+      }
     }
 
     // ============ UTILITY ============

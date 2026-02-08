@@ -225,6 +225,29 @@ const AdminAPI = {
   createUser: (data) => apiRequest('/admin/utilisateurs', { method: 'POST', body: JSON.stringify(data) }),
 };
 
+// ==================== PAIEMENTS ====================
+
+const PaiementsAPI = {
+  status: () => apiRequest('/paiements/status'),
+  mesPaiements: () => apiRequest('/paiements/mes-paiements'),
+  get: (id) => apiRequest(`/paiements/${id}`),
+  create: (data) => apiRequest('/paiements', { method: 'POST', body: JSON.stringify(data) }),
+  list: (params = '') => apiRequest(`/paiements${params ? '?' + params : ''}`),
+  uploadRecu: (id, formData) => {
+    const url = `${API_BASE_URL}/paiements/${id}/recu`;
+    const headers = {};
+    const token = getToken();
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    return fetch(url, { method: 'POST', headers, body: formData }).then(async r => {
+      const data = await r.json();
+      if (!r.ok) throw { status: r.status, message: data.message || 'Erreur serveur' };
+      return data;
+    });
+  },
+  verifier: (id) => apiRequest(`/paiements/${id}/verifier`, { method: 'PATCH' }),
+  rembourser: (id) => apiRequest(`/paiements/${id}/rembourser`, { method: 'PATCH' }),
+};
+
 // ==================== UTILS ====================
 
 function formatDate(dateStr) {
