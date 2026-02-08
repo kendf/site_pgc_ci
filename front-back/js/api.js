@@ -246,6 +246,8 @@ const PaiementsAPI = {
   },
   verifier: (id) => apiRequest(`/paiements/${id}/verifier`, { method: 'PATCH' }),
   rembourser: (id) => apiRequest(`/paiements/${id}/rembourser`, { method: 'PATCH' }),
+  approuverRemboursement: (id) => apiRequest(`/paiements/${id}/approuver-remboursement`, { method: 'PATCH' }),
+  refuserRemboursement: (id, reason) => apiRequest(`/paiements/${id}/refuser-remboursement`, { method: 'PATCH', body: JSON.stringify({ reason }) }),
 };
 
 // ==================== UTILS ====================

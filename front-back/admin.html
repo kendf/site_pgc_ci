@@ -955,6 +955,7 @@
           <button class="btn btn-sm btn-outline-warning" onclick="filterPaiements('en_attente', this)">En attente</button>
           <button class="btn btn-sm btn-outline-info" onclick="filterPaiements('paye', this)">Re&ccedil;u envoy&eacute;</button>
           <button class="btn btn-sm btn-outline-success" onclick="filterPaiements('verifie', this)">V&eacute;rifi&eacute;s</button>
+          <button class="btn btn-sm btn-outline-danger" onclick="filterPaiements('remboursement_en_attente', this)">Remb. en attente</button>
           <button class="btn btn-sm btn-outline-secondary" onclick="filterPaiements('rembourse', this)">Rembours&eacute;s</button>
         </div>
 
@@ -2547,6 +2548,12 @@
           }
         } else if (p.statut === 'en_attente') {
           actions = `<span class="text-muted small">En attente du client</span>`;
+        } else if (p.statut === 'remboursement_en_attente') {
+          const noteInfo = p.note_reception ? `<br><small class="text-muted">${escapeHtml(p.note_reception)}</small>` : '';
+          actions = `
+            <button class="btn btn-sm btn-success" onclick="approuverRemboursement('${p.id}')"><i class="fas fa-check me-1"></i>Approuver</button>
+            <button class="btn btn-sm btn-outline-danger ms-1" onclick="refuserRemboursement('${p.id}')"><i class="fas fa-times"></i></button>
+            ${noteInfo}`;
         } else if (p.statut === 'rembourse') {
           actions = `<span class="text-secondary"><i class="fas fa-undo"></i> Rembourse</span>`;
         }
@@ -2569,6 +2576,7 @@
         en_attente: '<span class="badge bg-warning text-dark">En attente</span>',
         paye: '<span class="badge bg-info text-white">Recu envoye</span>',
         verifie: '<span class="badge bg-success">Verifie</span>',
+        remboursement_en_attente: '<span class="badge bg-danger">Remb. en attente</span>',
         rembourse: '<span class="badge bg-secondary">Rembourse</span>',
         echoue: '<span class="badge bg-danger">Echoue</span>',
       };
@@ -2643,6 +2651,29 @@
         loadPaiementsAdmin();
       } catch (error) {
         showAlert(document.getElementById('alertContainer'), 'Erreur: ' + (error.message || 'Impossible de rembourser'));
+      }
+    }
+
+    async function approuverRemboursement(id) {
+      if (!confirm('Approuver ce remboursement ? Le client sera notifie.')) return;
+      try {
+        await PaiementsAPI.approuverRemboursement(id);
+        showAlert(document.getElementById('alertContainer'), 'Remboursement approuve avec succes', 'success');
+        loadPaiementsAdmin();
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'), 'Erreur: ' + (error.message || 'Impossible d\'approuver'));
+      }
+    }
+
+    async function refuserRemboursement(id) {
+      const reason = prompt('Motif du refus de remboursement :');
+      if (reason === null) return;
+      try {
+        await PaiementsAPI.refuserRemboursement(id, reason || 'Remboursement refuse');
+        showAlert(document.getElementById('alertContainer'), 'Remboursement refuse', 'warning');
+        loadPaiementsAdmin();
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'), 'Erreur: ' + (error.message || 'Impossible de refuser'));
       }
     }
 

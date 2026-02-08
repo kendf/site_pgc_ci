@@ -12,7 +12,12 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "WebFetch(domain:regal-nougat-18b501.netlify.app)"
+      "WebFetch(domain:regal-nougat-18b501.netlify.app)",
+      "Bash(node:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlZmZhMWVkYi1jOGRhLTQzMWMtOWQwYS02OThhMTU2NmY3NzUiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzcwNTAzNTExLCJleHAiOjE3NzExMDgzMTF9.M6B5ffTStFiFhdZN1gX92ixOTGu0WIBiK0NBC-eAP5s\")",
+      "Bash(find:*)",
+      "Bash(python3:*)",
+      "Bash(npx prisma generate:*)"
     ]
   }
 }
