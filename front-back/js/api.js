@@ -8,21 +8,60 @@
 // Exemple : const API_BASE_URL = 'https://votre-api.onrender.com/api';
 const API_BASE_URL = window.API_BASE_URL || 'https://golf-club-backend.onrender.com/api';
 
-// Token Supabase stocké après connexion
+// Token stocké après connexion
 function getToken() {
-  return localStorage.getItem('access_token');
+  return localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 }
 
-function setToken(token) {
-  localStorage.setItem('access_token', token);
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    if (!base64Url) return null;
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
+
+function isTokenExpired(token) {
+  const payload = parseJwt(token);
+  if (!payload || !payload.exp) return true;
+  const now = Math.floor(Date.now() / 1000);
+  return payload.exp <= now;
+}
+
+function setToken(token, options = {}) {
+  const remember = options.remember !== false;
+  if (remember) {
+    localStorage.setItem('access_token', token);
+    sessionStorage.removeItem('access_token');
+  } else {
+    sessionStorage.setItem('access_token', token);
+    localStorage.removeItem('access_token');
+  }
 }
 
 function removeToken() {
   localStorage.removeItem('access_token');
+  sessionStorage.removeItem('access_token');
+  removeUser();
 }
 
 function isAuthenticated() {
-  return !!getToken();
+  const token = getToken();
+  if (!token) return false;
+  if (isTokenExpired(token)) {
+    removeToken();
+    return false;
+  }
+  return true;
 }
 
 // ===== GESTION DES RÔLES =====
@@ -32,11 +71,28 @@ function isAuthenticated() {
  */
 function getUser() {
   try {
-    const raw = localStorage.getItem('user');
+    const raw = localStorage.getItem('user') || sessionStorage.getItem('user');
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
+}
+
+function setUser(user, options = {}) {
+  const remember = options.remember !== false;
+  const value = JSON.stringify(user);
+  if (remember) {
+    localStorage.setItem('user', value);
+    sessionStorage.removeItem('user');
+  } else {
+    sessionStorage.setItem('user', value);
+    localStorage.removeItem('user');
+  }
+}
+
+function removeUser() {
+  localStorage.removeItem('user');
+  sessionStorage.removeItem('user');
 }
 
 /**
@@ -52,7 +108,7 @@ function getUserRole() {
  */
 function logout() {
   removeToken();
-  localStorage.removeItem('user');
+  removeUser();
   window.location.href = 'login.html';
 }
 

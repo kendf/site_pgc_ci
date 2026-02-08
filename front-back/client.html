@@ -1166,7 +1166,7 @@
     // ======================================================
     function handleLogout() {
       removeToken();
-      localStorage.removeItem('user');
+      removeUser();
       window.location.href = 'login.html';
     }
 

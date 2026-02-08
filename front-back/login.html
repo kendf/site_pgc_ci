@@ -262,7 +262,14 @@
 
     // Redirect if already logged in
     document.addEventListener('DOMContentLoaded', () => {
-      if (isAuthenticated()) {
+      if (!isAuthenticated()) return;
+
+      const role = getUserRole() || '';
+      if (role === 'admin' || role === 'superadmin') {
+        window.location.href = 'admin.html';
+      } else if (role === 'restaurant') {
+        window.location.href = 'restaurant.html';
+      } else {
         window.location.href = 'client.html';
       }
     });
@@ -291,12 +298,14 @@
 
         const token = response.access_token || response.token || response.data?.access_token;
         if (token) {
-          setToken(token);
+          const remember = document.getElementById('rememberMe').checked;
+          setToken(token, { remember });
         }
 
         if (response.user || response.data?.user) {
           const user = response.user || response.data.user;
-          localStorage.setItem('user', JSON.stringify(user));
+          const remember = document.getElementById('rememberMe').checked;
+          setUser(user, { remember });
         }
 
         showAlert(document.getElementById('alertContainer'), 'Connexion réussie ! Redirection...', 'success');

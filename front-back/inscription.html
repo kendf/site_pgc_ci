@@ -367,7 +367,7 @@
 
         if (response.user || response.data?.user) {
           const user = response.user || response.data.user;
-          localStorage.setItem('user', JSON.stringify(user));
+          setUser(user);
         }
 
         showAlert(document.getElementById('alertContainer'), 'Compte créé avec succès ! Redirection...', 'success');
