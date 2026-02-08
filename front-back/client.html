@@ -1062,6 +1062,8 @@
             actions = '<span class="text-muted small">En verification...</span>';
           } else if (p.statut === 'verifie') {
             actions = '<i class="fas fa-check-circle text-success"></i> Verifie';
+          } else if (p.statut === 'remboursement_en_attente') {
+            actions = '<span class="text-warning small">Remboursement en attente</span>';
           } else if (p.statut === 'rembourse') {
             actions = '<i class="fas fa-undo text-info"></i> Rembourse';
           }
@@ -1093,6 +1095,7 @@
         en_attente: '<span class="badge bg-warning text-dark">En attente</span>',
         paye: '<span class="badge bg-info">Recu envoye</span>',
         verifie: '<span class="badge bg-success">Verifie</span>',
+        remboursement_en_attente: '<span class="badge bg-danger">Remb. en attente</span>',
         rembourse: '<span class="badge bg-secondary">Rembourse</span>',
         echoue: '<span class="badge bg-danger">Echoue</span>',
       };

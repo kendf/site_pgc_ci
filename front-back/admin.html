@@ -2585,7 +2585,7 @@
 
     function filterPaiements(statut, btn) {
       paiementsFilter = statut;
-      document.querySelectorAll('#section-paiements .btn-outline-primary, #section-paiements .btn-outline-warning, #section-paiements .btn-outline-info, #section-paiements .btn-outline-success, #section-paiements .btn-outline-secondary').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#section-paiements .btn-outline-primary, #section-paiements .btn-outline-warning, #section-paiements .btn-outline-info, #section-paiements .btn-outline-success, #section-paiements .btn-outline-secondary, #section-paiements .btn-outline-danger').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderPaiementsAdmin();
     }
