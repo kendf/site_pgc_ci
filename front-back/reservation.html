@@ -1169,7 +1169,7 @@
 
         return `
           <div class="col-lg-4 col-md-6">
-            <div class="gc-service-card position-relative" data-service="${code}" onclick="selectService('${code}', '${name.replace(/'/g, "\\'")}', ${price}, '${service.id || ''}')">
+            <div class="gc-service-card position-relative" data-service="${code}" onclick="selectService('${code}', '${name.replace(/'/g, "\\'")}', ${price})">
               <div class="check-mark"><i class="fas fa-check"></i></div>
               <div class="service-icon ${iconInfo.class}">
                 <i class="${iconInfo.icon}"></i>
