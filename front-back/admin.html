@@ -1457,11 +1457,14 @@
     }
 
     // ============ RESERVATIONS ============
+    const RESERVATIONS_TIMEOUT_MS = 15000;
+
     async function loadReservations() {
       const tbody = document.getElementById('reservationsTableBody');
       const tableResponsive = tbody ? (tbody.closest('.table-responsive') || tbody.parentElement?.parentElement) : null;
       if (tableResponsive) showLoading(tableResponsive);
 
+      let timeoutId = null;
       try {
         // Load service filter options
         loadServiceFilterOptions().catch(() => {});
@@ -1472,7 +1475,13 @@
         if (status) params.set('status', status);
 
         const queryStr = params.toString();
-        const data = await ReservationsAPI.list(queryStr);
+        const data = await Promise.race([
+          ReservationsAPI.list(queryStr),
+          new Promise((_, reject) => {
+            timeoutId = setTimeout(() => reject({ code: 'TIMEOUT', message: 'Chargement trop long. Cliquez sur Reessayer.' }), RESERVATIONS_TIMEOUT_MS);
+          })
+        ]);
+        if (timeoutId) clearTimeout(timeoutId);
         const payload = data.data || data.reservations || data || [];
         const reservations = Array.isArray(payload) ? payload : (payload.data || []);
         const pagination = payload.pagination || data.pagination || {};
@@ -1484,14 +1493,30 @@
         renderReservationsPagination();
       } catch (error) {
         console.error('Erreur chargement reservations:', error);
-        tbody.closest('.table-responsive').innerHTML = `
-          <table class="table gc-table mb-0">
-            <thead><tr><th>N&deg;</th><th>Date</th><th>Service</th><th>Client</th><th>Personnes</th><th>Statut</th><th>Prix</th><th>Actions</th></tr></thead>
-            <tbody><tr><td colspan="8" class="text-center text-danger py-4">
-              <i class="fas fa-exclamation-triangle me-2"></i>Erreur de chargement
-            </td></tr></tbody>
-          </table>`;
+        if (timeoutId) clearTimeout(timeoutId);
+        const message = error?.code === 'TIMEOUT'
+          ? (error.message || 'Chargement trop long. Cliquez sur Reessayer.')
+          : 'Erreur de chargement';
+        renderReservationsError(message, tableResponsive || tbody?.closest('.table-responsive'));
       }
+    }
+
+    function renderReservationsError(message, container) {
+      if (!container) return;
+      container.innerHTML = `
+        <table class="table gc-table mb-0">
+          <thead><tr><th>N&deg;</th><th>Date</th><th>Service</th><th>Client</th><th>Personnes</th><th>Statut</th><th>Prix</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr>
+              <td colspan="8" class="text-center text-danger py-4">
+                <i class="fas fa-exclamation-triangle me-2"></i>${escapeHtml(message)}
+                <div class="mt-2">
+                  <button class="btn btn-sm btn-outline-primary" onclick="loadReservations()">Reessayer</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>`;
     }
 
     function renderReservationsTable() {
