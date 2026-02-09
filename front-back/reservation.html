@@ -533,11 +533,6 @@
       <div class="collapse navbar-collapse" id="mainNav">
         <ul class="navbar-nav ms-auto align-items-center gap-1">
           <li class="nav-item">
-            <a class="nav-link" href="../index.html">
-              <i class="fas fa-home me-1"></i> Accueil
-            </a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link active" href="reservation.html">
               <i class="fas fa-calendar-check me-1"></i> Réservation
             </a>
@@ -1563,8 +1558,15 @@
           return;
         }
         const categories = { entree: 'Entrees', plat: 'Plats', dessert: 'Desserts', boisson: 'Boissons' };
+        const normalizedMenus = menus.map((m, idx) => ({
+          id: m.id || m._id || `menu-${idx}`,
+          name: m.nom || m.name || 'Menu',
+          description: m.description || m.desc || '',
+          price: Number(m.prix ?? m.price ?? 0),
+          category: m.category || m.categorie || 'plat'
+        }));
         const grouped = {};
-        menus.forEach(m => {
+        normalizedMenus.forEach(m => {
           const cat = m.category || 'plat';
           if (!grouped[cat]) grouped[cat] = [];
           grouped[cat].push(m);
@@ -1585,10 +1587,19 @@
               <div id="menuCat${key}" class="accordion-collapse collapse ${i === 0 ? 'show' : ''}">
                 <div class="accordion-body p-0 pb-2">
                   ${items.map(m => `
-                    <div class="d-flex justify-content-between align-items-start py-1 border-bottom" style="font-size:0.85rem;">
-                      <div>
-                        <span class="fw-semibold">${m.name}</span>
-                        ${m.description ? `<br><small class="text-muted">${m.description}</small>` : ''}
+                    <div class="form-check d-flex justify-content-between align-items-start py-1 border-bottom" style="font-size:0.85rem;">
+                      <div class="flex-grow-1">
+                        <input class="form-check-input menu-check me-2" type="checkbox"
+                          id="menu-${m.id}"
+                          value="${m.id}"
+                          data-name="${escapeHtml(m.name)}"
+                          data-price="${m.price}"
+                          data-category="${escapeHtml(m.category)}"
+                          onchange="updateSummary()">
+                        <label class="form-check-label" for="menu-${m.id}">
+                          <span class="fw-semibold">${escapeHtml(m.name)}</span>
+                          ${m.description ? `<br><small class="text-muted">${escapeHtml(m.description)}</small>` : ''}
+                        </label>
                       </div>
                       <span class="text-success fw-bold ms-2 text-nowrap">${Number(m.price).toLocaleString('fr-FR')} F</span>
                     </div>
@@ -1599,6 +1610,7 @@
         });
         html += '</div>';
         container.innerHTML = html;
+        updateSummary();
       } catch (error) {
         console.error('Erreur chargement menus:', error);
         container.innerHTML = '<p class="text-muted small">Impossible de charger les menus.</p>';
@@ -1606,6 +1618,15 @@
     }
 
     // ==================== SUMMARY ====================
+    function getSelectedMenus() {
+      return Array.from(document.querySelectorAll('.menu-check:checked')).map((el) => ({
+        id: el.value,
+        name: el.dataset.name || '',
+        price: Number(el.dataset.price || 0),
+        category: el.dataset.category || ''
+      }));
+    }
+
     function updateSummary() {
       document.getElementById('sumService').textContent = state.selectedServiceName || '--';
 
@@ -1646,8 +1667,13 @@
       } else if (state.selectedService === 'restaurant') {
         const formuleSelect = document.getElementById('selectFormule');
         const formulePrice = parseInt(formuleSelect.selectedOptions[0]?.dataset.price) || state.selectedServicePrice || 10000;
-        total = formulePrice * personnes;
+        const selectedMenus = getSelectedMenus();
+        const menuTotal = selectedMenus.reduce((sum, m) => sum + (Number(m.price) || 0), 0);
+        total = (formulePrice * personnes) + menuTotal;
         optionsText.push(formuleSelect.selectedOptions[0]?.text.split(' - ')[0] || '');
+        if (selectedMenus.length) {
+          optionsText.push('Plats: ' + selectedMenus.map(m => m.name).join(', '));
+        }
       } else if (state.selectedService === 'salle') {
         const nbJours = state.salleNbJours || 1;
         const prixParJour = state.selectedServicePrice || 150000;
@@ -1733,6 +1759,12 @@
           });
 
         } else if (state.selectedService === 'restaurant') {
+          const selectedMenus = getSelectedMenus();
+          const menuTotal = selectedMenus.reduce((sum, m) => sum + (Number(m.price) || 0), 0);
+          const formuleSelect = document.getElementById('selectFormule');
+          const formulePrice = parseInt(formuleSelect.selectedOptions[0]?.dataset.price) || state.selectedServicePrice || 10000;
+          const estimatedTotal = (formulePrice * personnes) + menuTotal;
+
           result = await RestaurantAPI.reserver({
             service_code: 'restaurant',
             creneau_id: state.selectedSlot.id,
@@ -1742,6 +1774,8 @@
               heure: state.selectedSlot.timeStart,
               formule: document.getElementById('selectFormule').value,
               emplacement: document.getElementById('selectEmplacement').value,
+              menus: selectedMenus,
+              total_price: estimatedTotal,
               allergies: document.getElementById('checkAllergies').checked
                 ? document.getElementById('inputAllergies').value.trim()
                 : null,
@@ -1872,6 +1906,13 @@
         month: 'long',
         year: 'numeric',
       });
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = String(text);
+      return div.innerHTML;
     }
   </script>
 
