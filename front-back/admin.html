@@ -1494,9 +1494,16 @@
       } catch (error) {
         console.error('Erreur chargement reservations:', error);
         if (timeoutId) clearTimeout(timeoutId);
-        const message = error?.code === 'TIMEOUT'
-          ? (error.message || 'Chargement trop long. Cliquez sur Reessayer.')
-          : 'Erreur de chargement';
+        let message = 'Erreur de chargement';
+        if (error?.code === 'TIMEOUT') {
+          message = error.message || 'Chargement trop long. Cliquez sur Reessayer.';
+        } else if (error?.status === 401) {
+          message = 'Session expirée. Veuillez vous reconnecter.';
+        } else if (error?.status === 403) {
+          message = 'Accès refusé. Vérifiez votre rôle.';
+        } else if (error?.message) {
+          message = error.message;
+        }
         renderReservationsError(message, tableResponsive || tbody?.closest('.table-responsive'));
       }
     }
