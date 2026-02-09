@@ -35,10 +35,10 @@
       <div class="collapse navbar-collapse" id="receptionNavbar">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link active" href="#" data-section="reservations"><i class="fas fa-calendar-check me-1"></i> RÃ©servations</a>
+            <a class="nav-link active" href="#reservations" data-section="reservations" onclick="showSection('reservations'); return false;"><i class="fas fa-calendar-check me-1"></i> RÃ©servations</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" data-section="paiements"><i class="fas fa-credit-card me-1"></i> Paiements</a>
+            <a class="nav-link" href="#paiements" data-section="paiements" onclick="showSection('paiements'); return false;"><i class="fas fa-credit-card me-1"></i> Paiements</a>
           </li>
         </ul>
         <button class="btn btn-outline-light btn-sm" id="btnLogout">
@@ -51,8 +51,8 @@
   <div class="gc-admin-wrapper">
     <aside class="gc-sidebar">
       <nav class="nav flex-column">
-        <a class="nav-link active" href="#" data-section="reservations"><i class="fas fa-calendar-check"></i> RÃ©servations</a>
-        <a class="nav-link" href="#" data-section="paiements"><i class="fas fa-credit-card"></i> Paiements</a>
+        <a class="nav-link active" href="#reservations" data-section="reservations" onclick="showSection('reservations'); return false;"><i class="fas fa-calendar-check"></i> RÃ©servations</a>
+        <a class="nav-link" href="#paiements" data-section="paiements" onclick="showSection('paiements'); return false;"><i class="fas fa-credit-card"></i> Paiements</a>
       </nav>
     </aside>
 
@@ -120,10 +120,10 @@
         <div class="d-flex gap-2 mb-3 flex-wrap">
           <button class="btn btn-sm btn-outline-primary active" onclick="filterPaiements('tous', this)">Tous</button>
           <button class="btn btn-sm btn-outline-warning" onclick="filterPaiements('en_attente', this)">En attente</button>
-          <button class="btn btn-sm btn-outline-info" onclick="filterPaiements('paye', this)">ReÃƒÂ§u envoyÃƒÂ©</button>
-          <button class="btn btn-sm btn-outline-success" onclick="filterPaiements('verifie', this)">VÃƒÂ©rifiÃƒÂ©s</button>
+          <button class="btn btn-sm btn-outline-info" onclick="filterPaiements('paye', this)">ReÃ§u envoyÃ©</button>
+          <button class="btn btn-sm btn-outline-success" onclick="filterPaiements('verifie', this)">VÃ©rifiÃ©s</button>
           <button class="btn btn-sm btn-outline-danger" onclick="filterPaiements('remboursement_en_attente', this)">Remb. en attente</button>
-          <button class="btn btn-sm btn-outline-secondary" onclick="filterPaiements('rembourse', this)">RemboursÃƒÂ©s</button>
+          <button class="btn btn-sm btn-outline-secondary" onclick="filterPaiements('rembourse', this)">RemboursÃ©s</button>
         </div>
 
         <div class="gc-card card">
@@ -206,20 +206,6 @@
       }
     })();
 
-    const ReservationsAPI = {
-      list: (query='') => apiRequest('/reservations' + (query ? '?' + query : '')),
-      confirmer: (id) => apiRequest(`/reservations/${id}/confirmer`, { method: 'PATCH' }),
-      refuser: (id, reason) => apiRequest(`/reservations/${id}/refuser`, { method: 'PATCH', body: JSON.stringify({ reason }) }),
-      terminer: (id) => apiRequest(`/reservations/${id}/terminer`, { method: 'PATCH' }),
-    };
-
-    const PaiementsAPI = {
-      list: () => apiRequest('/paiements'),
-      verifier: (id) => apiRequest(`/paiements/${id}/verifier`, { method: 'PATCH' }),
-      approuverRemboursement: (id) => apiRequest(`/paiements/${id}/approuver-remboursement`, { method: 'PATCH' }),
-      refuserRemboursement: (id, reason) => apiRequest(`/paiements/${id}/refuser-remboursement`, { method: 'PATCH', body: JSON.stringify({ reason }) })
-    };
-
     function initPage() {
       initNav();
 
@@ -295,12 +281,15 @@
 
     function showSection(section, options = {}) {
       if (!section) return;
-      const target = document.getElementById(`section-${section}`);
+      const targetId = `section-${section}`;
+      const target = document.getElementById(targetId);
       if (!target) return;
 
-      document.querySelectorAll('.section').forEach(s =>
-        s.classList.toggle('active', s.id === `section-${section}`)
-      );
+      document.querySelectorAll('.section').forEach(s => {
+        const isActive = s.id === targetId;
+        s.classList.toggle('active', isActive);
+        s.style.display = isActive ? 'block' : 'none';
+      });
 
       document.querySelectorAll('[data-section]').forEach(l =>
         l.classList.toggle('active', l.dataset.section === section)
@@ -314,6 +303,9 @@
       if (section === 'paiements') loadPaiements();
     }
 
+    window.showSection = showSection;
+    
+
     async function loadReservations() {
       const tbody = document.getElementById('reservationsBody');
       tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4">Chargement...</td></tr>';
@@ -326,7 +318,7 @@
         const reservations = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : Array.isArray(data?.reservations) ? data.reservations : [];
 
         if (!reservations.length) {
-          tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Aucune rÃƒÆ’Ã‚Â©servation</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Aucune rÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©servation</td></tr>';
           return;
         }
 
@@ -370,7 +362,8 @@
       tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4">Chargement...</td></tr>';
       try {
         const data = await PaiementsAPI.list();
-        allPaiements = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : Array.isArray(data?.paiements) ? data.paiements : [];
+        const payload = data?.data || data || {};
+        allPaiements = Array.isArray(payload) ? payload : (payload.data || []);
         renderPaiements();
       } catch (err) {
         tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger py-4">Erreur de chargement</td></tr>';
@@ -446,48 +439,48 @@
 
       await ReservationsAPI.refuser(id, reason);
       bootstrap.Modal.getInstance(document.getElementById('modalRefuse')).hide();
-      showAlert('RÃƒÆ’Ã‚Â©servation refusÃƒÆ’Ã‚Â©e', 'warning');
+      showAlert('RÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©servation refusÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e', 'warning');
       loadReservations();
     }
 
     async function confirmReservation(id) {
       await ReservationsAPI.confirmer(id);
-      showAlert('RÃƒÆ’Ã‚Â©servation confirmÃƒÆ’Ã‚Â©e', 'success');
+      showAlert('RÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©servation confirmÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e', 'success');
       loadReservations();
     }
 
     async function completeReservation(id) {
       await ReservationsAPI.terminer(id);
-      showAlert('RÃƒÆ’Ã‚Â©servation terminÃƒÆ’Ã‚Â©e', 'success');
+      showAlert('RÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©servation terminÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e', 'success');
       loadReservations();
     }
 
     async function verifierPaiement(id) {
       await PaiementsAPI.verifier(id);
-      showAlert('Paiement vÃƒÆ’Ã‚Â©rifiÃƒÆ’Ã‚Â©', 'success');
+      showAlert('Paiement vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©rifiÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©', 'success');
       loadPaiements();
     }
 
     async function approuverRemboursement(id) {
       await PaiementsAPI.approuverRemboursement(id);
-      showAlert('Remboursement approuvÃƒÆ’Ã‚Â©', 'success');
+      showAlert('Remboursement approuvÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©', 'success');
       loadPaiements();
     }
 
     async function refuserRemboursement(id) {
-      const reason = prompt('Motif du refus :') || 'Remboursement refusÃƒÆ’Ã‚Â©';
+      const reason = prompt('Motif du refus :') || 'Remboursement refusÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©';
       await PaiementsAPI.refuserRemboursement(id, reason);
-      showAlert('Remboursement refusÃƒÆ’Ã‚Â©', 'warning');
+      showAlert('Remboursement refusÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©', 'warning');
       loadPaiements();
     }
 
     function statusBadge(status) {
       const map = {
         en_attente: '<span class="badge bg-warning text-dark">En attente</span>',
-        confirmee: '<span class="badge bg-success">ConfirmÃƒÆ’Ã‚Â©e</span>',
-        annulee: '<span class="badge bg-secondary">AnnulÃƒÆ’Ã‚Â©e</span>',
-        terminee: '<span class="badge bg-info">TerminÃƒÆ’Ã‚Â©e</span>',
-        refusee: '<span class="badge bg-danger">RefusÃƒÆ’Ã‚Â©e</span>'
+        confirmee: '<span class="badge bg-success">ConfirmÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e</span>',
+        annulee: '<span class="badge bg-secondary">AnnulÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e</span>',
+        terminee: '<span class="badge bg-info">TerminÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e</span>',
+        refusee: '<span class="badge bg-danger">RefusÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e</span>'
       };
       return map[status] || `<span class="badge bg-light text-dark">${status}</span>`;
     }
@@ -495,11 +488,11 @@
     function paiementBadge(statut) {
       const map = {
         en_attente: '<span class="badge bg-warning text-dark">En attente</span>',
-        paye: '<span class="badge bg-info">ReÃƒÆ’Ã‚Â§u envoyÃƒÆ’Ã‚Â©</span>',
-        verifie: '<span class="badge bg-success">VÃƒÆ’Ã‚Â©rifiÃƒÆ’Ã‚Â©</span>',
+        paye: '<span class="badge bg-info">ReÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§u envoyÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©</span>',
+        verifie: '<span class="badge bg-success">VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©rifiÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©</span>',
         remboursement_en_attente: '<span class="badge bg-danger">Remb. en attente</span>',
-        rembourse: '<span class="badge bg-secondary">RemboursÃƒÆ’Ã‚Â©</span>',
-        echoue: '<span class="badge bg-danger">ÃƒÆ’Ã¢â‚¬Â°chouÃƒÆ’Ã‚Â©</span>',
+        rembourse: '<span class="badge bg-secondary">RemboursÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©</span>',
+        echoue: '<span class="badge bg-danger">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°chouÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©</span>',
       };
       return map[statut] || `<span class="badge bg-light text-dark">${statut}</span>`;
     }
