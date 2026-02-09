@@ -232,13 +232,13 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="client.html">
-              <i class="fas fa-user me-1"></i> Mon Espace
+            <a class="nav-link" href="jeu-golf.html">
+              <i class="fas fa-golf-ball me-1"></i> Jeu de Golf
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="jeu-golf.html">
-              <i class="fas fa-golf-ball me-1"></i> Jeu de Golf
+            <a class="nav-link active" href="client.html">
+              <i class="fas fa-user me-1"></i> Mon Espace
             </a>
           </li>
         </ul>
@@ -546,6 +546,30 @@
         </div>
       </section>
 
+      <!-- Modal Paiement QR -->
+      <div class="modal fade" id="modalPaiementQR" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title"><i class="fas fa-qrcode me-2"></i>Paiement par QR</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <div id="qrPaiementInfo" class="alert alert-info mb-3"></div>
+              <div class="text-center">
+                <div class="mb-2">
+                  <img id="qrPaiementImg" class="img-fluid" style="max-width:220px;" alt="QR Code">
+                </div>
+                <div class="small text-muted mb-2">Scannez le QR pour payer</div>
+                <a id="qrPaiementLink" href="#" target="_blank" class="btn btn-outline-primary btn-sm">
+                  Ouvrir le lien
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Modal Upload Recu -->
       <div class="modal fade" id="modalRecu" tabindex="-1">
         <div class="modal-dialog">
@@ -580,6 +604,8 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- QR Code -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <!-- API Module -->
   <script src="js/api.js"></script>
 
@@ -593,6 +619,7 @@
     let allPaiements = [];
     let currentFilter = 'toutes';
     let currentRecuPaiementId = null;
+    let currentQrPaiementUrl = null;
 
     // ======================================================
     //  AUTH CHECK
@@ -1051,11 +1078,16 @@
           let actions = '';
           if (p.statut === 'en_attente') {
             if (p.wave_payment_url) {
-              actions += `<a href="${escapeHtml(p.wave_payment_url)}" target="_blank" class="btn btn-sm btn-primary me-1" title="Payer avec Wave"><i class="fas fa-money-bill-wave"></i></a>`;
+              actions += `<button class="btn btn-sm btn-primary me-1" onclick="openQrModal('${p.id}', '${escapeHtml(resNum)}', '${montant}', '${escapeAttr(p.wave_payment_url)}')" title="Payer par QR"><i class="fas fa-qrcode"></i></button>`;
+            } else {
+              actions += '<span class="text-muted small">Lien de paiement indisponible</span>';
             }
-            actions += `<button class="btn btn-sm btn-outline-primary" onclick="openRecuModal('${p.id}', '${escapeHtml(resNum)}', '${montant}')" title="Envoyer le recu"><i class="fas fa-upload"></i></button>`;
           } else if (p.statut === 'paye') {
-            actions = '<span class="text-muted small">En verification...</span>';
+            if (!p.recu_url) {
+              actions = `<button class="btn btn-sm btn-outline-primary" onclick="openRecuModal('${p.id}', '${escapeHtml(resNum)}', '${montant}')" title="Envoyer le recu"><i class="fas fa-upload"></i></button>`;
+            } else {
+              actions = '<span class="text-muted small">En verification...</span>';
+            }
           } else if (p.statut === 'verifie') {
             actions = '<i class="fas fa-check-circle text-success"></i> Verifie';
           } else if (p.statut === 'remboursement_en_attente') {
@@ -1096,6 +1128,38 @@
         echoue: '<span class="badge bg-danger">Echoue</span>',
       };
       return map[statut] || `<span class="badge bg-light text-dark">${statut}</span>`;
+    }
+
+    function openQrModal(paiementId, resNum, montant, url) {
+      if (!url) {
+        showNotification('Lien de paiement indisponible.', 'warning');
+        return;
+      }
+      currentQrPaiementUrl = url;
+      document.getElementById('qrPaiementInfo').innerHTML = `
+        <div class="alert alert-info mb-0">
+          <strong>Reservation:</strong> ${resNum}<br>
+          <strong>Montant:</strong> ${montant}
+        </div>
+      `;
+      const img = document.getElementById('qrPaiementImg');
+      img.src = '';
+      const link = document.getElementById('qrPaiementLink');
+      link.href = url;
+
+      if (window.QRCode && typeof QRCode.toDataURL === 'function') {
+        QRCode.toDataURL(url, { width: 220, margin: 1 }, (err, dataUrl) => {
+          if (err) {
+            img.alt = 'QR indisponible';
+            return;
+          }
+          img.src = dataUrl;
+        });
+      } else {
+        img.alt = 'QR indisponible';
+      }
+
+      new bootstrap.Modal(document.getElementById('modalPaiementQR')).show();
     }
 
     function openRecuModal(paiementId, resNum, montant) {
@@ -1152,6 +1216,9 @@
         bootstrap.Modal.getInstance(document.getElementById('modalRecu')).hide();
         showNotification('Recu envoye avec succes ! La reception va le verifier.', 'success');
         loadPaiements();
+        if (typeof switchSection === 'function') {
+          switchSection('paiements');
+        }
       } catch (error) {
         showNotification(error.message || 'Erreur lors de l\'envoi du recu.', 'danger');
       }
@@ -1208,6 +1275,10 @@
       const div = document.createElement('div');
       div.textContent = str;
       return div.innerHTML;
+    }
+
+    function escapeAttr(str) {
+      return escapeHtml(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
     function showNotification(message, type = 'danger') {

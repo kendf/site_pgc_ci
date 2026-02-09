@@ -327,7 +327,8 @@
           const serviceName = r.service?.nom || r.service_id?.slice(0,8) || '-';
           const date = r.creneau?.start_at || r.created_at || '';
           const personnes = r.personnes || 1;
-          const status = r.status || '-';
+          const status = r.status || r.statut || '-';
+          const paymentStatus = r.payment_status || r.paymentStatus || r.payment?.statut || r.paiement?.statut || '';
           const menuSummary = getMenuSummary(r.details, personnes);
 
           let actions = '';
@@ -337,7 +338,15 @@
               <button class="btn btn-danger btn-sm" onclick="openRefuseModal('${r.id}')"><i class="fas fa-times"></i></button>
             `;
           } else if (status === 'confirmee') {
-            actions = `<button class="btn btn-primary btn-sm" onclick="completeReservation('${r.id}')"><i class="fas fa-flag-checkered"></i></button>`;
+            if (paymentStatus === 'verifie') {
+              actions = `
+                <button class="btn btn-success btn-sm" disabled title="Paiement verifie">R&eacute;serv&eacute;</button>`;
+            } else {
+              actions = `
+                <button class="btn btn-warning btn-sm" onclick="requestPayment('${r.id}')">
+                  <i class="fas fa-credit-card me-1"></i> Demander paiement
+                </button>`;
+            }
           }
 
           return `

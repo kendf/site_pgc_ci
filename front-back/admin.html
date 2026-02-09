@@ -1567,6 +1567,7 @@
           : (r.service_nom || r.service_name || r.service_code || (r.service_id ? r.service_id.substring(0, 8) : 'N/A'));
         const date = r.date_reservation || r.date || r.created_at;
         const statut = r.status || r.statut || '';
+        const paymentStatus = r.payment_status || r.paymentStatus || r.payment?.statut || r.paiement?.statut || '';
         const prix = r.total_price ?? r.prix_total ?? r.prix ?? r.total ?? 0;
         const personnes = r.personnes ?? r.nombre_personnes ?? r.nb_personnes ?? 1;
         const menuSummary = getMenuSummary(r.details, personnes);
@@ -1581,10 +1582,18 @@
               <i class="fas fa-times"></i>
             </button>`;
         } else if (statut === 'confirmee') {
-          actions = `
-            <button class="btn btn-warning btn-action" onclick="openPaiementModal('${r.id}', '${escapeHtml(serviceName)}', ${prix})" title="Demander paiement">
-              <i class="fas fa-credit-card"></i>
-            </button>
+          if (paymentStatus === 'verifie') {
+            actions = `
+              <button class="btn btn-success btn-action" disabled title="Paiement verifie">
+                R&eacute;serv&eacute;
+              </button>`;
+          } else {
+            actions = `
+              <button class="btn btn-warning btn-action" onclick="openPaiementModal('${r.id}', '${escapeHtml(serviceName)}', ${prix})" title="Demander paiement">
+                <i class="fas fa-credit-card"></i>
+              </button>`;
+          }
+          actions += `
             <button class="btn btn-primary btn-action" onclick="terminerReservation('${r.id}')" title="Terminer">
               <i class="fas fa-flag-checkered"></i>
             </button>`;
