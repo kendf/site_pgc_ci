@@ -1459,11 +1459,12 @@
     // ============ RESERVATIONS ============
     async function loadReservations() {
       const tbody = document.getElementById('reservationsTableBody');
-      showLoading(tbody.closest('.table-responsive'));
+      const tableResponsive = tbody ? (tbody.closest('.table-responsive') || tbody.parentElement?.parentElement) : null;
+      if (tableResponsive) showLoading(tableResponsive);
 
       try {
         // Load service filter options
-        await loadServiceFilterOptions();
+        loadServiceFilterOptions().catch(() => {});
 
         // Build query params
         const params = new URLSearchParams();

@@ -953,7 +953,7 @@
             </div>
             <div class="gc-summary-total">
               <span class="label">Total estime</span>
-              <span class="value" id="sumTotal">0,00 &euro;</span>
+              <span class="value" id="sumTotal">0 FCFA;</span>
             </div>
           </div>
 
@@ -1666,7 +1666,7 @@
         }
       } else if (state.selectedService === 'restaurant') {
         const formuleSelect = document.getElementById('selectFormule');
-        const formulePrice = parseInt(formuleSelect.selectedOptions[0]?.dataset.price) || state.selectedServicePrice || 10000;
+        const formulePrice = parseInt(formuleSelect.selectedOptions[0]?.dataset.price) || state.selectedServicePrice || 0;
         const selectedMenus = getSelectedMenus();
         const menuUnitTotal = selectedMenus.reduce((sum, m) => sum + (Number(m.price) || 0), 0);
         const menuTotal = menuUnitTotal * personnes;
@@ -1764,7 +1764,7 @@
           const menuUnitTotal = selectedMenus.reduce((sum, m) => sum + (Number(m.price) || 0), 0);
           const menuTotal = menuUnitTotal * personnes;
           const formuleSelect = document.getElementById('selectFormule');
-          const formulePrice = parseInt(formuleSelect.selectedOptions[0]?.dataset.price) || state.selectedServicePrice || 10000;
+          const formulePrice = parseInt(formuleSelect.selectedOptions[0]?.dataset.price) || state.selectedServicePrice || 0;
           const estimatedTotal = (formulePrice * personnes) + menuTotal;
 
           result = await RestaurantAPI.reserver({
