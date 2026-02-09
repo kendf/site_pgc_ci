@@ -328,6 +328,7 @@
           const date = r.creneau?.start_at || r.created_at || '';
           const personnes = r.personnes || 1;
           const status = r.status || '-';
+          const menuSummary = getMenuSummary(r.details, personnes);
 
           let actions = '';
           if (status === 'en_attente') {
@@ -343,7 +344,7 @@
             <tr>
               <td><strong>#${r.id.slice(0,8)}</strong></td>
               <td>${escapeHtml(clientName)}</td>
-              <td>${escapeHtml(serviceName)}</td>
+              <td>${escapeHtml(serviceName)}${menuSummary ? `<div class="small text-muted">${escapeHtml(menuSummary)}</div>` : ''}</td>
               <td>${date ? new Date(date).toLocaleString('fr-FR') : '-'}</td>
               <td>${personnes}</td>
               <td>${statusBadge(status)}</td>
@@ -504,6 +505,27 @@
       alert.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
       container.appendChild(alert);
       setTimeout(() => alert.remove(), 5000);
+    }
+
+    function parseDetails(details) {
+      if (!details) return null;
+      if (typeof details === 'object') return details;
+      if (typeof details === 'string') {
+        try { return JSON.parse(details); } catch (e) { return null; }
+      }
+      return null;
+    }
+
+    function getMenuSummary(details, personnes) {
+      const parsed = parseDetails(details);
+      const menus = Array.isArray(parsed?.menus) ? parsed.menus : [];
+      if (!menus.length) return '';
+      const names = menus
+        .map(m => m?.name || m?.nom || m?.label || m?.id)
+        .filter(Boolean);
+      if (!names.length) return '';
+      const suffix = parsed?.menus_per_person ? ` (x${personnes || 1})` : '';
+      return `Plats${suffix}: ${names.join(', ')}`;
     }
 
     function escapeHtml(text) {

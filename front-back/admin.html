@@ -1527,6 +1527,8 @@
         const date = r.date_reservation || r.date || r.created_at;
         const statut = r.status || r.statut || '';
         const prix = r.total_price ?? r.prix_total ?? r.prix ?? r.total ?? 0;
+        const personnes = r.personnes ?? r.nombre_personnes ?? r.nb_personnes ?? 1;
+        const menuSummary = getMenuSummary(r.details, personnes);
 
         let actions = '';
         if (statut === 'en_attente') {
@@ -1551,7 +1553,7 @@
           <tr>
             <td><strong>#${r.id}</strong></td>
             <td>${date ? formatDate(date) : 'N/A'}</td>
-            <td>${escapeHtml(serviceName)}</td>
+            <td>${escapeHtml(serviceName)}${menuSummary ? `<div class="small text-muted">${escapeHtml(menuSummary)}</div>` : ''}</td>
             <td>${escapeHtml(clientName)}</td>
             <td>${r.personnes ?? r.nombre_personnes ?? r.nb_personnes ?? '-'}</td>
             <td>${formatStatus(statut)}</td>
@@ -2698,6 +2700,27 @@
     }
 
     // ============ UTILITY ============
+    function parseDetails(details) {
+      if (!details) return null;
+      if (typeof details === 'object') return details;
+      if (typeof details === 'string') {
+        try { return JSON.parse(details); } catch (e) { return null; }
+      }
+      return null;
+    }
+
+    function getMenuSummary(details, personnes) {
+      const parsed = parseDetails(details);
+      const menus = Array.isArray(parsed?.menus) ? parsed.menus : [];
+      if (!menus.length) return '';
+      const names = menus
+        .map(m => m?.name || m?.nom || m?.label || m?.id)
+        .filter(Boolean);
+      if (!names.length) return '';
+      const suffix = parsed?.menus_per_person ? ` (x${personnes || 1})` : '';
+      return `Plats${suffix}: ${names.join(', ')}`;
+    }
+
     function escapeHtml(text) {
       if (!text) return '';
       const div = document.createElement('div');

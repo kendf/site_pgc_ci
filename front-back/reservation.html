@@ -1592,9 +1592,9 @@
                         <input class="form-check-input menu-check me-2" type="checkbox"
                           id="menu-${m.id}"
                           value="${m.id}"
-                          data-name="${escapeHtml(m.name)}"
+                          data-name="${escapeAttr(m.name)}"
                           data-price="${m.price}"
-                          data-category="${escapeHtml(m.category)}"
+                          data-category="${escapeAttr(m.category)}"
                           onchange="updateSummary()">
                         <label class="form-check-label" for="menu-${m.id}">
                           <span class="fw-semibold">${escapeHtml(m.name)}</span>
@@ -1668,11 +1668,12 @@
         const formuleSelect = document.getElementById('selectFormule');
         const formulePrice = parseInt(formuleSelect.selectedOptions[0]?.dataset.price) || state.selectedServicePrice || 10000;
         const selectedMenus = getSelectedMenus();
-        const menuTotal = selectedMenus.reduce((sum, m) => sum + (Number(m.price) || 0), 0);
+        const menuUnitTotal = selectedMenus.reduce((sum, m) => sum + (Number(m.price) || 0), 0);
+        const menuTotal = menuUnitTotal * personnes;
         total = (formulePrice * personnes) + menuTotal;
         optionsText.push(formuleSelect.selectedOptions[0]?.text.split(' - ')[0] || '');
         if (selectedMenus.length) {
-          optionsText.push('Plats: ' + selectedMenus.map(m => m.name).join(', '));
+          optionsText.push('Plats (x' + personnes + '): ' + selectedMenus.map(m => m.name).join(', '));
         }
       } else if (state.selectedService === 'salle') {
         const nbJours = state.salleNbJours || 1;
@@ -1760,7 +1761,8 @@
 
         } else if (state.selectedService === 'restaurant') {
           const selectedMenus = getSelectedMenus();
-          const menuTotal = selectedMenus.reduce((sum, m) => sum + (Number(m.price) || 0), 0);
+          const menuUnitTotal = selectedMenus.reduce((sum, m) => sum + (Number(m.price) || 0), 0);
+          const menuTotal = menuUnitTotal * personnes;
           const formuleSelect = document.getElementById('selectFormule');
           const formulePrice = parseInt(formuleSelect.selectedOptions[0]?.dataset.price) || state.selectedServicePrice || 10000;
           const estimatedTotal = (formulePrice * personnes) + menuTotal;
@@ -1775,6 +1777,7 @@
               formule: document.getElementById('selectFormule').value,
               emplacement: document.getElementById('selectEmplacement').value,
               menus: selectedMenus,
+              menus_per_person: true,
               total_price: estimatedTotal,
               allergies: document.getElementById('checkAllergies').checked
                 ? document.getElementById('inputAllergies').value.trim()
@@ -1913,6 +1916,10 @@
       const div = document.createElement('div');
       div.textContent = String(text);
       return div.innerHTML;
+    }
+
+    function escapeAttr(text) {
+      return escapeHtml(text).replace(/"/g, '&quot;');
     }
   </script>
 
