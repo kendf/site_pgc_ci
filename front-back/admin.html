@@ -1527,19 +1527,27 @@
     }
 
     function renderReservationsTable() {
-      const tbody = document.getElementById('reservationsTableBody');
+      let tbody = document.getElementById('reservationsTableBody');
+      let tableResponsive = null;
 
-      // Restore table structure if needed
-      const tableResponsive = tbody.closest('.table-responsive') || tbody.parentElement.parentElement;
-      if (!document.getElementById('reservationsTableBody')) {
+      if (tbody) {
+        tableResponsive = tbody.closest('.table-responsive') || tbody.parentElement?.parentElement || null;
+      } else {
+        const section = document.getElementById('section-reservations');
+        tableResponsive = section ? section.querySelector('.table-responsive') : null;
+      }
+
+      if (!tbody && tableResponsive) {
         tableResponsive.innerHTML = `
           <table class="table gc-table mb-0">
             <thead><tr><th>N&deg;</th><th>Date</th><th>Service</th><th>Client</th><th>Personnes</th><th>Statut</th><th>Prix</th><th>Actions</th></tr></thead>
             <tbody id="reservationsTableBody"></tbody>
           </table>`;
+        tbody = document.getElementById('reservationsTableBody');
       }
 
-      const target = document.getElementById('reservationsTableBody');
+      const target = tbody || document.getElementById('reservationsTableBody');
+      if (!target) return;
 
       if (!state.reservations.data.length) {
         target.innerHTML = `
@@ -1598,6 +1606,7 @@
 
     function renderReservationsPagination() {
       const container = document.getElementById('reservationsPagination');
+      if (!container) return;
       const { page, totalPages } = state.reservations;
 
       if (totalPages <= 1) {
