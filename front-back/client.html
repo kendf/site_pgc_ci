@@ -654,26 +654,30 @@
       const token = getToken();
       if (!token) return;
 
-      // Decode JWT to get user info (Supabase JWT payload)
       const payload = parseJwt(token);
       if (!payload) {
         handleLogout();
         return;
       }
 
-      const userId = payload.sub;
-      const userEmail = payload.email;
+      const storedUser = getUser() || {};
+      const userEmail = storedUser.email || payload.email;
+      const clientId = storedUser.client_id || storedUser.client?.id || storedUser.clientId || null;
 
       try {
         // Try to get client data via the clients endpoint
         // The client_id may be the same as the supabase user id
-        const client = await ClientsAPI.get(userId);
-        currentClient = client;
+        let client = null;
+        if (clientId) {
+          client = await ClientsAPI.get(clientId);
+        } else {
+          client = await ClientsAPI.me();
+        }
+        currentClient = client?.data || client;
       } catch (error) {
         // If client not found by Supabase ID, use stored user data from login/register
-        const storedUser = getUser() || {};
         currentClient = {
-          id: userId,
+          id: clientId,
           prenom: storedUser.prenom || '',
           nom: storedUser.nom || '',
           email: storedUser.email || userEmail || '',
@@ -787,10 +791,12 @@
       try {
         // Load golf parties count
         const golfResult = await GolfAPI.mesParties();
-        const parties = golfResult?.data || golfResult || [];
+        const payload = golfResult?.data || golfResult || {};
+        const parties = Array.isArray(payload) ? payload : (payload.data || []);
+        const pagination = payload.pagination || {};
         allParties = parties;
 
-        const totalParties = golfResult?.pagination?.total || parties.length;
+        const totalParties = pagination.total ?? parties.length;
         document.getElementById('statGolfParties').textContent = totalParties;
       } catch (error) {
         document.getElementById('statGolfParties').textContent = '--';
@@ -924,16 +930,10 @@
       try {
         // Load stats
         const stats = await GolfAPI.mesStats();
-        if (stats && stats.data) {
-          const s = stats.data;
-          document.getElementById('golfBestScore').textContent = s.meilleur_score ?? '--';
-          document.getElementById('golfAvgScore').textContent = s.score_moyen ?? '--';
-          document.getElementById('golfTotalParties').textContent = s.nombre_parties ?? 0;
-        } else if (stats) {
-          document.getElementById('golfBestScore').textContent = stats.meilleur_score ?? '--';
-          document.getElementById('golfAvgScore').textContent = stats.score_moyen ?? '--';
-          document.getElementById('golfTotalParties').textContent = stats.nombre_parties ?? 0;
-        }
+        const s = stats?.data || stats || {};
+        document.getElementById('golfBestScore').textContent = s.meilleur_score ?? '--';
+        document.getElementById('golfAvgScore').textContent = s.score_moyen ?? '--';
+        document.getElementById('golfTotalParties').textContent = s.nombre_parties ?? 0;
       } catch (error) {
         // Stats not critical, keep defaults
       }
@@ -941,7 +941,8 @@
       try {
         // Load parties
         const result = await GolfAPI.mesParties();
-        const parties = result?.data || result || [];
+        const payload = result?.data || result || {};
+        const parties = Array.isArray(payload) ? payload : (payload.data || []);
         allParties = parties;
 
         renderGolfScores(parties);

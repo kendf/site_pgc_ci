@@ -166,9 +166,18 @@ function requireRole(allowedRoles, redirectUrl) {
 async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
   const headers = {
-    'Content-Type': 'application/json',
     ...options.headers,
   };
+
+  const isFormData = options.body instanceof FormData;
+  if (!isFormData) {
+    if (!headers['Content-Type'] && !headers['content-type']) {
+      headers['Content-Type'] = 'application/json';
+    }
+  } else {
+    delete headers['Content-Type'];
+    delete headers['content-type'];
+  }
 
   const token = getToken();
   if (token) {
@@ -288,6 +297,7 @@ const CreneauxAPI = {
 // ==================== CLIENTS ====================
 
 const ClientsAPI = {
+  me: () => apiRequest('/clients/me'),
   get: (id) => apiRequest(`/clients/${id}`),
   update: (id, data) => apiRequest(`/clients/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
   reservations: (id) => apiRequest(`/clients/${id}/reservations`),

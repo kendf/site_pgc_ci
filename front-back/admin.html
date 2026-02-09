@@ -492,7 +492,7 @@
               <div class="stat-icon bg-salle"><i class="fas fa-chart-pie"></i></div>
               <div class="stat-info">
                 <div class="stat-value" id="statOccupancy">--</div>
-                <div class="stat-label">Taux d'occupation</div>
+                <div class="stat-label">R&eacute;servations du jour</div>
               </div>
             </div>
           </div>
@@ -876,7 +876,7 @@
               <div class="stat-icon bg-salle"><i class="fas fa-star"></i></div>
               <div class="stat-info">
                 <div class="stat-value" id="statsMostRequested">--</div>
-                <div class="stat-label">Service le plus demand&eacute;</div>
+                <div class="stat-label">Statut dominant</div>
               </div>
             </div>
           </div>
@@ -887,7 +887,7 @@
           <div class="col-lg-6">
             <div class="gc-card card">
               <div class="card-header">
-                <i class="fas fa-chart-bar me-2"></i>R&eacute;servations par service
+                <i class="fas fa-chart-bar me-2"></i>R&eacute;servations par jour
               </div>
               <div class="card-body">
                 <div class="gc-bar-chart" id="statsReservationsByService">
@@ -899,7 +899,7 @@
           <div class="col-lg-6">
             <div class="gc-card card">
               <div class="card-header">
-                <i class="fas fa-chart-bar me-2"></i>Revenus par mois
+                <i class="fas fa-chart-bar me-2"></i>Revenus par service
               </div>
               <div class="card-body">
                 <div class="gc-bar-chart" id="statsRevenueByMonth">
@@ -1072,6 +1072,10 @@
             <div class="mb-3">
               <label class="form-label">Email</label>
               <input type="email" class="form-control" id="newUserEmail" required placeholder="email@example.com">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Mot de passe</label>
+              <input type="password" class="form-control" id="newUserPassword" required placeholder="Mot de passe">
             </div>
             <div class="row g-3 mb-3">
               <div class="col-md-6">
@@ -1364,25 +1368,19 @@
 
         // Stat cards
         document.getElementById('statTotalReservations').textContent =
-          dashboard.total_reservations ?? dashboard.totalReservations ?? 0;
+          dashboard.total_reservations ?? 0;
         document.getElementById('statPendingReservations').textContent =
-          dashboard.reservations_en_attente ?? dashboard.pendingReservations ?? 0;
+          dashboard.pending_reservations ?? 0;
         document.getElementById('statTotalRevenue').textContent =
-          formatPrice(dashboard.revenus_total ?? dashboard.totalRevenue ?? 0);
+          formatPrice(dashboard.today_revenue ?? 0);
         document.getElementById('statTotalClients').textContent =
-          dashboard.total_clients ?? dashboard.totalClients ?? 0;
-
-        const occupancy = dashboard.taux_occupation ?? dashboard.occupancyRate ?? 0;
+          dashboard.total_clients ?? 0;
         document.getElementById('statOccupancy').textContent =
-          (typeof occupancy === 'number' ? occupancy.toFixed(1) : occupancy) + '%';
+          dashboard.today_reservations ?? 0;
 
-        // Recent reservations
-        const recentReservations = dashboard.reservations_recentes ?? dashboard.recentReservations ?? [];
-        renderRecentReservations(recentReservations.slice(0, 10));
-
-        // Revenue by service
-        const revenueByService = dashboard.revenus_par_service ?? dashboard.revenueByService ?? [];
-        renderRevenueByServiceChart(revenueByService);
+        // Recent reservations & revenue by service not provided by backend
+        renderRecentReservations([]);
+        renderRevenueByServiceChart([]);
 
         state.dashboardLoaded = true;
       } catch (error) {
@@ -1470,23 +1468,16 @@
         // Build query params
         const params = new URLSearchParams();
         const status = document.getElementById('filterStatus').value;
-        const service = document.getElementById('filterService').value;
-        const dateStart = document.getElementById('filterDateStart').value;
-        const dateEnd = document.getElementById('filterDateEnd').value;
-
-        if (status) params.set('statut', status);
-        if (service) params.set('service_id', service);
-        if (dateStart) params.set('date_debut', dateStart);
-        if (dateEnd) params.set('date_fin', dateEnd);
-        params.set('page', state.reservations.page);
+        if (status) params.set('status', status);
 
         const queryStr = params.toString();
         const data = await ReservationsAPI.list(queryStr);
-        const reservations = data.data || data.reservations || data;
-        const pagination = data.pagination || {};
+        const payload = data.data || data.reservations || data || [];
+        const reservations = Array.isArray(payload) ? payload : (payload.data || []);
+        const pagination = payload.pagination || data.pagination || {};
 
         state.reservations.data = Array.isArray(reservations) ? reservations : [];
-        state.reservations.totalPages = pagination.totalPages || pagination.total_pages || 1;
+        state.reservations.totalPages = pagination.pages || pagination.totalPages || pagination.total_pages || 1;
 
         renderReservationsTable();
         renderReservationsPagination();
@@ -1529,19 +1520,21 @@
       target.innerHTML = state.reservations.data.map(r => {
         const clientName = r.client
           ? `${r.client.prenom || ''} ${r.client.nom || ''}`.trim()
-          : (r.client_nom || 'N/A');
-        const serviceName = r.service ? (r.service.nom || r.service.name) : (r.service_nom || 'N/A');
+          : (r.client_nom || r.client_name || (r.client_id ? r.client_id.substring(0, 8) : 'N/A'));
+        const serviceName = r.service
+          ? (r.service.nom || r.service.name)
+          : (r.service_nom || r.service_name || r.service_code || (r.service_id ? r.service_id.substring(0, 8) : 'N/A'));
         const date = r.date_reservation || r.date || r.created_at;
-        const statut = r.statut || r.status || '';
-        const prix = r.prix_total ?? r.prix ?? r.total ?? 0;
+        const statut = r.status || r.statut || '';
+        const prix = r.total_price ?? r.prix_total ?? r.prix ?? r.total ?? 0;
 
         let actions = '';
         if (statut === 'en_attente') {
           actions = `
-            <button class="btn btn-success btn-action" onclick="confirmReservation(${r.id})" title="Confirmer">
+            <button class="btn btn-success btn-action" onclick="confirmReservation('${r.id}')" title="Confirmer">
               <i class="fas fa-check"></i>
             </button>
-            <button class="btn btn-danger btn-action" onclick="openRefuseModal(${r.id})" title="Refuser">
+            <button class="btn btn-danger btn-action" onclick="openRefuseModal('${r.id}')" title="Refuser">
               <i class="fas fa-times"></i>
             </button>`;
         } else if (statut === 'confirmee') {
@@ -1549,7 +1542,7 @@
             <button class="btn btn-warning btn-action" onclick="openPaiementModal('${r.id}', '${escapeHtml(serviceName)}', ${prix})" title="Demander paiement">
               <i class="fas fa-credit-card"></i>
             </button>
-            <button class="btn btn-primary btn-action" onclick="terminerReservation(${r.id})" title="Terminer">
+            <button class="btn btn-primary btn-action" onclick="terminerReservation('${r.id}')" title="Terminer">
               <i class="fas fa-flag-checkered"></i>
             </button>`;
         }
@@ -1560,7 +1553,7 @@
             <td>${date ? formatDate(date) : 'N/A'}</td>
             <td>${escapeHtml(serviceName)}</td>
             <td>${escapeHtml(clientName)}</td>
-            <td>${r.nombre_personnes ?? r.nb_personnes ?? '-'}</td>
+            <td>${r.personnes ?? r.nombre_personnes ?? r.nb_personnes ?? '-'}</td>
             <td>${formatStatus(statut)}</td>
             <td>${formatPrice(prix)}</td>
             <td>${actions || '<span class="text-muted">-</span>'}</td>
@@ -1792,10 +1785,10 @@
             <td><span class="badge bg-primary">${reservationCount}</span></td>
             <td>${inscritLe ? formatDate(inscritLe) : '-'}</td>
             <td>
-              <button class="btn btn-outline-primary btn-action" onclick="viewClientProfile(${c.id})" title="Voir profil">
+              <button class="btn btn-outline-primary btn-action" onclick="viewClientProfile('${c.id}')" title="Voir profil">
                 <i class="fas fa-eye"></i>
               </button>
-              <button class="btn btn-outline-danger btn-action" onclick="openDeleteClientModal(${c.id}, '${escapeHtml((c.prenom || '') + ' ' + (c.nom || ''))}')" title="Supprimer">
+              <button class="btn btn-outline-danger btn-action" onclick="openDeleteClientModal('${c.id}', '${escapeHtml((c.prenom || '') + ' ' + (c.nom || ''))}')" title="Supprimer">
                 <i class="fas fa-trash"></i>
               </button>
             </td>
@@ -1809,9 +1802,13 @@
       new bootstrap.Modal(document.getElementById('modalClientProfile')).show();
 
       try {
-        const data = await ClientsAPI.get(id);
-        const client = data.data || data.client || data;
-        const reservations = client.reservations || [];
+        const [clientRes, reservationsRes] = await Promise.all([
+          ClientsAPI.get(id),
+          ClientsAPI.reservations(id)
+        ]);
+        const client = clientRes.data || clientRes.client || clientRes;
+        const reservationsPayload = reservationsRes.data || reservationsRes.reservations || reservationsRes || [];
+        const reservations = Array.isArray(reservationsPayload) ? reservationsPayload : [];
 
         body.innerHTML = `
           <div class="row mb-4">
@@ -1933,13 +1930,14 @@
         admin: 'bg-danger',
         reception: 'bg-primary',
         direction: 'bg-warning text-dark',
-        staff: 'bg-secondary'
+        staff: 'bg-secondary',
+        restaurant: 'bg-success'
       };
 
       tbody.innerHTML = state.users.map(u => {
         const role = u.role || 'staff';
         const badgeClass = roleBadgeMap[role] || 'bg-secondary';
-        const isActive = u.actif ?? u.active ?? true;
+        const isActive = u.is_active ?? u.actif ?? u.active ?? true;
 
         return `
           <tr>
@@ -1963,11 +1961,12 @@
 
     async function handleAddUser() {
       const email = document.getElementById('newUserEmail').value.trim();
+      const password = document.getElementById('newUserPassword').value.trim();
       const nom = document.getElementById('newUserNom').value.trim();
       const prenom = document.getElementById('newUserPrenom').value.trim();
       const role = document.getElementById('newUserRole').value;
 
-      if (!email || !nom || !prenom || !role) {
+      if (!email || !password || !nom || !prenom || !role) {
         showAlert(document.getElementById('alertContainer'),
           'Veuillez remplir tous les champs');
         return;
@@ -1978,7 +1977,7 @@
       btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Enregistrement...';
 
       try {
-        await AdminAPI.createUser({ email, nom, prenom, role });
+        await AdminAPI.createUser({ email, password, nom, prenom, role });
         bootstrap.Modal.getInstance(document.getElementById('modalAddUser')).hide();
         document.getElementById('formAddUser').reset();
         showAlert(document.getElementById('alertContainer'),
@@ -2210,7 +2209,8 @@
 
       if (Array.isArray(calendar)) {
         calendar.forEach(slot => {
-          const date = new Date(slot.date || slot.start_time || slot.debut);
+          const startAt = slot.start_at || slot.date || slot.start_time || slot.debut;
+          const date = startAt ? new Date(startAt) : new Date();
           const dayIndex = (date.getDay() + 6) % 7; // Monday = 0
           const dayName = days[dayIndex];
           if (slotsByDay[dayName]) {
@@ -2253,7 +2253,7 @@
           html += '<span class="text-muted small">Aucun</span>';
         } else {
           slots.slice(0, 8).forEach(slot => {
-            const time = slot.heure_debut || slot.start_time || slot.debut || '';
+            const time = slot.start_at || slot.heure_debut || slot.start_time || slot.debut || '';
             const timeStr = time ? formatTime(time) : '';
             const capacity = slot.capacite ?? slot.capacity ?? '';
             const reserved = slot.reserves ?? slot.reserved ?? 0;
@@ -2294,12 +2294,12 @@
 
       try {
         await CreneauxAPI.generer({
-          service_id: parseInt(serviceId),
+          service_id: serviceId,
           start_date: startDate,
           end_date: endDate,
           start_time: startTime,
           end_time: endTime,
-          interval: parseInt(interval),
+          slot_minutes: parseInt(interval),
           capacity: parseInt(capacity)
         });
 
@@ -2336,27 +2336,28 @@
           AdminAPI.statsRevenus(queryStr)
         ]);
 
-        const reservationStats = resStats.data || resStats;
-        const revenueStats = revStats.data || revStats;
+        const reservationStats = resStats.data || resStats || {};
+        const revenueStats = revStats.data || revStats || {};
 
         // Period stats
         document.getElementById('statsPeriodReservations').textContent =
-          reservationStats.total ?? reservationStats.total_reservations ?? 0;
+          reservationStats.count ?? 0;
 
-        const totalRevenue = revenueStats.total ?? revenueStats.total_revenus ?? 0;
+        const totalRevenue = revenueStats.revenue ?? 0;
         document.getElementById('statsPeriodRevenue').textContent = formatPrice(totalRevenue);
 
-        const mostRequested = reservationStats.service_top ?? reservationStats.most_requested ?? '-';
+        const byStatus = normalizeStatsMap(reservationStats.by_status, 'count');
+        const topStatus = byStatus.sort((a, b) => (b.count || 0) - (a.count || 0))[0];
         document.getElementById('statsMostRequested').textContent =
-          typeof mostRequested === 'object' ? (mostRequested.nom || mostRequested.name || '-') : mostRequested;
+          topStatus ? `${formatStatusLabel(topStatus.label)} (${topStatus.count || 0})` : '-';
 
-        // Reservations by service chart
-        const byService = reservationStats.par_service ?? reservationStats.byService ?? [];
-        renderStatsBarChart('statsReservationsByService', byService, 'count');
+        // Reservations by day chart
+        const byDay = normalizeStatsMap(reservationStats.by_day, 'count');
+        renderStatsBarChart('statsReservationsByService', byDay, 'count');
 
-        // Revenue by month chart
-        const byMonth = revenueStats.par_mois ?? revenueStats.byMonth ?? [];
-        renderStatsBarChart('statsRevenueByMonth', byMonth, 'revenue');
+        // Revenue by service chart
+        const byService = normalizeStatsMap(revenueStats.by_service, 'revenue');
+        renderStatsBarChart('statsRevenueByMonth', byService, 'revenue');
 
         state.statsLoaded = true;
       } catch (error) {
@@ -2366,26 +2367,44 @@
       }
     }
 
+    function normalizeStatsMap(input, valueKey = 'count') {
+      if (Array.isArray(input)) return input;
+      if (input && typeof input === 'object') {
+        return Object.entries(input).map(([label, value]) => ({
+          label,
+          [valueKey]: value,
+          value
+        }));
+      }
+      return [];
+    }
+
+    function formatStatusLabel(status) {
+      if (!status) return '-';
+      return String(status).replace(/_/g, ' ');
+    }
+
     function renderStatsBarChart(containerId, data, type) {
       const container = document.getElementById(containerId);
+      const normalized = Array.isArray(data) ? data : normalizeStatsMap(data, type === 'revenue' ? 'revenue' : 'count');
 
-      if (!data || !data.length) {
+      if (!normalized || !normalized.length) {
         container.innerHTML = '<div class="text-center py-4 text-muted">Aucune donn&eacute;e disponible</div>';
         return;
       }
 
       const getValue = (item) => {
         if (type === 'revenue') {
-          return parseFloat(item.revenus || item.revenue || item.total || 0);
+          return parseFloat(item.revenue ?? item.revenus ?? item.total ?? item.value ?? 0);
         }
-        return parseInt(item.count || item.total || item.nombre || 0);
+        return parseInt(item.count ?? item.total ?? item.nombre ?? item.value ?? 0);
       };
 
       const getLabel = (item) => {
-        return item.service || item.nom || item.name || item.mois || item.month || item.label || '-';
+        return item.label || item.service || item.nom || item.name || item.mois || item.month || '-';
       };
 
-      const maxValue = Math.max(...data.map(getValue));
+      const maxValue = Math.max(...normalized.map(getValue));
 
       const barClassMap = {
         golf: 'bar-golf',
@@ -2394,11 +2413,11 @@
         salles: 'bar-salle'
       };
 
-      container.innerHTML = data.map(item => {
+      container.innerHTML = normalized.map(item => {
         const label = getLabel(item);
         const value = getValue(item);
         const pct = maxValue > 0 ? (value / maxValue) * 100 : 0;
-        const barClass = barClassMap[label.toLowerCase()] || 'bar-default';
+        const barClass = barClassMap[String(label).toLowerCase()] || 'bar-default';
         const displayValue = type === 'revenue' ? formatPrice(value) : value;
 
         return `
@@ -2419,15 +2438,15 @@
       btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Export en cours...';
 
       try {
-        const data = await ReservationsAPI.export();
-
-        if (data.url) {
-          window.open(data.url, '_blank');
-        } else if (data.data) {
-          // Download as blob
-          const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
-          downloadBlob(blob, 'reservations_export.json');
+        const token = getToken();
+        const response = await fetch(`${API_BASE_URL}/reservations/export`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+        if (!response.ok) {
+          throw new Error('Export indisponible');
         }
+        const blob = await response.blob();
+        downloadBlob(blob, 'reservations_export.xlsx');
 
         showAlert(document.getElementById('alertContainer'),
           'Export des r&eacute;servations t&eacute;l&eacute;charg&eacute;', 'success');
@@ -2446,14 +2465,15 @@
       btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Export en cours...';
 
       try {
-        const data = await AdminAPI.exportStats();
-
-        if (data.url) {
-          window.open(data.url, '_blank');
-        } else if (data.data) {
-          const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
-          downloadBlob(blob, 'statistiques_export.json');
+        const token = getToken();
+        const response = await fetch(`${API_BASE_URL}/admin/stats/export`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+        if (!response.ok) {
+          throw new Error('Export indisponible');
         }
+        const blob = await response.blob();
+        downloadBlob(blob, 'statistiques_export.pdf');
 
         showAlert(document.getElementById('alertContainer'),
           'Export des statistiques t&eacute;l&eacute;charg&eacute;', 'success');
