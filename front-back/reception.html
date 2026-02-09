@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RÃ©ception - PrÃ©sident Golf Club</title>
+  <title>R�ception - Pr�sident Golf Club</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -27,7 +27,7 @@
   <nav class="navbar navbar-expand-lg gc-navbar sticky-top">
     <div class="container-fluid">
       <a class="navbar-brand" href="../index.html">
-        <i class="fas fa-headset"></i> PGC - Réception
+        <i class="fas fa-headset"></i> PGC - R?ception
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#receptionNavbar">
         <span class="navbar-toggler-icon"></span>
@@ -35,14 +35,14 @@
       <div class="collapse navbar-collapse" id="receptionNavbar">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link active" href="#reservations" data-section="reservations" onclick="showSection('reservations'); return false;"><i class="fas fa-calendar-check me-1"></i> Réservations</a>
+            <a class="nav-link active" href="#reservations" data-section="reservations" onclick="showSection('reservations'); return false;"><i class="fas fa-calendar-check me-1"></i> R?servations</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#paiements" data-section="paiements" onclick="showSection('paiements'); return false;"><i class="fas fa-credit-card me-1"></i> Paiements</a>
           </li>
         </ul>
         <button class="btn btn-outline-light btn-sm" id="btnLogout">
-          <i class="fas fa-sign-out-alt me-1"></i> Déconnexion
+          <i class="fas fa-sign-out-alt me-1"></i> D?connexion
         </button>
       </div>
     </div>
@@ -51,7 +51,7 @@
   <div class="gc-admin-wrapper">
     <aside class="gc-sidebar">
       <nav class="nav flex-column">
-        <a class="nav-link active" href="#reservations" data-section="reservations" onclick="showSection('reservations'); return false;"><i class="fas fa-calendar-check"></i> RÃ©servations</a>
+        <a class="nav-link active" href="#reservations" data-section="reservations" onclick="showSection('reservations'); return false;"><i class="fas fa-calendar-check"></i> R�servations</a>
         <a class="nav-link" href="#paiements" data-section="paiements" onclick="showSection('paiements'); return false;"><i class="fas fa-credit-card"></i> Paiements</a>
       </nav>
     </aside>
@@ -62,8 +62,8 @@
       <!-- RESERVATIONS -->
       <section id="section-reservations" class="section active">
         <div class="gc-page-header">
-          <h1><i class="fas fa-calendar-check me-2"></i>RÃ©servations</h1>
-          <p>Confirmer / refuser / terminer les rÃ©servations</p>
+          <h1><i class="fas fa-calendar-check me-2"></i>R�servations</h1>
+          <p>Confirmer / refuser / terminer les r�servations</p>
         </div>
 
         <div class="gc-filters gc-form mb-3">
@@ -73,9 +73,9 @@
               <select class="form-select" id="filterStatus">
                 <option value="">Toutes</option>
                 <option value="en_attente">En attente</option>
-                <option value="confirmee">ConfirmÃ©es</option>
-                <option value="annulee">AnnulÃ©es</option>
-                <option value="terminee">TerminÃ©es</option>
+                <option value="confirmee">Confirm�es</option>
+                <option value="annulee">Annul�es</option>
+                <option value="terminee">Termin�es</option>
               </select>
             </div>
             <div class="col-md-2">
@@ -92,7 +92,7 @@
               <table class="table gc-table mb-0">
                 <thead>
                   <tr>
-                    <th>NÂ°</th>
+                    <th>N�</th>
                     <th>Client</th>
                     <th>Service</th>
                     <th>Date</th>
@@ -114,16 +114,16 @@
       <section id="section-paiements" class="section">
         <div class="gc-page-header">
           <h1><i class="fas fa-credit-card me-2"></i>Paiements</h1>
-          <p>VÃ©rifier les reÃ§us et gÃ©rer les remboursements</p>
+          <p>V�rifier les re�us et g�rer les remboursements</p>
         </div>
 
         <div class="d-flex gap-2 mb-3 flex-wrap">
           <button class="btn btn-sm btn-outline-primary active" onclick="filterPaiements('tous', this)">Tous</button>
           <button class="btn btn-sm btn-outline-warning" onclick="filterPaiements('en_attente', this)">En attente</button>
-          <button class="btn btn-sm btn-outline-info" onclick="filterPaiements('paye', this)">ReÃ§u envoyÃ©</button>
-          <button class="btn btn-sm btn-outline-success" onclick="filterPaiements('verifie', this)">VÃ©rifiÃ©s</button>
+          <button class="btn btn-sm btn-outline-info" onclick="filterPaiements('paye', this)">Re�u envoy�</button>
+          <button class="btn btn-sm btn-outline-success" onclick="filterPaiements('verifie', this)">V�rifi�s</button>
           <button class="btn btn-sm btn-outline-danger" onclick="filterPaiements('remboursement_en_attente', this)">Remb. en attente</button>
-          <button class="btn btn-sm btn-outline-secondary" onclick="filterPaiements('rembourse', this)">RemboursÃ©s</button>
+          <button class="btn btn-sm btn-outline-secondary" onclick="filterPaiements('rembourse', this)">Rembours�s</button>
         </div>
 
         <div class="gc-card card">
@@ -133,12 +133,12 @@
                 <thead>
                   <tr>
                     <th>Date</th>
-                    <th>RÃ©servation</th>
+                    <th>R�servation</th>
                     <th>Client</th>
                     <th>Service</th>
                     <th>Montant</th>
                     <th>Statut</th>
-                    <th>ReÃ§u</th>
+                    <th>Re�u</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -158,7 +158,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Refuser la rÃ©servation</h5>
+          <h5 class="modal-title">Refuser la r�servation</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -318,7 +318,7 @@
         const reservations = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : Array.isArray(data?.reservations) ? data.reservations : [];
 
         if (!reservations.length) {
-          tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Aucune rÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©servation</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Aucune r?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�servation</td></tr>';
           return;
         }
 
@@ -449,48 +449,48 @@
 
       await ReservationsAPI.refuser(id, reason);
       bootstrap.Modal.getInstance(document.getElementById('modalRefuse')).hide();
-      showAlert('RÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©servation refusÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e', 'warning');
+      showAlert('R?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�servation refus?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�e', 'warning');
       loadReservations();
     }
 
     async function confirmReservation(id) {
       await ReservationsAPI.confirmer(id);
-      showAlert('RÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©servation confirmÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e', 'success');
+      showAlert('R?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�servation confirm?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�e', 'success');
       loadReservations();
     }
 
     async function completeReservation(id) {
       await ReservationsAPI.terminer(id);
-      showAlert('RÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©servation terminÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e', 'success');
+      showAlert('R?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�servation termin?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�e', 'success');
       loadReservations();
     }
 
     async function verifierPaiement(id) {
       await PaiementsAPI.verifier(id);
-      showAlert('Paiement vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©rifiÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©', 'success');
+      showAlert('Paiement v?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�rifi?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�', 'success');
       loadPaiements();
     }
 
     async function approuverRemboursement(id) {
       await PaiementsAPI.approuverRemboursement(id);
-      showAlert('Remboursement approuvÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©', 'success');
+      showAlert('Remboursement approuv?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�', 'success');
       loadPaiements();
     }
 
     async function refuserRemboursement(id) {
-      const reason = prompt('Motif du refus :') || 'Remboursement refusÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©';
+      const reason = prompt('Motif du refus :') || 'Remboursement refus?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�';
       await PaiementsAPI.refuserRemboursement(id, reason);
-      showAlert('Remboursement refusÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©', 'warning');
+      showAlert('Remboursement refus?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�', 'warning');
       loadPaiements();
     }
 
     function statusBadge(status) {
       const map = {
         en_attente: '<span class="badge bg-warning text-dark">En attente</span>',
-        confirmee: '<span class="badge bg-success">ConfirmÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e</span>',
-        annulee: '<span class="badge bg-secondary">AnnulÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e</span>',
-        terminee: '<span class="badge bg-info">TerminÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e</span>',
-        refusee: '<span class="badge bg-danger">RefusÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e</span>'
+        confirmee: '<span class="badge bg-success">Confirm?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�e</span>',
+        annulee: '<span class="badge bg-secondary">Annul?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�e</span>',
+        terminee: '<span class="badge bg-info">Termin?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�e</span>',
+        refusee: '<span class="badge bg-danger">Refus?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�e</span>'
       };
       return map[status] || `<span class="badge bg-light text-dark">${status}</span>`;
     }
@@ -498,11 +498,11 @@
     function paiementBadge(statut) {
       const map = {
         en_attente: '<span class="badge bg-warning text-dark">En attente</span>',
-        paye: '<span class="badge bg-info">ReÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§u envoyÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©</span>',
-        verifie: '<span class="badge bg-success">VÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©rifiÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©</span>',
+        paye: '<span class="badge bg-info">Re?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�u envoy?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�</span>',
+        verifie: '<span class="badge bg-success">V?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�rifi?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�</span>',
         remboursement_en_attente: '<span class="badge bg-danger">Remb. en attente</span>',
-        rembourse: '<span class="badge bg-secondary">RemboursÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©</span>',
-        echoue: '<span class="badge bg-danger">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°chouÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©</span>',
+        rembourse: '<span class="badge bg-secondary">Rembours?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�</span>',
+        echoue: '<span class="badge bg-danger">?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f??s?,�?f?'?,�?f��??s�?.�?f??s?,�?f?'�?,?s?f??s?,�chou?f?'????T?f???�?,??"??f?'�?,?�?f��??s��??z�?f?'????T?f��??s�?.�?f?'�?,?s?f??s?,�</span>',
       };
       return map[statut] || `<span class="badge bg-light text-dark">${statut}</span>`;
     }

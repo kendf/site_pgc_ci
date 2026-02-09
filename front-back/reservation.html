@@ -1160,7 +1160,7 @@
         const iconInfo = iconMap[code] || { icon: 'fas fa-concierge-bell', class: 'icon-golf' };
         const name = service.nom || service.name || code;
         const desc = service.description || '';
-        const price = service.prix_base || service.price || 0;
+        const price = Number(service.prix_base ?? service.base_price ?? service.price_per_person ?? service.price ?? 0);
 
         return `
           <div class="col-lg-4 col-md-6">
@@ -1702,6 +1702,40 @@
       document.getElementById('sumTotal').textContent = formatPrice(total);
     }
 
+    function computeReservationTotal() {
+      const personnes = parseInt(document.getElementById('inputPersonnes').value) || 1;
+      let total = 0;
+
+      if (state.selectedService === 'golf') {
+        total = (state.selectedServicePrice || 5000) * personnes;
+        if (document.getElementById('checkCaddie').checked) {
+          total += 5000;
+        }
+        if (document.getElementById('checkVoiturette').checked) {
+          total += 5000;
+        }
+      } else if (state.selectedService === 'restaurant') {
+        const formuleSelect = document.getElementById('selectFormule');
+        const formulePrice = parseInt(formuleSelect.selectedOptions[0]?.dataset.price) || state.selectedServicePrice || 0;
+        const selectedMenus = getSelectedMenus();
+        const menuUnitTotal = selectedMenus.reduce((sum, m) => sum + (Number(m.price) || 0), 0);
+        const menuTotal = menuUnitTotal * personnes;
+        total = (formulePrice * personnes) + menuTotal;
+      } else if (state.selectedService === 'salle') {
+        const nbJours = state.salleNbJours || 1;
+        const prixParJour = state.selectedServicePrice || 150000;
+        total = prixParJour * nbJours;
+        if (document.getElementById('checkPause').checked) {
+          total += 2000 * personnes * nbJours;
+        }
+        if (document.getElementById('checkRepas').checked) {
+          total += 10000 * personnes * nbJours;
+        }
+      }
+
+      return total;
+    }
+
     // ==================== CONFIRM RESERVATION ====================
     function limitEquipements() {
       const checks = document.querySelectorAll('.equip-check');
@@ -1738,6 +1772,7 @@
 
       const personnes = parseInt(document.getElementById('inputPersonnes').value) || 1;
       const notes = document.getElementById('inputNotes').value.trim();
+      const estimatedTotal = computeReservationTotal();
 
       try {
         let result;
@@ -1756,6 +1791,7 @@
               voiturette: document.getElementById('checkVoiturette').checked,
               voiturette_count: document.getElementById('checkVoiturette').checked ? 1 : 0,
               notes: notes,
+              total_price: estimatedTotal,
             },
           });
 
@@ -1765,7 +1801,7 @@
           const menuTotal = menuUnitTotal * personnes;
           const formuleSelect = document.getElementById('selectFormule');
           const formulePrice = parseInt(formuleSelect.selectedOptions[0]?.dataset.price) || state.selectedServicePrice || 0;
-          const estimatedTotal = (formulePrice * personnes) + menuTotal;
+          const restaurantTotal = (formulePrice * personnes) + menuTotal;
 
           result = await RestaurantAPI.reserver({
             service_code: 'restaurant',
@@ -1778,7 +1814,7 @@
               emplacement: document.getElementById('selectEmplacement').value,
               menus: selectedMenus,
               menus_per_person: true,
-              total_price: estimatedTotal,
+              total_price: restaurantTotal,
               allergies: document.getElementById('checkAllergies').checked
                 ? document.getElementById('inputAllergies').value.trim()
                 : null,
@@ -1811,6 +1847,7 @@
               equipements: getSelectedEquipements(),
               pause_cafe: document.getElementById('checkPause').checked,
               dejeuner: document.getElementById('checkRepas').checked,
+              total_price: estimatedTotal,
               notes: notes,
             },
           });
