@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RÃ©ception - PrÃ©sident Golf Club</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+
+  <style>
+    .gc-admin-wrapper { display:flex; min-height: calc(100vh - 62px); }
+    .gc-sidebar { width:260px; flex-shrink:0; }
+    .gc-main-content { flex:1; padding:1.5rem 2rem; overflow-x:hidden; }
+    .section { display:none; }
+    .section.active { display:block; }
+    @media (max-width: 992px){
+      .gc-admin-wrapper { flex-direction: column; }
+      .gc-sidebar { width:100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg gc-navbar sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="../index.html">
+        <i class="fas fa-headset"></i> PGC - RÃ©ception
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#receptionNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="receptionNavbar">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#" data-section="reservations"><i class="fas fa-calendar-check me-1"></i> RÃ©servations</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="paiements"><i class="fas fa-credit-card me-1"></i> Paiements</a>
+          </li>
+        </ul>
+        <button class="btn btn-outline-light btn-sm" id="btnLogout">
+          <i class="fas fa-sign-out-alt me-1"></i> DÃ©connexion
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="gc-admin-wrapper">
+    <aside class="gc-sidebar">
+      <nav class="nav flex-column">
+        <a class="nav-link active" href="#" data-section="reservations"><i class="fas fa-calendar-check"></i> RÃ©servations</a>
+        <a class="nav-link" href="#" data-section="paiements"><i class="fas fa-credit-card"></i> Paiements</a>
+      </nav>
+    </aside>
+
+    <main class="gc-main-content">
+      <div id="alertContainer"></div>
+
+      <!-- RESERVATIONS -->
+      <section id="section-reservations" class="section active">
+        <div class="gc-page-header">
+          <h1><i class="fas fa-calendar-check me-2"></i>RÃ©servations</h1>
+          <p>Confirmer / refuser / terminer les rÃ©servations</p>
+        </div>
+
+        <div class="gc-filters gc-form mb-3">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+              <label class="form-label">Statut</label>
+              <select class="form-select" id="filterStatus">
+                <option value="">Toutes</option>
+                <option value="en_attente">En attente</option>
+                <option value="confirmee">ConfirmÃ©es</option>
+                <option value="annulee">AnnulÃ©es</option>
+                <option value="terminee">TerminÃ©es</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-gc-primary w-100" id="btnFilterReservations">
+                <i class="fas fa-search me-1"></i> Filtrer
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gc-card card">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table gc-table mb-0">
+                <thead>
+                  <tr>
+                    <th>NÂ°</th>
+                    <th>Client</th>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Personnes</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="reservationsBody">
+                  <tr><td colspan="7" class="text-center py-4">Chargement...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAIEMENTS -->
+      <section id="section-paiements" class="section">
+        <div class="gc-page-header">
+          <h1><i class="fas fa-credit-card me-2"></i>Paiements</h1>
+          <p>VÃ©rifier les reÃ§us et gÃ©rer les remboursements</p>
+        </div>
+
+        <div class="d-flex gap-2 mb-3 flex-wrap">
+          <button class="btn btn-sm btn-outline-primary active" onclick="filterPaiements('tous', this)">Tous</button>
+          <button class="btn btn-sm btn-outline-warning" onclick="filterPaiements('en_attente', this)">En attente</button>
+          <button class="btn btn-sm btn-outline-info" onclick="filterPaiements('paye', this)">ReÃ§u envoyÃ©</button>
+          <button class="btn btn-sm btn-outline-success" onclick="filterPaiements('verifie', this)">VÃ©rifiÃ©s</button>
+          <button class="btn btn-sm btn-outline-danger" onclick="filterPaiements('remboursement_en_attente', this)">Remb. en attente</button>
+          <button class="btn btn-sm btn-outline-secondary" onclick="filterPaiements('rembourse', this)">RemboursÃ©s</button>
+        </div>
+
+        <div class="gc-card card">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table gc-table mb-0">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>RÃ©servation</th>
+                    <th>Client</th>
+                    <th>Service</th>
+                    <th>Montant</th>
+                    <th>Statut</th>
+                    <th>ReÃ§u</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="paiementsBody">
+                  <tr><td colspan="8" class="text-center py-4">Chargement...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal Refus -->
+  <div class="modal fade" id="modalRefuse" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Refuser la rÃ©servation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="refuseReservationId">
+          <textarea class="form-control" id="refuseReason" rows="4" placeholder="Motif du refus..."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-danger" id="btnConfirmRefuse">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/api.js"></script>
+
+  <script>
+    'use strict';
+
+    const ALLOWED_ROLES = ['reception','admin','superadmin','direction','staff'];
+
+    (function guard() {
+      const token =
+        (typeof getToken === 'function' && getToken()) ||
+        localStorage.getItem('access_token') ||
+        sessionStorage.getItem('access_token');
+
+      const storedUser = (typeof getUser === 'function' && getUser()) || null;
+      const rawRole =
+        (typeof getUserRole === 'function' && getUserRole()) ||
+        localStorage.getItem('user_role') ||
+        sessionStorage.getItem('user_role') ||
+        (storedUser && (storedUser.role || storedUser.type)) ||
+        '';
+
+      const role = String(rawRole || '').toLowerCase();
+
+      if (!token || !ALLOWED_ROLES.includes(role)) {
+        if (role === 'client') {
+          window.location.href = 'client.html';
+        } else {
+          window.location.href = 'login.html';
+        }
+      }
+    })();
+
+    const ReservationsAPI = {
+      list: (query='') => apiRequest('/reservations' + (query ? '?' + query : '')),
+      confirmer: (id) => apiRequest(`/reservations/${id}/confirmer`, { method: 'PATCH' }),
+      refuser: (id, reason) => apiRequest(`/reservations/${id}/refuser`, { method: 'PATCH', body: JSON.stringify({ reason }) }),
+      terminer: (id) => apiRequest(`/reservations/${id}/terminer`, { method: 'PATCH' }),
+    };
+
+    const PaiementsAPI = {
+      list: () => apiRequest('/paiements'),
+      verifier: (id) => apiRequest(`/paiements/${id}/verifier`, { method: 'PATCH' }),
+      approuverRemboursement: (id) => apiRequest(`/paiements/${id}/approuver-remboursement`, { method: 'PATCH' }),
+      refuserRemboursement: (id, reason) => apiRequest(`/paiements/${id}/refuser-remboursement`, { method: 'PATCH', body: JSON.stringify({ reason }) })
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      bindNav();
+      document.getElementById('btnLogout').addEventListener('click', () => {
+        if (typeof logout === 'function') {
+          logout();
+          return;
+        }
+
+        if (typeof removeToken === 'function') {
+          removeToken();
+        } else {
+          localStorage.removeItem('access_token');
+          sessionStorage.removeItem('access_token');
+        }
+
+        if (typeof removeUser === 'function') {
+          removeUser();
+        } else {
+          localStorage.removeItem('user');
+          localStorage.removeItem('user_role');
+          localStorage.removeItem('user_email');
+          localStorage.removeItem('user_name');
+          sessionStorage.removeItem('user');
+          sessionStorage.removeItem('user_role');
+          sessionStorage.removeItem('user_email');
+          sessionStorage.removeItem('user_name');
+        }
+
+        window.location.href = 'login.html';
+      });
+
+      document.getElementById('btnFilterReservations').addEventListener('click', loadReservations);
+      document.getElementById('btnConfirmRefuse').addEventListener('click', confirmRefuse);
+
+      loadReservations();
+      loadPaiements();
+    });
+
+    function bindNav() {
+      document.querySelectorAll('[data-section]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const section = link.dataset.section;
+          document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === `section-${section}`));
+          document.querySelectorAll('[data-section]').forEach(l => l.classList.toggle('active', l.dataset.section === section));
+          if (section === 'reservations') loadReservations();
+          if (section === 'paiements') loadPaiements();
+        });
+      });
+    }
+
+    async function loadReservations() {
+      const tbody = document.getElementById('reservationsBody');
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4">Chargement...</td></tr>';
+      try {
+        const status = document.getElementById('filterStatus').value;
+        const params = new URLSearchParams();
+        if (status) params.set('status', status);
+
+        const data = await ReservationsAPI.list(params.toString());
+        const reservations = data.data || data || [];
+
+        if (!reservations.length) {
+          tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Aucune rÃ©servation</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = reservations.map(r => {
+          const clientName = r.client ? `${r.client.prenom || ''} ${r.client.nom || ''}`.trim() : (r.client_id?.slice(0,8) || '-');
+          const serviceName = r.service?.nom || r.service_id?.slice(0,8) || '-';
+          const date = r.creneau?.start_at || r.created_at || '';
+          const personnes = r.personnes || 1;
+          const status = r.status || '-';
+
+          let actions = '';
+          if (status === 'en_attente') {
+            actions = `
+              <button class="btn btn-success btn-sm" onclick="confirmReservation('${r.id}')"><i class="fas fa-check"></i></button>
+              <button class="btn btn-danger btn-sm" onclick="openRefuseModal('${r.id}')"><i class="fas fa-times"></i></button>
+            `;
+          } else if (status === 'confirmee') {
+            actions = `<button class="btn btn-primary btn-sm" onclick="completeReservation('${r.id}')"><i class="fas fa-flag-checkered"></i></button>`;
+          }
+
+          return `
+            <tr>
+              <td><strong>#${r.id.slice(0,8)}</strong></td>
+              <td>${escapeHtml(clientName)}</td>
+              <td>${escapeHtml(serviceName)}</td>
+              <td>${date ? new Date(date).toLocaleString('fr-FR') : '-'}</td>
+              <td>${personnes}</td>
+              <td>${statusBadge(status)}</td>
+              <td>${actions || '<span class="text-muted">-</span>'}</td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger py-4">Erreur de chargement</td></tr>';
+      }
+    }
+
+    async function loadPaiements() {
+      const tbody = document.getElementById('paiementsBody');
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4">Chargement...</td></tr>';
+      try {
+        const data = await PaiementsAPI.list();
+        allPaiements = data.data || data || [];
+        renderPaiements();
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger py-4">Erreur de chargement</td></tr>';
+      }
+    }
+
+    let allPaiements = [];
+    let paiementFilter = 'tous';
+
+    function filterPaiements(statut, btn) {
+      paiementFilter = statut;
+      document.querySelectorAll('#section-paiements .btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderPaiements();
+    }
+
+    function renderPaiements() {
+      const tbody = document.getElementById('paiementsBody');
+      let list = allPaiements;
+      if (paiementFilter !== 'tous') list = allPaiements.filter(p => p.statut === paiementFilter);
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">Aucun paiement</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(p => {
+        const res = p.reservation || {};
+        const resNum = res.reservation_number || p.reservation_id?.slice(0,8) || '--';
+        const client = res.client ? `${res.client.prenom || ''} ${res.client.nom || ''}`.trim() : '--';
+        const service = res.service?.nom || '--';
+        const montant = Number(p.montant).toLocaleString('fr-FR') + ' FCFA';
+        const date = new Date(p.created_at).toLocaleDateString('fr-FR');
+
+        let actions = '';
+        if (p.statut === 'paye') {
+          actions = `<button class="btn btn-sm btn-success" onclick="verifierPaiement('${p.id}')">Valider</button>`;
+        } else if (p.statut === 'remboursement_en_attente') {
+          actions = `
+            <button class="btn btn-sm btn-success" onclick="approuverRemboursement('${p.id}')">Approuver</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="refuserRemboursement('${p.id}')">Refuser</button>
+          `;
+        }
+
+        const recu = p.recu_url ? `<a href="${escapeHtml(p.recu_url)}" target="_blank">Voir</a>` : '--';
+
+        return `
+          <tr>
+            <td>${date}</td>
+            <td>#${escapeHtml(resNum)}</td>
+            <td>${escapeHtml(client)}</td>
+            <td>${escapeHtml(service)}</td>
+            <td><strong>${montant}</strong></td>
+            <td>${paiementBadge(p.statut)}</td>
+            <td>${recu}</td>
+            <td>${actions || '<span class="text-muted">-</span>'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openRefuseModal(id) {
+      document.getElementById('refuseReservationId').value = id;
+      document.getElementById('refuseReason').value = '';
+      new bootstrap.Modal(document.getElementById('modalRefuse')).show();
+    }
+
+    async function confirmRefuse() {
+      const id = document.getElementById('refuseReservationId').value;
+      const reason = document.getElementById('refuseReason').value.trim();
+      if (!reason) return showAlert('Veuillez entrer un motif', 'warning');
+
+      await ReservationsAPI.refuser(id, reason);
+      bootstrap.Modal.getInstance(document.getElementById('modalRefuse')).hide();
+      showAlert('RÃ©servation refusÃ©e', 'warning');
+      loadReservations();
+    }
+
+    async function confirmReservation(id) {
+      await ReservationsAPI.confirmer(id);
+      showAlert('RÃ©servation confirmÃ©e', 'success');
+      loadReservations();
+    }
+
+    async function completeReservation(id) {
+      await ReservationsAPI.terminer(id);
+      showAlert('RÃ©servation terminÃ©e', 'success');
+      loadReservations();
+    }
+
+    async function verifierPaiement(id) {
+      await PaiementsAPI.verifier(id);
+      showAlert('Paiement vÃ©rifiÃ©', 'success');
+      loadPaiements();
+    }
+
+    async function approuverRemboursement(id) {
+      await PaiementsAPI.approuverRemboursement(id);
+      showAlert('Remboursement approuvÃ©', 'success');
+      loadPaiements();
+    }
+
+    async function refuserRemboursement(id) {
+      const reason = prompt('Motif du refus :') || 'Remboursement refusÃ©';
+      await PaiementsAPI.refuserRemboursement(id, reason);
+      showAlert('Remboursement refusÃ©', 'warning');
+      loadPaiements();
+    }
+
+    function statusBadge(status) {
+      const map = {
+        en_attente: '<span class="badge bg-warning text-dark">En attente</span>',
+        confirmee: '<span class="badge bg-success">ConfirmÃ©e</span>',
+        annulee: '<span class="badge bg-secondary">AnnulÃ©e</span>',
+        terminee: '<span class="badge bg-info">TerminÃ©e</span>',
+        refusee: '<span class="badge bg-danger">RefusÃ©e</span>'
+      };
+      return map[status] || `<span class="badge bg-light text-dark">${status}</span>`;
+    }
+
+    function paiementBadge(statut) {
+      const map = {
+        en_attente: '<span class="badge bg-warning text-dark">En attente</span>',
+        paye: '<span class="badge bg-info">ReÃ§u envoyÃ©</span>',
+        verifie: '<span class="badge bg-success">VÃ©rifiÃ©</span>',
+        remboursement_en_attente: '<span class="badge bg-danger">Remb. en attente</span>',
+        rembourse: '<span class="badge bg-secondary">RemboursÃ©</span>',
+        echoue: '<span class="badge bg-danger">Ã‰chouÃ©</span>',
+      };
+      return map[statut] || `<span class="badge bg-light text-dark">${statut}</span>`;
+    }
+
+    function showAlert(message, type = 'danger') {
+      const container = document.getElementById('alertContainer');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type} alert-dismissible fade show`;
+      alert.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+      container.appendChild(alert);
+      setTimeout(() => alert.remove(), 5000);
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = String(text);
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
