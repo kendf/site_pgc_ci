@@ -227,6 +227,9 @@ async function apiRequest(endpoint, options = {}) {
 const ServicesAPI = {
   list: () => apiRequest('/services'),
   get: (code) => apiRequest(`/services/${code}`),
+  create: (data) => apiRequest('/services', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id, data) => apiRequest(`/services/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+  delete: (id) => apiRequest(`/services/${id}`, { method: 'DELETE' }),
 };
 
 // ==================== GOLF ====================

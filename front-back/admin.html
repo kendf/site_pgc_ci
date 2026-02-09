@@ -719,9 +719,14 @@
 
       <!-- ==================== SECTION: SERVICES ==================== -->
       <section id="section-services" class="admin-section">
-        <div class="gc-page-header">
-          <h1><i class="fas fa-concierge-bell me-2"></i>Services</h1>
-          <p>Consulter et g&eacute;rer les services propos&eacute;s</p>
+        <div class="gc-page-header d-flex justify-content-between align-items-center">
+          <div>
+            <h1><i class="fas fa-concierge-bell me-2"></i>Services</h1>
+            <p>Consulter et g&eacute;rer les services propos&eacute;s</p>
+          </div>
+          <button class="btn btn-gc-primary" onclick="openServiceModal()">
+            <i class="fas fa-plus me-1"></i> Ajouter un service
+          </button>
         </div>
 
         <div class="row g-4" id="servicesGrid">
@@ -731,6 +736,67 @@
           </div>
         </div>
       </section>
+
+      <!-- Modal: Add/Edit Service -->
+      <div class="modal fade" id="modalService" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalServiceTitle">
+                <i class="fas fa-concierge-bell me-2"></i>Ajouter un service
+              </h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body gc-form">
+              <form id="formService" novalidate>
+                <input type="hidden" id="serviceEditId">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Code *</label>
+                    <input type="text" class="form-control" id="serviceCode" required placeholder="ex: restaurant">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Nom *</label>
+                    <input type="text" class="form-control" id="serviceName" required placeholder="Nom du service">
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" id="serviceDescription" rows="2" placeholder="Description du service..."></textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Prix de base (FCFA)</label>
+                    <input type="number" class="form-control" id="serviceBasePrice" min="0" step="0.01" placeholder="ex: 15000">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Prix par personne (FCFA)</label>
+                    <input type="number" class="form-control" id="servicePricePerPerson" min="0" step="0.01" placeholder="ex: 2500">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Dur&eacute;e par d&eacute;faut (minutes)</label>
+                    <input type="number" class="form-control" id="serviceDuration" min="1" step="1" placeholder="ex: 90">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Capacit&eacute; par d&eacute;faut</label>
+                    <input type="number" class="form-control" id="serviceCapacity" min="1" step="1" placeholder="ex: 4">
+                  </div>
+                  <div class="col-12">
+                    <div class="form-check mt-2">
+                      <input class="form-check-input" type="checkbox" id="serviceActive" checked>
+                      <label class="form-check-label" for="serviceActive">Service actif</label>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="button" class="btn btn-gc-primary" id="btnSaveService" onclick="saveService()">
+                <i class="fas fa-save me-1"></i> Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- ==================== SECTION: MENUS RESTAURANT ==================== -->
       <section id="section-menus" class="admin-section">
@@ -1234,7 +1300,8 @@
       servicesLoaded: false,
       creneauxLoaded: false,
       clientsLoaded: false,
-      usersLoaded: false
+      usersLoaded: false,
+      editingServiceId: null
     };
 
     // ============ AUTH CHECK ============
@@ -2198,8 +2265,8 @@
       grid.innerHTML = state.services.map(s => {
         const name = s.nom || s.name || 'Service';
         const code = s.code || '';
-        const isActive = s.actif ?? s.active ?? true;
-        const price = s.prix_base ?? s.base_price ?? s.prix ?? 0;
+        const isActive = s.is_active ?? s.actif ?? s.active ?? true;
+        const price = s.base_price ?? s.prix_base ?? s.prix ?? 0;
         const description = s.description || 'Aucune description disponible';
 
         return `
@@ -2216,12 +2283,143 @@
               </div>
               <div class="service-price">${formatPrice(price)}</div>
               <p class="service-description">${escapeHtml(description)}</p>
-              <button class="btn btn-gc-secondary btn-sm mt-2">
-                <i class="fas fa-edit me-1"></i> Modifier
-              </button>
+              <div class="d-flex gap-2 mt-2">
+                <button class="btn btn-gc-secondary btn-sm" onclick="openServiceModal('${s.id}')">
+                  <i class="fas fa-edit me-1"></i> Modifier
+                </button>
+                <button class="btn btn-outline-danger btn-sm" onclick="deleteService('${s.id}', '${escapeHtml(name).replace(/'/g,"\\'")}')">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
             </div>
           </div>`;
       }).join('');
+    }
+
+    function resetServiceForm() {
+      const form = document.getElementById('formService');
+      form.reset();
+      form.classList.remove('was-validated');
+      document.getElementById('serviceEditId').value = '';
+      document.getElementById('serviceActive').checked = true;
+    }
+
+    function openServiceModal(id) {
+      resetServiceForm();
+      state.editingServiceId = null;
+
+      if (id) {
+        const service = state.services.find(s => String(s.id) === String(id));
+        if (!service) {
+          showAlert(document.getElementById('alertContainer'), 'Service introuvable.', 'warning');
+          return;
+        }
+
+        state.editingServiceId = String(service.id);
+        document.getElementById('serviceEditId').value = service.id;
+        document.getElementById('serviceCode').value = service.code || '';
+        document.getElementById('serviceName').value = service.nom || service.name || '';
+        document.getElementById('serviceDescription').value = service.description || '';
+        document.getElementById('serviceBasePrice').value = service.base_price ?? service.prix_base ?? '';
+        document.getElementById('servicePricePerPerson').value = service.price_per_person ?? '';
+        document.getElementById('serviceDuration').value = service.default_duration_minutes ?? '';
+        document.getElementById('serviceCapacity').value = service.default_capacity ?? '';
+        document.getElementById('serviceActive').checked = service.is_active ?? service.actif ?? service.active ?? true;
+
+        document.getElementById('modalServiceTitle').innerHTML = '<i class="fas fa-concierge-bell me-2"></i>Modifier un service';
+      } else {
+        document.getElementById('modalServiceTitle').innerHTML = '<i class="fas fa-concierge-bell me-2"></i>Ajouter un service';
+      }
+
+      new bootstrap.Modal(document.getElementById('modalService')).show();
+    }
+
+    function parseOptionalNumber(value) {
+      if (value === '' || value === null || value === undefined) return null;
+      const num = Number(value);
+      return Number.isFinite(num) ? num : null;
+    }
+
+    function parseOptionalInt(value) {
+      if (value === '' || value === null || value === undefined) return null;
+      const num = parseInt(value, 10);
+      return Number.isFinite(num) ? num : null;
+    }
+
+    async function saveService() {
+      const form = document.getElementById('formService');
+      form.classList.add('was-validated');
+      if (!form.checkValidity()) return;
+
+      const id = document.getElementById('serviceEditId').value || null;
+      const code = document.getElementById('serviceCode').value.trim();
+      const nom = document.getElementById('serviceName').value.trim();
+
+      if (!code || !nom) {
+        showAlert(document.getElementById('alertContainer'), 'Veuillez remplir le code et le nom.', 'warning');
+        return;
+      }
+
+      const data = {
+        code,
+        nom,
+        description: document.getElementById('serviceDescription').value.trim() || null,
+        is_active: document.getElementById('serviceActive').checked,
+        base_price: parseOptionalNumber(document.getElementById('serviceBasePrice').value),
+        price_per_person: parseOptionalNumber(document.getElementById('servicePricePerPerson').value),
+        default_duration_minutes: parseOptionalInt(document.getElementById('serviceDuration').value),
+        default_capacity: parseOptionalInt(document.getElementById('serviceCapacity').value),
+      };
+
+      const btn = document.getElementById('btnSaveService');
+      const original = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Enregistrement...';
+
+      try {
+        if (id) {
+          await ServicesAPI.update(id, data);
+          showAlert(document.getElementById('alertContainer'), 'Service mis à jour avec succès.', 'success');
+        } else {
+          await ServicesAPI.create(data);
+          showAlert(document.getElementById('alertContainer'), 'Service créé avec succès.', 'success');
+        }
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalService'));
+        if (modal) modal.hide();
+
+        state.servicesLoaded = false;
+        const filterSelect = document.getElementById('filterService');
+        const slotSelect = document.getElementById('slotServiceId');
+        if (filterSelect) filterSelect.options.length = 1;
+        if (slotSelect) slotSelect.options.length = 1;
+
+        await loadServices();
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'), error.message || 'Erreur lors de l’enregistrement du service.', 'danger');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = original;
+      }
+    }
+
+    async function deleteService(id, name) {
+      if (!id) return;
+      const label = name ? `\"${name}\"` : 'ce service';
+      if (!confirm(`Supprimer ${label} ?`)) return;
+
+      try {
+        await ServicesAPI.delete(id);
+        showAlert(document.getElementById('alertContainer'), 'Service supprimé avec succès.', 'success');
+        state.servicesLoaded = false;
+        const filterSelect = document.getElementById('filterService');
+        const slotSelect = document.getElementById('slotServiceId');
+        if (filterSelect) filterSelect.options.length = 1;
+        if (slotSelect) slotSelect.options.length = 1;
+        await loadServices();
+      } catch (error) {
+        showAlert(document.getElementById('alertContainer'), error.message || 'Erreur lors de la suppression du service.', 'danger');
+      }
     }
 
     // ============ CRENEAUX ============
